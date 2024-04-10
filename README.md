@@ -1,7 +1,9 @@
 # Prj_group_Certifi
 this is gonna be our new repo 
+NG is here !
 Rada here!
 Karma also here!!
+
 
 
 
