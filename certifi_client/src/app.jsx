@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import Login from "./component/Login"; // Corrected import statement
 
 import abi from "./contractJson/Booklist.json";
 import { ethers } from "ethers"; //import ethers library
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./component/Navbar";
 import logo from "./book.png";
+import Layout from "./component/Layout";
+import Public from "./component/Public";
 
 function App() {
   const [state, setState] = useState({
@@ -70,23 +73,13 @@ function App() {
 
   return (
     <>
-      <div className="App">
-        <Router>
-          <Navbar />
-          <Routes>
-            {/* You can add your routes here */}
-          </Routes>
-        </Router>
-
-        <p
-          className="text-muted lead"
-          style={{ marginTop: "10px", marginLeft: "5px" }}
-        >
-          <p>
-            <b>Connected account:</b> {account}
-          </p>
-        </p>
-      </div>
+    <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Public />} />
+        </Route>
+        
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </>
   );
 }
