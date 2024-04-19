@@ -2,7 +2,7 @@ import React from 'react'
 
 const Public = () => {
   return (
-    <div>
+    <div className='pt-36 px-16'>
       Home Page
     </div>
   )

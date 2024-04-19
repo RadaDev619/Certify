@@ -1,60 +1,77 @@
 import React, { useState } from "react";
-
+import { Link } from "react-router-dom";
+import logo from "../../public/logo.png"
 function Login() {
   // Define state   variables for form inputs
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+const [email, setEmail ] = useState("")
+const [password,setPassword] = useState("")
 
   // Function to handle form submission
   const handleSubmit = (event) => {
-    event.preventDefault(); // Prevent default form submission behavior
+    event.preventDefault(); 
 
-    // You can handle form submission here, for example, sending the data to a server
+    console.log("Email", email)
+    console.log("Password", password)
+  
+    if (!password || !email){
+      alert("All fields are required")
+    }
+    else {
+      // call the backend login api
+    }
 
-    // Reset form fields after submission
-    setName("");
+
+    setPassword("");
     setEmail("");
-    setMessage("");
-  };
+    
+
+};
 
   return (
-    <div className="form-container"> {/* Apply form-container class */}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Name:
+    <div className="flex justify-center items-center flex-col">
+      <nav className=" w-full pt-12 pb-20 flex justify-between px-52 items-center">
+        <img src={logo} alt="" />
+        <p>
+          Don't have an account? 
+          <Link to={"/register"} className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500">
+          Sign Up
+          </Link>
+        </p>
+      </nav>
+
+      <div className="form-container w-[50vw] xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32"> 
+      <p className="text-center text-4xl pb-12">Log In</p>
+      <form onSubmit={handleSubmit} className="flex justify-center items-center flex-col w-full gap-6">
+        <div className="w-full">
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Email:
-            <input
-              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
+              placeholder="Email Address"
+              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
             />
-          </label>
         </div>
-        <div>
-          <label>
-            Message:
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              required
+        <div className="w-full">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
             />
-          </label>
+            <div className="py-4 flex justify-between">
+              <div className="flex justify-center items-center gap-2">
+              <input type="radio" className=""/>
+              Remember Me
+              </div>
+              <Link to={"/forgotpassword"}>
+              <p>Forgot Password?</p>
+              </Link>
+            </div>
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit" className="w-full bg-[#8000FF] h-14 rounded-md shadow-xl text-white text-xl hover:bg-[#5808a8] hover:transition-all hover:duration-500">Sign In</button>
       </form>
+    </div>
     </div>
   );
 }
