@@ -24,9 +24,10 @@ function UserChoice() {
       <div className="form-container w-[50vw] xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
         <p className="text-center text-4xl pb-12">Choose User Type</p>
         <div className="flex justify-center items-center gap-10">
+
           <div
-            className={`card w-64 h-64 rounded-lg shadow-md flex flex-col justify-center items-center cursor-pointer hover:scale-110 transition-transform ${
-              selectedUser === 1 ? "border-2 border-blue-500" : ""
+            className={`card w-60 h-60 rounded-lg shadow-md flex flex-col justify-center items-center cursor-pointer hover:scale-110 transition-transform ${
+              selectedUser === 1 ? "border-1 border-blue-500" : ""
             }`}
             onClick={() => handleCardClick(1)}
           >
@@ -34,8 +35,8 @@ function UserChoice() {
             <p className="text-xl mt-4">User 1</p>
           </div>
           <div
-            className={`card w-64 h-64 rounded-lg shadow-md flex flex-col justify-center items-center cursor-pointer hover:scale-110 transition-transform ${
-              selectedUser === 2 ? "border-2 border-blue-500" : ""
+            className={`card w-60 h-60 rounded-lg shadow-md flex flex-col justify-center items-center cursor-pointer hover:scale-110 transition-transform ${
+              selectedUser === 2 ? "border-1 border-blue-500" : ""
             }`}
             onClick={() => handleCardClick(2)}
           >
