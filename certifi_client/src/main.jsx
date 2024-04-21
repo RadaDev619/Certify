@@ -1,16 +1,5 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
+import { render } from 'preact'
+import { App } from './app.jsx'
 import './index.css'
-import { Route, Routes, BrowserRouter } from 'react-router-dom'
 
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <BrowserRouter>
-        <Routes>
-          <Route path="/*" element={<App />} />
-        </Routes>
-      </BrowserRouter>
-  </React.StrictMode>,
-)
+render(<App />, document.getElementById('app'))

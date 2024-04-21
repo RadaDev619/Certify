@@ -1,4 +1,10 @@
-# bms
+# Prj_group_Certifi
+this is gonna be our new repo 
+NG is here !
+Rada here!
+Karma also here!!
+TPG here!!!
+
 
 
 
@@ -15,14 +21,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.com/dapp-projects3774409/bms.git
+git remote add origin https://gitlab.com/prj_group1/prj_group_certifi.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.com/dapp-projects3774409/bms/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.com/prj_group1/prj_group_certifi/-/settings/integrations)
 
 ## Collaborate with your team
 
