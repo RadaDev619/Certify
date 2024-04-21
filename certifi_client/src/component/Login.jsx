@@ -33,7 +33,7 @@ const [password,setPassword] = useState("")
         <img src={logo} alt="" />
         <p>
           Don't have an account? 
-          <Link to={"/register"} className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500">
+          <Link to={"/userchoice"} className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500">
           Sign Up
           </Link>
         </p>
@@ -64,7 +64,7 @@ const [password,setPassword] = useState("")
               <input type="radio" className=""/>
               Remember Me
               </div>
-              <Link to={"/forgotpassword"}>
+              <Link to={"/Forgotpassword"}>
               <p>Forgot Password?</p>
               </Link>
             </div>

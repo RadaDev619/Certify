@@ -6,7 +6,12 @@ import { ethers } from "ethers"; //import ethers library
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./component/Layout";
 import Public from "./component/Public";
-import Register from "./pages/Register";
+import UserRegister from "./pages/UserRegister";
+import InstitutionRegister from "./pages/InstitutionRegister";
+import ForgotPassword from "./pages/Forgetpassword";
+import UserChoice from "./pages/UserChoice";
+import ChangeP from"./pages/Changep"
+import OtpEnter from "./pages/OtpEnter"
 
 function App() {
   const [state, setState] = useState({
@@ -76,8 +81,13 @@ function App() {
           <Route index element={<Public />} />
         </Route>
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
+        <Route path="/uregister" element={<UserRegister />} />
+        <Route path="/iregister" element={<InstitutionRegister />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} /> 
+        <Route path="/userchoice" element={<UserChoice />} /> 
+        <Route path="/changep" element={<ChangeP />} />
+        <Route path="/otpenter" element={<OtpEnter />} />
+    </Routes>
     </>
   );
 }
