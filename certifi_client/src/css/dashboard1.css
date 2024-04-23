@@ -181,34 +181,6 @@
     font-weight: bold;
   }
   
-  
-  .table-row {
-    display: grid !important; 
-    grid-template-columns: repeat(6, 1fr) !important;
-    padding: 10px !important;
-    border-bottom: 1px solid #e4e4e4 !important;
-  }
-  
-  .status {
-    display: flex; 
-    padding: 5px 10px; 
-    border-radius: 2px; 
-    background-color: #def7c4;
-    border-radius: 15px;
-    justify-content: center;
-  }
-  
-  .valid {
-    width: 30%;
-  }
-  
-  .pending {
-    background-color: #f7c4c4;
-    width: 35%;
-    align-items: center;
-    border-radius: 15px;
-  }
-  
   .action-icons {
     display: flex;
     align-items: center;

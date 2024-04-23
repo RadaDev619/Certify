@@ -14,6 +14,7 @@ import ChangeP from"./pages/Changep"
 import OtpEnter from "./pages/OtpEnter"
 import Dashboard from "./pages/Dashboard";
 import Dashboard1 from "./pages/Dashboard1";
+import Accountsetting from "./pages/Accountsetting";
 
 function App() {
   const [state, setState] = useState({
@@ -91,6 +92,7 @@ function App() {
         <Route path="/otpenter" element={<OtpEnter />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard1" element={<Dashboard1 />} />
+        <Route path="/accountsetting" element={<Accountsetting />} />
     </Routes>
     </>
   );
