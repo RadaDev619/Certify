@@ -39,9 +39,9 @@ function InstitutionRegistration() {
 
   // Example list of locations (replace with your actual data or fetch from an API)
   const locations = [
-    { name: "New York" },
-    { name: "Los Angeles" },
-    { name: "Chicago" },
+    { name: "Thimphu" },
+    { name: "Punakha" },
+    { name: "Wangdue" },
     // ... add more locations
   ];
 

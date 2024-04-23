@@ -54,7 +54,7 @@ function ChangePassword() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email Address"
-              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
+              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-3"
             />
           </div>
           <div className="w-full">
@@ -63,16 +63,16 @@ function ChangePassword() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="New Password"
-              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
+              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-3"
             />
           </div>
-          <div className="w-full">
+          <div className="w-full pb-6">
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm Password"
-              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
+              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-3"
             />
           </div>
           <button
