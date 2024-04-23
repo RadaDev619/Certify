@@ -311,3 +311,30 @@
   font-size: 20px;
   margin-right: 10px;
 }
+
+.document-wrapper {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .no-documents-text {
+    color: #000;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  
+  .add-new-btn {
+    background-color: #8000ff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
