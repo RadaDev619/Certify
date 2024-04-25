@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./../css/accountsetting.css";
 import certifiLogo from "./../assets/certifi-logo.png";
 import userProfileImage from "./../assets/user-profile.png";
@@ -10,17 +10,6 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
 const Account = () => {
-  const [showCreateDropdown, setShowCreateDropdown] = useState(false);
-  const [showUserDropdown, setShowUserDropdown] = useState(false);
-
-  const toggleCreateDropdown = () => {
-    setShowCreateDropdown(!showCreateDropdown);
-  };
-
-  const toggleUserDropdown = () => {
-    setShowUserDropdown(!showUserDropdown);
-  };
-
   return (
     <div className="dashboard-wrapper">
       <div className="sidebar">
@@ -50,7 +39,6 @@ const Account = () => {
             </div>
             <div
               className="profile-image-container"
-              onClick={toggleUserDropdown}
             >
               <img
                 src={userProfileImage}
@@ -58,14 +46,6 @@ const Account = () => {
                 className="profile-image"
               />
               <span className="username">Username</span>
-              {showUserDropdown && (
-                <div className="user-dropdown">
-                  <div className="user-dropdown-content">
-                    <FaCog className="settings-icon" />
-                    <span>Settings</span>
-                  </div>
-                </div>
-              )}
             </div>
             <div className="logout-icon-container">
               <FaSignOutAlt />
@@ -102,7 +82,7 @@ const Account = () => {
                 <div className="account-detail">
                   <span className="label">Name</span>
                   <div className="input-container">
-                    <input type="text" value="Name" className="input-field" />
+                    <input type="text" value="Name" className="input-field" readOnly />
                   </div>
                   <div className="edit-container">
                     <span className="edit-text">Edit</span>
@@ -116,6 +96,7 @@ const Account = () => {
                       type="password"
                       value="************"
                       className="input-field"
+                      readOnly
                     />
                     <div className="edit-container">
                       <span className="edit-text">Edit</span>
@@ -130,6 +111,7 @@ const Account = () => {
                       type="email"
                       value="Test@gmail.com"
                       className="input-field"
+                      readOnly
                     />
                     <div className="edit-container">
                       <span className="edit-text">Edit</span>
