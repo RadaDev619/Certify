@@ -12,9 +12,11 @@ import ForgotPassword from "./pages/Forgetpassword";
 import UserChoice from "./pages/UserChoice";
 import ChangeP from"./pages/Changep"
 import OtpEnter from "./pages/OtpEnter"
-import Dashboard from "./pages/Dashboard";
-import Dashboard1 from "./pages/Dashboard1";
-import Accountsetting from "./pages/Accountsetting";
+import Dashboard from "./pages/User/Dashboard";
+import Dashboard1 from "./pages/User/Dashboard1";
+import Accountsetting from "./pages/User/Accountsetting";
+import Institutiondashboard from "./pages/Institution/Institutiondashboard";
+import Institutionaccountsetting from "./pages/Institution/Institutionaccountsetting";
 
 function App() {
   const [state, setState] = useState({
@@ -93,6 +95,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard1" element={<Dashboard1 />} />
         <Route path="/accountsetting" element={<Accountsetting />} />
+        <Route path="/institutiondashboard" element={<Institutiondashboard />} />
+        <Route path="/institutionaccountsetting" element={<Institutionaccountsetting />} />
     </Routes>
     </>
   );

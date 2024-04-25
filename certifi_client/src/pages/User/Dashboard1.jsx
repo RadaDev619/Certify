@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "../css/dashboard.css";
-import certifiLogo from "./../assets/certifi-logo.png";
-import userProfileImage from "./../assets/user-profile.png";
-import metamaskLogo from "./../assets/metamask-logo.png";
+import "../../css/dashboard1.css";
+import certifiLogo from "../../assets/certifi-logo.png";
+import userProfileImage from "../../assets/user-profile.png";
+import metamaskLogo from "../../assets/metamask-logo.png";
 import "@fortawesome/fontawesome-free/css/all.css";
 import {
   FaSignOutAlt,
@@ -117,29 +117,11 @@ const Dashboard = () => {
                 <div>View</div>
                 <div>Upload</div>
               </div>
-              <div className="table-row">
-                <div>Document</div>
-                <div className="status valid">Valid</div>
-                <div>User name</div>
-                <div>11 February 2024</div>
-                <div>
-                  <i className="fas fa-eye"></i>
-                </div>
-                <div>
-                  <i className="fas fa-upload"></i>
-                </div>
-              </div>
-              <div className="table-row">
-                <div>Document</div>
-                <div className="status pending">Pending</div>
-                <div>User name</div>
-                <div>11 February 2024</div>
-                <div>
-                  <i className="fas fa-eye"></i>
-                </div>
-                <div>
-                  <i className="fas fa-upload"></i>
-                </div>
+              <div className="document-wrapper">
+                <div className="no-documents-text">NO DOCUMENTS</div>
+                <button className="add-new-btn">
+                  Add New
+                </button>
               </div>
             </div>
           </CardContent>

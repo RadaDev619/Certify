@@ -1,10 +1,10 @@
 import React from "react";
-import "./../css/accountsetting.css";
-import certifiLogo from "./../assets/certifi-logo.png";
-import userProfileImage from "./../assets/user-profile.png";
-import metamaskLogo from "./../assets/metamask-logo.png";
+import "../../css/institutionaccountsetting.css";
+import certifiLogo from "../../assets/certifi-logo.png";
+import userProfileImage from "../../assets/user-profile.png";
+import metamaskLogo from "../../assets/metamask-logo.png";
 import "@fortawesome/fontawesome-free/css/all.css";
-import { FaSignOutAlt, FaSearch, FaUser, FaCog, FaEdit } from "react-icons/fa";
+import { FaSignOutAlt, FaSearch, FaUser, FaEdit } from "react-icons/fa";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
