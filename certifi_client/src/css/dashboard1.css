@@ -181,34 +181,6 @@
     font-weight: bold;
   }
   
-  
-  .table-row {
-    display: grid !important; 
-    grid-template-columns: repeat(6, 1fr) !important;
-    padding: 10px !important;
-    border-bottom: 1px solid #e4e4e4 !important;
-  }
-  
-  .status {
-    display: flex; 
-    padding: 5px 10px; 
-    border-radius: 2px; 
-    background-color: #def7c4;
-    border-radius: 15px;
-    justify-content: center;
-  }
-  
-  .valid {
-    width: 30%;
-  }
-  
-  .pending {
-    background-color: #f7c4c4;
-    width: 35%;
-    align-items: center;
-    border-radius: 15px;
-  }
-  
   .action-icons {
     display: flex;
     align-items: center;
@@ -311,3 +283,30 @@
   font-size: 20px;
   margin-right: 10px;
 }
+
+.document-wrapper {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .no-documents-text {
+    color: #000;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  
+  .add-new-btn {
+    background-color: #8000ff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }

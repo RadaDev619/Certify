@@ -9,12 +9,12 @@ function certificatevalidation() {
       {/* <div className="bg-white w-1/2 p-6 rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center">CERTIFICATE OF COMPLETION</h1>
         <p className="text-lg text-center mt-4">Awarded to</p>
-        <h2 className="text-xl font-bold text-center mt-2">{{personName}}</h2>
+        <h2 className="text-xl font-bold text-center mt-2">personName</h2>
         <p className="text-lg text-center mt-4">For completing the course</p>
-        <h3 className="text-lg font-bold text-center mt-2">{{courseName}}</h3>
-        <p className="text-sm text-center mt-4">Course duration: {{courseHours}}</p>
-        <p className="text-sm text-center">Course details: {{courseDetails}}</p>
-        <p className="text-xs text-center mt-8">Valid since: {{certificationDate}}</p>
+        <h3 className="text-lg font-bold text-center mt-2">courseName</h3>
+        <p className="text-sm text-center mt-4">Course duration: courseHours</p>
+        <p className="text-sm text-center">Course details: courseDetails</p>
+        <p className="text-xs text-center mt-8">Valid since: certificationDate</p>
       </div> */}
 
       {/* Information Card Section */}

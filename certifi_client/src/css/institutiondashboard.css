@@ -155,6 +155,19 @@
     width: 30px;
     object-fit: cover;
   }
+
+  .profile-table-image-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: 10px;
+  }
+  
+  .profile-table-image {
+    height: 30px;
+    width: 30px;
+    object-fit: cover;
+  }
   
   .logout-icon-container {
     background-color: white; /* Match MetaMask box color */
@@ -172,9 +185,9 @@
     border-radius: 4px;
   } */
   
-  .table-header {
+  .table-header1 {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     color: #7a7878;
     /* background-color: #f0f0f0; */
     padding: 10px;
@@ -182,30 +195,41 @@
   }
   
   
-  .table-row {
+  .table-row1 {
     display: grid !important; 
-    grid-template-columns: repeat(6, 1fr) !important;
+    grid-template-columns: repeat(5, 1fr) !important;
     padding: 10px !important;
     border-bottom: 1px solid #e4e4e4 !important;
   }
   
   .status {
-    display: flex; 
-    padding: 5px 10px; 
-    border-radius: 2px; 
-    background-color: #def7c4;
-    border-radius: 15px;
-    justify-content: center;
+    display: flex;
+    background-color: white;
+    justify-content: flex-start;
+    column-gap: 20px;
+  }
+
+  .pad-status {
+    padding: 0 !important;
   }
   
   .valid {
-    width: 30%;
+    padding: 5px 10px;
+    background-color: #def7c4;
+    width: 35%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
   }
   
   .pending {
+    padding: 5px 10px;
     background-color: #f7c4c4;
     width: 35%;
+    display: flex;
     align-items: center;
+    justify-content: center;
     border-radius: 15px;
   }
   
