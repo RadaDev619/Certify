@@ -22,6 +22,7 @@ import Institutiondashboard from "./pages/Institution/Institutiondashboard";
 import Institutionaccountsetting from "./pages/Institution/Institutionaccountsetting";
 import InsOtpVer from "./pages/InsOtpVer";
 import InsLogin from "./component/InsLogin";
+import CertificateOfCompletion from "./pages/CertificateOfCompletion";
 
 
 function App() {
@@ -108,6 +109,7 @@ function App() {
         <Route path="/accountsetting" element={<Accountsetting />} />
         <Route path="/institutiondashboard" element={<Institutiondashboard />} />
         <Route path="/institutionaccountsetting" element={<Institutionaccountsetting />} />
+        <Route path="/certificateofcompletion" element={<CertificateOfCompletion />} />
 
     </Routes>
     </>
