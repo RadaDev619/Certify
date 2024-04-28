@@ -13,6 +13,10 @@ import UserChoice from "./pages/UserChoice";
 import ChangeP from"./pages/Changep"
 import OtpEnter from "./pages/OtpEnter"
 import Dashboard from "./pages/Dashboard";
+import Certificatepart from "./pages/certificate/Certificatepart"
+import Certificateform from "./pages/certificate/Certificateform"
+import Certificatevalidation from "./pages/certificate/certificatevalidation"
+
 
 function App() {
   const [state, setState] = useState({
@@ -89,6 +93,9 @@ function App() {
         <Route path="/changep" element={<ChangeP />} />
         <Route path="/otpenter" element={<OtpEnter />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/csigner" element={<Certificatepart />} />
+        <Route path="/cform" element={<Certificateform />} />
+        <Route path="/cvalid" element={<Certificatevalidation />} />
     </Routes>
     </>
   );
