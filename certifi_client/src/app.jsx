@@ -15,6 +15,12 @@ import OtpEnter from "./pages/OtpEnter"
 import Certificatepart from "./pages/certificate/Certificatepart"
 import Certificateform from "./pages/certificate/Certificateform"
 import Certificatevalidation from "./pages/certificate/certificatevalidation"
+import Dashboard from "./pages/User/Dashboard";
+import Dashboard1 from "./pages/User/Dashboard1";
+import Accountsetting from "./pages/User/Accountsetting";
+import Institutiondashboard from "./pages/Institution/Institutiondashboard";
+import Institutionaccountsetting from "./pages/Institution/Institutionaccountsetting";
+
 
 
 function App() {
@@ -94,6 +100,12 @@ function App() {
         <Route path="/csigner" element={<Certificatepart />} />
         <Route path="/cform" element={<Certificateform />} />
         <Route path="/cvalid" element={<Certificatevalidation />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard1" element={<Dashboard1 />} />
+        <Route path="/accountsetting" element={<Accountsetting />} />
+        <Route path="/institutiondashboard" element={<Institutiondashboard />} />
+        <Route path="/institutionaccountsetting" element={<Institutionaccountsetting />} />
+
     </Routes>
     </>
   );
