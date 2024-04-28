@@ -20,7 +20,8 @@ import Dashboard1 from "./pages/User/Dashboard1";
 import Accountsetting from "./pages/User/Accountsetting";
 import Institutiondashboard from "./pages/Institution/Institutiondashboard";
 import Institutionaccountsetting from "./pages/Institution/Institutionaccountsetting";
-
+import InsOtpVer from "./pages/InsOtpVer";
+import InsLogin from "./component/InsLogin";
 
 
 function App() {
@@ -97,6 +98,8 @@ function App() {
         <Route path="/userchoice" element={<UserChoice />} /> 
         <Route path="/changep" element={<ChangeP />} />
         <Route path="/otpenter" element={<OtpEnter />} />
+        <Route path="/insotpver" element={<InsOtpVer />} />
+        <Route path="/inslogin" element={<InsLogin />} />
         <Route path="/csigner" element={<Certificatepart />} />
         <Route path="/cform" element={<Certificateform />} />
         <Route path="/cvalid" element={<Certificatevalidation />} />

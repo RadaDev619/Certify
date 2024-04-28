@@ -4,7 +4,7 @@ import logo from "../../public/logo.png"
 import { useNavigate } from "react-router-dom";
 
 
-function Login() {
+function InsLogin() {
   // Define state   variables for form inputs
 const [email, setEmail ] = useState("")
 const [password,setPassword] = useState("")
@@ -22,7 +22,7 @@ const navigate = useNavigate()
       alert("All fields are required")
     }
     else {
-      fetch ("https://prj-certifi-backend.onrender.com/api/auth/login", {
+      fetch ("https://prj-certifi-backend.onrender.com/api/institution/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,7 +38,7 @@ const navigate = useNavigate()
           alert("Login successful!");
           setEmail("");
           setPassword("");
-          navigate("/dashboard")
+          navigate("/Institutiondashboard")
         }else{
           alert("Login failed. Please try again.");
         }
@@ -98,4 +98,4 @@ const navigate = useNavigate()
   );
 }
 
-export default Login;
+export default InsLogin;

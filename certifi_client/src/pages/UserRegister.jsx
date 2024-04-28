@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../public/logo.png";
+import { useNavigate } from "react-router-dom";
 
 function URegister() {
   // Define state variables for registration inputs
@@ -9,9 +10,13 @@ function URegister() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const navigate = useNavigate()
   // Function to handle form submission
   const handleSubmit = (event) => {
+
     event.preventDefault();
+
+    document.cookie = `email=${email}; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
 
     // Basic validation (add more as needed)
     if (!name || !email || !password || !confirmPassword) {
@@ -25,15 +30,39 @@ function URegister() {
     }
 
     // TODO: Call backend API for registration
+    fetch("https://prj-certifi-backend.onrender.com/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if(data.status === "success") {
+          alert("Registration successful!");
+          setName("");
+          setEmail("");
+          setPassword("");
+          setConfirmPassword("");
+          
+          navigate("/OtpEnter");
+        }else{
+          alert("Registration failed. Please try again.");
+        }
+      })
+      .catch((error) => console.error("Error:", error));
+
     console.log("Name:", name);
     console.log("Email:", email);
     console.log("Password:", password);
 
     // Clear form fields after submission
-    setName("");
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
+
   };
 
   return (

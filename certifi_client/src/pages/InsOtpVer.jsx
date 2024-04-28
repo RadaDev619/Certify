@@ -16,10 +16,10 @@ function getCookie(name) {
   return null;
 }
 
-const userEmail = getCookie('email');
+const insEmail = getCookie('InsEmail');
 
 
-function OtpEntry() {
+function InsOtpEntry() {
   const [otp, setOtp] = useState(new Array(6).fill(""));
 
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ function OtpEntry() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: userEmail,
+        email: insEmail,
         otp: otpValue,
       }),
     })
@@ -53,7 +53,7 @@ function OtpEntry() {
       .then((data) => {
         if (data.status === "Verified") {
           alert("OTP verification successful!");
-          navigate("/Login");
+          navigate("/InsLogin");
         } else {
           alert("OTP verification failed. Please try again.");
         }
@@ -115,4 +115,4 @@ function OtpEntry() {
   );
 }
 
-export default OtpEntry;
+export default InsOtpEntry;
