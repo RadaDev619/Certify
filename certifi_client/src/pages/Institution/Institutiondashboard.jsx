@@ -10,14 +10,13 @@ import {
   FaCheck,
   FaTimes,
   FaHome,
-  FaEdit,
   FaFilter,
-  FaTrashAlt,
   FaCog,
 } from "react-icons/fa";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import Modal from "react-modal";
 
 const Dashboard = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
@@ -25,6 +24,40 @@ const Dashboard = () => {
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
   };
+
+  // verify modal
+  const [verifyModalIsOpen, setVerifyModalIsOpen] = useState(false);
+
+  const openVerifyModal = () => {
+    setVerifyModalIsOpen(true);
+  };
+
+  const closeVerifyModal = () => {
+    setVerifyModalIsOpen(false);
+  };
+
+  const handleVerify = () => {
+    // Implement delete account logic here
+    console.log("Validated");
+    closeVerifyModal();
+  };
+
+    // notvalid modal
+    const [notValidModalIsOpen, setnotValidModalIsOpen] = useState(false);
+
+    const opennotValidModal = () => {
+      setnotValidModalIsOpen(true);
+    };
+  
+    const closenotValidModal = () => {
+      setnotValidModalIsOpen(false);
+    };
+  
+    const handlenotValid = () => {
+      // Implement delete account logic here
+      console.log("Not Validated");
+      closenotValidModal();
+    };
 
   return (
     <div className="dashboard-wrapper">
@@ -109,13 +142,78 @@ const Dashboard = () => {
                   <i className="fas fa-eye"></i>
                 </div>
                 <div className="status pad-status">
-                  <div className="valid">
+                  <div className="valid" onClick={openVerifyModal}>
                     <FaCheck />
                   </div>
-                  <div className="pending">
+                  <div className="pending" onClick={opennotValidModal}>
                     <FaTimes />
                   </div>
                 </div>
+                {/* verify Modal */}
+              <Modal
+                isOpen={verifyModalIsOpen}
+                onRequestClose={closeVerifyModal}
+                contentLabel="Verify Account Modal"
+                className="modal-overlay"
+                overlayClassName="modal-overlay"
+              >
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h2 className="modal-title">Status validation </h2>
+                  </div>
+                  <p className="modal-message">
+                  Are you sure this document is valid? 
+                  </p>
+                  <div className="modal-buttons">
+                    <button
+                      className="modal-button verify"
+                      onClick={handleVerify}
+                    >
+                      Verify
+                    </button>
+                    <button
+                      className="modal-button cancel"
+                      onClick={closeVerifyModal}
+                    >
+                      Back 
+                    </button>
+                  </div>
+                </div>
+              </Modal>
+
+              {/* not validated modal */}
+              <Modal
+                isOpen={notValidModalIsOpen}
+                onRequestClose={closenotValidModal}
+                contentLabel="Verify Account Modal"
+                className="modal-overlay"
+                overlayClassName="modal-overlay"
+              >
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h2 className="modal-title">Status validation </h2>
+                  </div>
+                  <p className="modal-message">
+                  Are you sure this document is not valid? 
+                  </p>
+                  <div className="modal-buttons">
+                    <button
+                      className="modal-button not-valid"
+                      onClick={handlenotValid}
+                    >
+                      Remove
+                    </button>
+                    <button
+                      className="modal-button cancel"
+                      onClick={closenotValidModal}
+                    >
+                      Back
+                    </button>
+                  </div>
+                </div>
+              </Modal>
+
+
               </div>
             </div>
           </CardContent>
