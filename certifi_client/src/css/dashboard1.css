@@ -174,7 +174,7 @@
   
   .table-header {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     color: #7a7878;
     /* background-color: #f0f0f0; */
     padding: 10px;

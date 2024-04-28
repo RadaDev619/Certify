@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import "../../css/accountsetting.css";
 import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
@@ -8,10 +8,72 @@ import { FaSignOutAlt, FaSearch, FaUser, FaEdit } from "react-icons/fa";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import AvatarPopup from "../../component/AvatarPopup";
+import NamePopup from "../../component/NamePopUp";
+import PasswordPopup from "../../component/PasswordPopUp";
+import EmailPopup from "../../component/EmailPopUp";
+import DeleteAccountPopup from "../../component/DeleteAccountPopUp";
 
 const Account = () => {
+  const [showAvatarPopup, setShowAvatarPopup] = useState(false);
+  const [showNamePopup, setShowNamePopup] = useState(false);
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
+  const [showEmailPopup, setShowEmailPopup] = useState(false);
+  const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
+
+  const handleEditAvatar = () => {
+    setShowAvatarPopup(true);
+  };
+
+  const handleCloseAvatarPopup = () => {
+    setShowAvatarPopup(false);
+  };
+
+  const handleEditName = () => {
+    setShowNamePopup(true);
+  };
+
+  const handleCloseNamePopup = () => {
+    setShowNamePopup(false);
+  };
+
+  const handleEditPassword = () => {
+    setShowPasswordPopup(true);
+  };
+
+  const handleClosePasswordPopup = () => {
+    setShowPasswordPopup(false);
+  };
+
+  const handleEditEmail = () => {
+    setShowEmailPopup(true);
+  };
+
+  const handleCloseEmailPopup = () => {
+    setShowEmailPopup(false);
+  };
+
+  const handleDeleteAccount = () => {
+    setShowDeleteAccountPopup(true);
+  };
+
+  const handleCloseDeleteAccountPopup = () => {
+    setShowDeleteAccountPopup(false);
+  };
+
   return (
     <div className="dashboard-wrapper">
+      {showAvatarPopup && (
+        <AvatarPopup onClose={handleCloseAvatarPopup} />
+      )}
+      {showNamePopup && <NamePopup onClose={handleCloseNamePopup} />}
+      {showPasswordPopup && (
+        <PasswordPopup onClose={handleClosePasswordPopup} />
+      )}
+      {showEmailPopup && <EmailPopup onClose={handleCloseEmailPopup} />}
+      {showDeleteAccountPopup && (
+        <DeleteAccountPopup onClose={handleCloseDeleteAccountPopup} />
+      )}
       <div className="sidebar">
         <div className="logo-container">
           <div className="logo-circle">
@@ -74,7 +136,7 @@ const Account = () => {
                       />
                     </div>
                   </div>
-                  <div className="edit-container">
+                  <div className="edit-container" onClick={handleEditAvatar}>
                     <span className="edit-text">Edit</span>
                     <FaEdit className="edit-icon" />
                   </div>
@@ -84,8 +146,8 @@ const Account = () => {
                   <div className="input-container">
                     <input type="text" value="Name" className="input-field" readOnly />
                   </div>
-                  <div className="edit-container">
-                    <span className="edit-text">Edit</span>
+                  <div className="edit-container" onClick={handleEditName}>
+                    <span className="edit-text" >Edit</span>
                     <FaEdit className="edit-icon" />
                   </div>
                 </div>
@@ -98,7 +160,7 @@ const Account = () => {
                       className="input-field"
                       readOnly
                     />
-                    <div className="edit-container">
+                    <div className="edit-container" onClick={handleEditPassword}>
                       <span className="edit-text">Edit</span>
                       <FaEdit className="edit-icon" />
                     </div>{" "}
@@ -113,7 +175,7 @@ const Account = () => {
                       className="input-field"
                       readOnly
                     />
-                    <div className="edit-container">
+                    <div className="edit-container" onClick={handleEditEmail}>
                       <span className="edit-text">Edit</span>
                       <FaEdit className="edit-icon" />
                     </div>{" "}
@@ -137,7 +199,7 @@ const Account = () => {
                   services associated with your CertiFi account and permanent
                   deletion of your personal information.
                 </Typography>
-                <button className="delete-account-button">
+                <button className="delete-account-button" onClick={handleDeleteAccount}>
                   Delete Account
                 </button>
               </div>

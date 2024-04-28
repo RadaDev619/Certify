@@ -17,6 +17,7 @@ import {
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import Modal from "react-modal";
 
 const Dashboard = () => {
   const [showCreateDropdown, setShowCreateDropdown] = useState(false);
@@ -28,6 +29,44 @@ const Dashboard = () => {
 
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
+  };
+
+  const [renameModalIsOpen, setRenameModalIsOpen] = useState(false);
+  const [newName, setNewName] = useState("");
+
+  const openRenameModal = () => {
+    setRenameModalIsOpen(true);
+  };
+
+  const closeRenameModal = () => {
+    setRenameModalIsOpen(false);
+    setNewName("");
+  };
+
+  const handleNameChange = (e) => {
+    setNewName(e.target.value);
+  };
+
+  const handleSubmit = () => {
+    // Handle the renaming logic here
+    console.log("New name:", newName);
+    closeRenameModal();
+  };
+
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
+
+  const openDeleteModal = () => {
+    setDeleteModalIsOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalIsOpen(false);
+  };
+
+  const handleDelete = () => {
+    // Implement delete account logic here
+    console.log("Account deleted");
+    closeDeleteModal();
   };
 
   return (
@@ -61,7 +100,7 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="main-content">
-        {/* Rest of the code remains the same */}        
+        {/* Rest of the code remains the same */}
         <div className="search-bar">
           <div className="search-container">
             <FaSearch className="search-icon" />
@@ -75,7 +114,10 @@ const Dashboard = () => {
                 className="metamask-logo"
               />
             </div>
-            <div className="profile-image-container" onClick={toggleUserDropdown}>
+            <div
+              className="profile-image-container"
+              onClick={toggleUserDropdown}
+            >
               <img
                 src={userProfileImage}
                 alt="User Profile"
@@ -103,42 +145,131 @@ const Dashboard = () => {
               <Typography variant="h5" component="div">
                 Documents
               </Typography>
-              <div className="action-icons">
-                <FaEdit className="icon" /> Rename
-                <FaTrashAlt className="icon" /> Delete
-              </div>
+
+              <Modal
+                isOpen={renameModalIsOpen}
+                onRequestClose={closeRenameModal}
+                contentLabel="Rename Modal"
+                className="modal-overlay"
+                overlayClassName="modal-overlay"
+              >
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h2 className="modal-title">Enter a new name</h2>
+                    <span className="modal-close" onClick={closeRenameModal}>
+                      &times;
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    value={newName}
+                    onChange={handleNameChange}
+                    placeholder="Name"
+                    className="modal-input"
+                  />
+                  <div className="modal-buttons">
+                    <button
+                      className="modal-button cancel"
+                      onClick={closeRenameModal}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="modal-button confirm"
+                      onClick={handleSubmit}
+                    >
+                      Change name
+                    </button>
+                  </div>
+                </div>
+              </Modal>
+              {/* Delete Modal */}
+              <Modal
+                isOpen={deleteModalIsOpen}
+                onRequestClose={closeDeleteModal}
+                contentLabel="Delete Account Modal"
+                className="modal-overlay"
+                overlayClassName="modal-overlay"
+              >
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h2 className="modal-title">Delete Document</h2>
+                  </div>
+                  <p className="modal-message">
+                    Are you sure want to delete this document ? you will loose
+                    this data and it will be permanently be deleted.
+                  </p>
+                  <div className="modal-buttons">
+                    <button
+                      className="modal-button delete"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      className="modal-button cancel"
+                      onClick={closeDeleteModal}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </Modal>
             </div>
             <div className="documents-table">
-              <div className="table-header">
+              <div className="table-header table-headers">
                 <div>Name</div>
                 <div>Status</div>
                 <div>Author</div>
                 <div>Update date</div>
                 <div>View</div>
                 <div>Upload</div>
+                <div>Actions</div>
               </div>
-              <div className="table-row">
+              <div className="table-row table-rows">
                 <div>Document</div>
-                <div className="status valid">Valid</div>
+                <div className="status valids">Valid</div>
                 <div>User name</div>
                 <div>11 February 2024</div>
-                <div>
-                  <i className="fas fa-eye"></i>
+                <div className="view-icon">
+                  <i className="fas fa-eye "></i>
                 </div>
-                <div>
+                <div className="view-icon">
                   <i className="fas fa-upload"></i>
+                </div>
+
+                <div className="action-icons">
+                  <div className="icon-container" onClick={openRenameModal}>
+                    <FaEdit className="icon" /> Rename
+                  </div>
+
+                  <div className="icon-container" onClick={openDeleteModal}>
+                    <FaTrashAlt className="icon" />
+                    Delete
+                  </div>
                 </div>
               </div>
-              <div className="table-row">
+              <div className="table-row table-rows">
                 <div>Document</div>
-                <div className="status pending">Pending</div>
+                <div className="status pendings">Pending</div>
                 <div>User name</div>
                 <div>11 February 2024</div>
-                <div>
+                <div className="view-icon">
                   <i className="fas fa-eye"></i>
                 </div>
-                <div>
+                <div className="view-icon">
                   <i className="fas fa-upload"></i>
+                </div>
+
+                <div className="action-icons">
+                  <div className="icon-container" onClick={openRenameModal}>
+                    <FaEdit className="icon" /> Rename
+                  </div>
+
+                  <div className="icon-container" onClick={openDeleteModal}>
+                    <FaTrashAlt className="icon" />
+                    Delete
+                  </div>
                 </div>
               </div>
             </div>
