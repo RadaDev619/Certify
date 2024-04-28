@@ -69,7 +69,9 @@ const [password,setPassword] = useState("")
               </Link>
             </div>
         </div>
-        <button type="submit" className="w-full bg-[#8000FF] h-14 rounded-md shadow-xl text-white text-xl hover:bg-[#5808a8] hover:transition-all hover:duration-500">Sign In</button>
+        <div className="w-full  flex justify-center">
+        <button type="submit"  className="w-full bg-[#8000FF] h-14 rounded-md shadow-xl text-white text-xl hover:bg-[#5808a8] hover:transition-all hover:duration-500">Sign In</button>
+        </div>
       </form>
     </div>
     </div>
