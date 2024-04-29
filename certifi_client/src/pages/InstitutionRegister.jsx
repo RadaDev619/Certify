@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../public/logo.png";
+import { useNavigate } from "react-router-dom";
 
 // Function to validate email format
 const validateEmail = (email) => {
@@ -18,11 +19,9 @@ const validatePassword = (password) => {
 function InstitutionRegistration() {
   // State variables
   const [instituteType, setInstituteType] = useState("");
-  const [instituteLocation, setInstituteLocation] = useState("");
+  // const [instituteLocation, setInstituteLocation] = useState("");
   const [companyName, setCompanyName] = useState(""); // State for company name
-  const [location, setLocation] = useState(""); // State for location
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [instituteLocation, setLocation] = useState(""); // State for location
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,6 +29,7 @@ function InstitutionRegistration() {
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
+  const navigate = useNavigate();
   // Example list of institution types (replace with your actual data)
   const instituteTypes = ["University", "College", "High School", "Company", "Other"];
 
@@ -51,12 +51,14 @@ function InstitutionRegistration() {
   );
 
   // Filter locations based on search term
-  const filteredLocations = locations.filter((location) =>
-    location.name.toLowerCase().includes(locationSearchTerm.toLowerCase())
+  const filteredLocations = locations.filter((instituteLocation) =>
+    instituteLocation.name.toLowerCase().includes(locationSearchTerm.toLowerCase())
   );
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    document.cookie = `InsEmail=${email}; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
 
     // Validation (include companyName and location)
     if (
@@ -73,6 +75,36 @@ function InstitutionRegistration() {
     }
 
     // ... (rest of the validation and submission logic)
+    fetch("https://prj-certifi-backend.onrender.com/api/institute/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        companyName,
+        email,
+        instituteType,
+        instituteLocation, 
+        password
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          alert("Registration successful!");
+          setCompanyName("");
+          setLocation("");
+          setEmail("");
+          setPassword("");
+          setConfirmPassword("");
+
+          navigate("/InsOtpVer")
+
+        } else {
+          alert("Registration failed. Please try again.");
+        }
+      })
+      .catch((error) => console.error("Error:", error));
   };
 
   return (
@@ -148,7 +180,7 @@ function InstitutionRegistration() {
             <div className="w-full relative">
             <input
               type="text"
-              value={location}
+              value={instituteLocation}
               onChange={(e) => {
                 setLocation(e.target.value);
                 setLocationSearchTerm(e.target.value); // Update location search term

@@ -197,6 +197,7 @@
     border-radius: 4px;
     flex-grow: 1; /* Add this line */
     margin-right: 10px;
+    outline: none;
   }
   
   .edit-button {

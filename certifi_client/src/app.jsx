@@ -21,8 +21,9 @@ import Accountsetting from "./pages/User/Accountsetting";
 import Institutiondashboard from "./pages/Institution/Institutiondashboard";
 import Institutionaccountsetting from "./pages/Institution/Institutionaccountsetting";
 import InstituteLogin from "./component/instituteLogin";
-
-
+import InsOtpVer from "./pages/InsOtpVer";
+import InsLogin from "./component/InsLogin";
+import CertificateOfCompletion from "./pages/CertificateOfCompletion";
 
 
 function App() {
@@ -99,6 +100,8 @@ function App() {
         <Route path="/userchoice" element={<UserChoice />} /> 
         <Route path="/changep" element={<ChangeP />} />
         <Route path="/otpenter" element={<OtpEnter />} />
+        <Route path="/insotpver" element={<InsOtpVer />} />
+        <Route path="/inslogin" element={<InsLogin />} />
         <Route path="/csigner" element={<Certificatepart />} />
         <Route path="/cform" element={<Certificateform />} />
         <Route path="/cvalid" element={<Certificatevalidation />} />
@@ -108,6 +111,7 @@ function App() {
         <Route path="/institutiondashboard" element={<Institutiondashboard />} />
         <Route path="/institutionaccountsetting" element={<Institutionaccountsetting />} />
         <Route path="/InstituteLogin" element={<InstituteLogin />} />
+        <Route path="/certificateofcompletion" element={<CertificateOfCompletion />} />
 
     </Routes>
     </>

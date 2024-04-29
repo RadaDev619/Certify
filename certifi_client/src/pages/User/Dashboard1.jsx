@@ -103,10 +103,6 @@ const Dashboard = () => {
               <Typography variant="h5" component="div">
                 Documents
               </Typography>
-              <div className="action-icons">
-                <FaEdit className="icon" /> Rename
-                <FaTrashAlt className="icon" /> Delete
-              </div>
             </div>
             <div className="documents-table">
               <div className="table-header">
@@ -116,6 +112,7 @@ const Dashboard = () => {
                 <div>Update date</div>
                 <div>View</div>
                 <div>Upload</div>
+                <div>Actions</div>
               </div>
               <div className="document-wrapper">
                 <div className="no-documents-text">NO DOCUMENTS</div>
