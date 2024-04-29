@@ -64,8 +64,6 @@ function InstitutionRegistration() {
       !instituteLocation ||
       !companyName || // Check if company name is filled
       !location || // Check if location is filled
-      !firstName ||
-      !lastName ||
       !email ||
       !password ||
       !confirmPassword

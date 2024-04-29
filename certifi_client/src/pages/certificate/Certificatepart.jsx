@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import logo from "../../../public/logo.png";
 
 const CertificatePart = () => {
@@ -120,10 +121,13 @@ const CertificatePart = () => {
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-96">
           Add document
         </button>
+        <link rel="stylesheet" href="" />
         <button className="text-gray-700 font-bold py-2 px-4 rounded w-96">
           Cancel
         </button>
+        <link/>
       </div>
+      
     </div>
   );
 };

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../public/logo.png"
 
-function Login() {
-  // Define state   variables for form inputs
+function instituteLogin() {
+// Define state   variables for form inputs
 const [email, setEmail ] = useState("")
 const [password,setPassword] = useState("")
 
@@ -79,4 +79,4 @@ const [password,setPassword] = useState("")
   );
 }
 
-export default Login;
+export default instituteLogin

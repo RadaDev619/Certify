@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "../../css/dashboard.css";
 import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
@@ -39,11 +40,13 @@ const Dashboard = () => {
           </div>
           <span className="company-name">CertiFi</span>
         </div>
+    
         <div className="create-btn-container">
-          <button className="create-btn" onClick={toggleCreateDropdown}>
+          <button  className="create-btn" onClick={toggleCreateDropdown}>
             <FaPlusCircle className="icon" /> Create
             {showCreateDropdown && (
               <div className="create-dropdown">
+              <Link to="/cform" className="create-dropdown-link">
                 <div className="create-dropdown-header">
                   <FaFileAlt className="file-icon" />
                   <span className="certificate-text">Certificate</span>
@@ -52,16 +55,17 @@ const Dashboard = () => {
                   Choose a template, create a certificate and manage ownership
                   and validity
                 </div>
-              </div>
+              </Link> 
+            </div>
             )}
           </button>
         </div>
+        
         <div className="home">
           <FaHome className="icon" /> Home
         </div>
       </div>
       <div className="main-content">
-        {/* Rest of the code remains the same */}        
         <div className="search-bar">
           <div className="search-container">
             <FaSearch className="search-icon" />
@@ -76,21 +80,18 @@ const Dashboard = () => {
               />
             </div>
             <div className="profile-image-container" onClick={toggleUserDropdown}>
-              <img
-                src={userProfileImage}
-                alt="User Profile"
-                className="profile-image"
-              />
-              <span className="username">Username</span>
-              {showUserDropdown && (
-                <div className="user-dropdown">
-                  <div className="user-dropdown-content">
-                    <FaCog className="settings-icon" />
-                    <span>Settings</span>
-                  </div>
-                </div>
-              )}
-            </div>
+  <img src={userProfileImage} alt="User Profile" className="profile-image" />
+  <span className="username">Username</span>
+  {showUserDropdown && (
+    <div className="user-dropdown">
+      <Link to="/accountsetting" className="user-dropdown-content"> 
+        <FaCog className="settings-icon" />
+        <span>Settings</span>
+      </Link> 
+    </div>
+  )}
+</div>
+
             <div className="logout-icon-container">
               <FaSignOutAlt />
             </div>

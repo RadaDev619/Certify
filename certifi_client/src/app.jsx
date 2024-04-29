@@ -20,6 +20,8 @@ import Dashboard1 from "./pages/User/Dashboard1";
 import Accountsetting from "./pages/User/Accountsetting";
 import Institutiondashboard from "./pages/Institution/Institutiondashboard";
 import Institutionaccountsetting from "./pages/Institution/Institutionaccountsetting";
+import InstituteLogin from "./component/instituteLogin";
+
 
 
 
@@ -105,6 +107,7 @@ function App() {
         <Route path="/accountsetting" element={<Accountsetting />} />
         <Route path="/institutiondashboard" element={<Institutiondashboard />} />
         <Route path="/institutionaccountsetting" element={<Institutionaccountsetting />} />
+        <Route path="/InstituteLogin" element={<InstituteLogin />} />
 
     </Routes>
     </>
