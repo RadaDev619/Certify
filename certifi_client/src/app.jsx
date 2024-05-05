@@ -24,6 +24,7 @@ import InstituteLogin from "./component/instituteLogin";
 import InsOtpVer from "./pages/InsOtpVer";
 import InsLogin from "./component/InsLogin";
 import CertificateOfCompletion from "./pages/CertificateOfCompletion";
+import Admindashboard from "./pages/Admin/Admindashboard";
 
 
 function App() {
@@ -112,6 +113,7 @@ function App() {
         <Route path="/institutionaccountsetting" element={<Institutionaccountsetting />} />
         <Route path="/InstituteLogin" element={<InstituteLogin />} />
         <Route path="/certificateofcompletion" element={<CertificateOfCompletion />} />
+        <Route path="/admindashboard" element={<Admindashboard />} />
 
     </Routes>
     </>
