@@ -26,7 +26,6 @@ import InsLogin from "./component/InsLogin";
 import CertificateOfCompletion from "./pages/CertificateOfCompletion";
 import Admindashboard from "./pages/Admin/Admindashboard";
 
-
 function App() {
   const [state, setState] = useState({
     provider: null,

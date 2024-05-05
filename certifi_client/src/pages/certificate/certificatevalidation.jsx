@@ -1,4 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+import logo from "../../../public/logo.png";
+import { useNavigate } from "react-router-dom";
+import backgroundImage from "../../../public/background.jpeg";
 
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");
@@ -12,12 +16,11 @@ function CertificateValidation() {
   // State for certificate information (replace with your actual data or fetching mechanism)
   const [certificateInfo, setCertificateInfo] = useState({
     certificateName: "React JS Fundamentals",
-    createdOn: new Date().toLocaleDateString("en-US", {  // Automatic today's date
+    createdOn: new Date().toLocaleDateString("en-US", { // Automatic today's date
       year: "numeric",
       month: "short",
       day: "numeric",
     }),
-    issuedBy: "something@gmail.com",
     documentId: "784174184789-32432843-23008408373",
   });
 
@@ -40,7 +43,6 @@ function CertificateValidation() {
   };
 
   const documentIdRef = useRef(null);
-
   const [copySuccess, setCopySuccess] = useState(false);
 
   const handleCopyDocumentId = () => {
@@ -59,8 +61,39 @@ function CertificateValidation() {
       });
   };
 
+  // State for valid badge color
+  const [validBadgeColor, setValidBadgeColor] = useState("#80FF00"); // Initial color: green
+
+  // Function to update the badge color based on validation logic
+  const updateBadgeColor = () => {
+    // Example validation: Check if document ID is a number and has 10 digits
+    const isValidDocumentId =
+      !isNaN(certificateInfo.documentId) &&
+      certificateInfo.documentId.toString().length === 10;
+
+    // Update badge color based on validation result
+    if (isValidDocumentId) {
+      setValidBadgeColor("#80FF00"); // Green for valid
+    } else {
+      setValidBadgeColor("#FF0000"); // Red for invalid
+    }
+  };
+
+  // useEffect to update the badge color when necessary
+  useEffect(() => {
+    updateBadgeColor();
+  }, [certificateInfo.documentId]); // Update when documentId changes
+
   return (
     <div className="flex h-screen">
+      <nav className="w-full flex justify-between pl-20 pb-5 fixed top-0 left-0">
+        <p className="">
+          <Link to={"/login"} className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500">
+            <img src={logo} alt="" />
+          </Link>
+        </p>
+      </nav>
+
       {/* Certificate Content */}
       <div className="w-[70%] bg-white p-8 pt-32 shadow-md rounded-lg">
         <h1 className="text-4xl font-bold text-center font-serif">
@@ -88,8 +121,8 @@ function CertificateValidation() {
           created is shown
         </p>
         <div className="py-5">
-          {/* Valid badge */}
-          <div className=" bg-[#80FF00] text-[white] text-bg font-medium px-4 py-5 rounded text-center">
+          {/* Valid badge with dynamic color */}
+          <div className={`bg-[${validBadgeColor}] text-[white] text-bg font-medium px-4 py-5 rounded text-center`}>
             Document valid
           </div>
         </div>
@@ -118,7 +151,7 @@ function CertificateValidation() {
             <div>
               {recipients.map((recipient) => (
                 <div key={recipient.email}>
-                  <h1 className=" text-lg pb-2">{recipient.role}</h1> 
+                  <h1 className=" text-lg pb-2">{recipient.role}</h1>
                   <p className="pb-2 font-bold">
                     {recipient.email} ({recipient.role})
                   </p>
@@ -133,14 +166,12 @@ function CertificateValidation() {
           <div className="mt-4">
             <p>Certificate </p>
             <p className="font-bold pb-3">{certificateInfo.certificateName}</p>
-           
-              <div>
-                <p>Created on</p>
-                <p className="font-bold pb-3">{certificateInfo.createdOn}</p>
-              </div>
-            
-            <p>Issues by </p>
-            <p className="font-bold pb-3">{certificateInfo.issuedBy}</p>
+
+            <div>
+              <p>Created on</p>
+              <p className="font-bold pb-3">{certificateInfo.createdOn}</p>
+            </div>
+
             <p>Document identification</p>
             {/* Added flex container */}
             <div className="flex items-center relative"> {/* Add relative positioning */}
@@ -151,12 +182,11 @@ function CertificateValidation() {
               <button className="px-6 py-2 mb-3 border " onClick={handleCopyDocumentId}>
                 Copy
               </button>
-
               {/* Momentary Message */}
               {copySuccess && (
-             <span className="absolute top-[-30px] left-[400px] bg-green-500 text-white px-2 py-2 rounded">
-             Copied!
-           </span>
+                <span className="absolute top-[-30px] left-[400px] bg-green-500 text-white px-2 py-2 rounded">
+                  Copied!
+                </span>
               )}
             </div>
           </div>
