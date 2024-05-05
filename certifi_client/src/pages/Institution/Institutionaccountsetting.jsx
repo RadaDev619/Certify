@@ -2,9 +2,8 @@ import React, {useState} from "react";
 import "../../css/institutionaccountsetting.css";
 import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
-import metamaskLogo from "../../assets/metamask-logo.png";
 import "@fortawesome/fontawesome-free/css/all.css";
-import { FaSignOutAlt, FaSearch, FaUser, FaEdit } from "react-icons/fa";
+import { FaSignOutAlt, FaUser, FaEdit } from "react-icons/fa";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -87,18 +86,9 @@ const Account = () => {
       </div>
       <div className="main-content">
         <div className="search-bar">
-          <div className="search-container">
-            <FaSearch className="search-icon" />
-            <input type="text" placeholder="Search Document or Folder" />
-          </div>
+
           <div className="user-info">
-            <div className="metamask-logo-container">
-              <img
-                src={metamaskLogo}
-                alt="MetaMask Logo"
-                className="metamask-logo"
-              />
-            </div>
+
             <div
               className="profile-image-container"
             >
