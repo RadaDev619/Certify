@@ -7,17 +7,50 @@ import backgroundImage from "../../../public/background.jpeg";
 function CertificateForm() {
   const navigate = useNavigate();
 
-  const handleButtonClick = () => {
-    if (validateForm()) {
-      navigate("/csigner");
+ React.useEffect(() => {
+    const mail = window.localStorage.getItem("email");
+    return () => {
+      setEmail(mail);
+      console.log(email)
     }
-  };
+  }, [])
+
+  const handleButtonClick = () => {
+    const cPeriod = courseHours + " " + durationType;
+    if (validateForm()) {
+      const FormData = {
+        name: personName,
+        email: email, 
+        courseName: courseName, 
+        coursePeriod: cPeriod, 
+        courseDetails: courseDetails,
+        createdAt: certificationDate,
+        cid: ID
+      }
+      fetch("https://prj-certifi-backend.onrender.com/api/certificate/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(FormData),
+      }).then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            navigate("/csigner");
+          } else {
+            alert("Certificate creation failed. Please try again.");
+          }
+        });
+      }
+      
+    }
 
   const [personName, setPersonName] = useState('');
   const [courseName, setCourseName] = useState('');
   const [courseHours, setCourseHours] = useState('');
   const [courseDetails, setCourseDetails] = useState('');
-  const [certificationDate, setCertificationDate] = useState('');
+  const [email, setEmail] = useState('');
+  const [certificationDate, setCertificationDate] = useState(Date.now());
   const [ID, setID] = useState('');
   const [durationType, setDurationType] = useState('month');
   const [errors, setErrors] = useState({});

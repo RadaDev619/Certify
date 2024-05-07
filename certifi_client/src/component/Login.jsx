@@ -35,6 +35,7 @@ const navigate = useNavigate()
       .then((data) => {
         if(data.status === "Success") {
           alert("Login successful!");
+          window.localStorage.setItem("email", email);
           setEmail("");
           setPassword("");
           navigate("/dashboard")
