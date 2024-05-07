@@ -87,18 +87,7 @@ const Account = () => {
       </div>
       <div className="main-content">
         <div className="search-bar">
-          <div className="search-container">
-            <FaSearch className="search-icon" />
-            <input type="text" placeholder="Search Document or Folder" />
-          </div>
           <div className="user-info">
-            <div className="metamask-logo-container">
-              <img
-                src={metamaskLogo}
-                alt="MetaMask Logo"
-                className="metamask-logo"
-              />
-            </div>
             <div
               className="profile-image-container"
             >
