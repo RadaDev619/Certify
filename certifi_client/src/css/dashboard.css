@@ -37,6 +37,7 @@
 }
 
 .logo {
+  margin-right: 50px !important;
   margin-top: 5px;
   max-width: 40px;
   max-height: 40px;
@@ -188,7 +189,6 @@
   border-bottom: 1px solid #e4e4e4 !important;
 }
 
-
 .status {
   display: flex;
   padding: 5px 10px;
@@ -239,7 +239,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow */
 }
 
-.view-icon{
+.view-icon {
   padding-left: 5%;
 }
 
