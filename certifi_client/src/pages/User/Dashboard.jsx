@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../../css/dashboard.css";
+import metamaskLogo from "../../assets/metamask-logo.png";
 import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
-import metamaskLogo from "../../assets/metamask-logo.png";
 import "@fortawesome/fontawesome-free/css/all.css";
 import {
   FaSignOutAlt,
@@ -34,6 +34,26 @@ const Dashboard = () => {
 
   const [renameModalIsOpen, setRenameModalIsOpen] = useState(false);
   const [newName, setNewName] = useState("");
+  const [metamaskPopupIsOpen, setMetamaskPopupIsOpen] = useState(false);
+  const [metamaskPopupPendingIsOpen, setMetamaskPopupPendingIsOpen] = useState(false);
+
+  const openMetamaskPopup = () => {
+    setMetamaskPopupIsOpen(true);
+  };
+
+  // Function to close Metamask popup
+  const closeMetamaskPopup = () => {
+    setMetamaskPopupIsOpen(false);
+  };
+
+  const openMetamaskPopupPending = () => {
+    setMetamaskPopupPendingIsOpen(true);
+  };
+
+  // Function to close Metamask popup
+  const closeMetamaskPopupPending = () => {
+    setMetamaskPopupPendingIsOpen(false);
+  };
 
   const openRenameModal = () => {
     setRenameModalIsOpen(true);
@@ -72,6 +92,66 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-wrapper">
+      <Modal
+        isOpen={metamaskPopupIsOpen}
+        onRequestClose={closeMetamaskPopup}
+        contentLabel="Metamask Connection Modal"
+        className="modal-overlay"
+        overlayClassName="modal-overlay"
+      >
+        <div className="modal-content">
+          <div className="modal-header">
+            <h2 className="modal-title">Metamask Connection Required</h2>
+          </div>
+          <p className="modal-message">
+            Please connect your Metamask account to upload documents.
+          </p>
+
+
+          <div className="modal-buttons">
+          <button className="metamask-logo-container">
+            <img
+              src={metamaskLogo}
+              alt="Metamask Logo"
+              className="metamask-logo"
+            />
+            Connect Wallet
+          </button>
+            <button className="modal-button" onClick={closeMetamaskPopup}>
+              Close
+            </button>
+            {/* <button className="modal-button connect-wallet-button">
+        <img src={metamaskLogo} alt="Metamask Logo" className="connect-wallet-logo" />
+        Connect Wallet
+      </button> */}
+          </div>
+        </div>
+      </Modal>
+      {/* popup pending */}
+      <Modal
+        isOpen={metamaskPopupPendingIsOpen}
+        onRequestClose={closeMetamaskPopupPending}
+        contentLabel="Metamask Connection Modal"
+        className="modal-overlay"
+        overlayClassName="modal-overlay"
+      >
+        <div className="modal-content">
+          <div className="modal-header">
+            <h2 className="modal-title">Document Pending</h2>
+          </div>
+          <p className="modal-message">
+            You cannot upload the document since it has not been varified.
+          </p>
+
+
+          <div className="modal-buttons">
+            <button className="modal-button" onClick={closeMetamaskPopupPending}>
+              Close
+            </button>
+          </div>
+        </div>
+      </Modal>
+
       <div className="sidebar">
         <div className="logo-container">
           <div className="logo-circle">
@@ -112,13 +192,6 @@ const Dashboard = () => {
             <input type="text" placeholder="Search Document or Folder" />
           </div>
           <div className="user-info">
-            <div className="metamask-logo-container">
-              <img
-                src={metamaskLogo}
-                alt="MetaMask Logo"
-                className="metamask-logo"
-              />
-            </div>
             <div
               className="profile-image-container"
               onClick={toggleUserDropdown}
@@ -138,29 +211,9 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
-
-            {/* <div
-              className="profile-image-container"
-              onClick={toggleUserDropdown}
-            >
-              <img
-                src={userProfileImage}
-                alt="User Profile"
-                className="profile-image"
-              />
-              <span className="username">Username</span>
-              {showUserDropdown && (
-                <div className="user-dropdown">
-                  <div className="user-dropdown-content">
-                    <FaCog className="settings-icon" />
-                    <span>Settings</span>
-                  </div>
-                </div>
-              )}
-            </div> */}
-            <div className="logout-icon-container">
+            <Link to="/" className="logout-icon-container">
               <FaSignOutAlt />
-            </div>
+            </Link>
           </div>
         </div>
         {/* Rest of the code remains the same */}
@@ -251,7 +304,7 @@ const Dashboard = () => {
                 <div>Upload</div>
                 <div>Actions</div>
               </div>
-              <div className="table-row table-rows">
+              <div className="table-rows table-rowss">
                 <div>Document</div>
                 <div className="status valids">Valid</div>
                 <div>User name</div>
@@ -260,7 +313,7 @@ const Dashboard = () => {
                   <i className="fas fa-eye "></i>
                 </div>
                 <div className="view-icon">
-                  <i className="fas fa-upload"></i>
+                  <i className="fas fa-upload" onClick={openMetamaskPopup}></i>
                 </div>
 
                 <div className="action-icons">
@@ -274,7 +327,7 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-              <div className="table-row table-rows">
+              <div className="table-rows table-rowss">
                 <div>Document</div>
                 <div className="status pendings">Pending</div>
                 <div>User name</div>
@@ -283,7 +336,7 @@ const Dashboard = () => {
                   <i className="fas fa-eye"></i>
                 </div>
                 <div className="view-icon">
-                  <i className="fas fa-upload"></i>
+                  <i className="fas fa-upload" onClick={openMetamaskPopupPending}></i>
                 </div>
 
                 <div className="action-icons">
