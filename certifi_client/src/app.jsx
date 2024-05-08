@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Login from "./component/Login"; // Corrected import statement
 
-import abi from "./contractJson/Booklist.json";
+import abi from "./contractJson/Certify.json";
 import { ethers } from "ethers"; //import ethers library
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./component/Layout";

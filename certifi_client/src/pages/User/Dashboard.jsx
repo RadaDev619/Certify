@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../css/dashboard.css";
 import metamaskLogo from "../../assets/metamask-logo.png";
@@ -23,6 +23,30 @@ import Modal from "react-modal";
 const Dashboard = () => {
   const [showCreateDropdown, setShowCreateDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [certificates, setCertificates] = useState([]); // State to store fetched certificates
+
+  useEffect(() => {
+    // Fetch certificates from backend API
+    fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setCertificates(data.data);
+        } else {
+          alert("Certificate data fetch failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching certificates:", error);
+        alert("An error occurred while fetching certificates. Please try again.");
+      });
+  }, []);
 
   const toggleCreateDropdown = () => {
     setShowCreateDropdown(!showCreateDropdown);
@@ -304,34 +328,14 @@ const Dashboard = () => {
                 <div>Upload</div>
                 <div>Actions</div>
               </div>
-              <div className="table-rows table-rowss">
-                <div>Document</div>
-                <div className="status valids">Valid</div>
-                <div>User name</div>
-                <div>11 February 2024</div>
-                <div className="view-icon">
-                  <i className="fas fa-eye "></i>
-                </div>
-                <div className="view-icon">
-                  <i className="fas fa-upload" onClick={openMetamaskPopup}></i>
-                </div>
-
-                <div className="action-icons">
-                  <div className="icon-container" onClick={openRenameModal}>
-                    <FaEdit className="icon" /> Rename
-                  </div>
-
-                  <div className="icon-container" onClick={openDeleteModal}>
-                    <FaTrashAlt className="icon" />
-                    Delete
-                  </div>
-                </div>
-              </div>
-              <div className="table-rows table-rowss">
-                <div>Document</div>
-                <div className="status pendings">Pending</div>
-                <div>User name</div>
-                <div>11 February 2024</div>
+   
+            {certificates.map((certificate) => (
+              <div className="table-rows table-rowss" key={certificate._id}>
+                <div>{certificate.courseName}</div>
+                <div className={`status ${certificate.verified === true ? true : false}`}>
+                  {certificate.verified}</div>
+                <div>{certificate.name}</div>
+                <div>{certificate.createdAt}</div>
                 <div className="view-icon">
                   <i className="fas fa-eye"></i>
                 </div>
@@ -350,7 +354,9 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
+              ))}
             </div>
+            
           </CardContent>
         </Card>
       </div>

@@ -204,12 +204,22 @@
   background-color: #def7c4 !important;
 }
 
-.pendings {
+.true{
+  background-color: #def7c4 !important;
+}
+
+.false {
   background-color: #f7c4c4 !important;
   align-items: center;
   border-radius: 15px;
   padding: 5px 20px;
 }
+/* .pendings {
+  background-color: #f7c4c4 !important;
+  align-items: center;
+  border-radius: 15px;
+  padding: 5px 20px;
+} */
 
 .action-icons {
   display: flex;

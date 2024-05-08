@@ -16,6 +16,7 @@ function CertificateForm() {
   }, [])
 
   const handleButtonClick = () => {
+    
     const cPeriod = courseHours + " " + durationType;
     if (validateForm()) {
       const FormData = {
@@ -36,6 +37,7 @@ function CertificateForm() {
       }).then((response) => response.json())
         .then((data) => {
           if (data.status === "success") {
+            window.localStorage.setItem("certId", data.data._id);
             navigate("/csigner");
           } else {
             alert("Certificate creation failed. Please try again.");
