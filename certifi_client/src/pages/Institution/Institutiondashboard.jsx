@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../css/institutiondashboard.css";
 import certifiLogo from "../../assets/certifi-logo.png";
@@ -21,6 +21,31 @@ import Modal from "react-modal";
 
 const Dashboard = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [certificates, setCertificates] = useState([]); // State to store fetched certificates
+  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] = useState(null);
+  const [currentNotValidCertificateId, setCurrentNotValidCertificateId] = useState(null);
+  useEffect(() => {
+    // Fetch certificates from backend API
+    fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setCertificates(data.data);
+        } else {
+          alert("Certificate data fetch failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching certificates:", error);
+        alert("An error occurred while fetching certificates. Please try again.");
+      });
+  }, []);
 
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
@@ -29,7 +54,8 @@ const Dashboard = () => {
   // verify modal
   const [verifyModalIsOpen, setVerifyModalIsOpen] = useState(false);
 
-  const openVerifyModal = () => {
+  const openVerifyModal = (certificateId) => {
+    setCurrentVerifyCertificateId(certificateId)
     setVerifyModalIsOpen(true);
   };
 
@@ -37,28 +63,55 @@ const Dashboard = () => {
     setVerifyModalIsOpen(false);
   };
 
-  const handleVerify = () => {
-    // Implement delete account logic here
-    console.log("Validated");
+  const handleVerify = (certificateId) => {
+    fetch(`https://prj-certifi-backend.onrender.com/api/certificate/verify/${certificateId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }).then((response) => response.json())
+    .then((data) => {
+      if (data.status === "success") {
+        console.log(data.data)
+        alert("Document verified successfully.");  
+      }
+      else{
+        console.log(data)
+        alert("Document verification failed. Please try again.");
+      }
+    })
+    // console.log("Validated");
     closeVerifyModal();
+  };
+
+  const handleNotValid = (certificateId) => {
+    fetch(`https://prj-certifi-backend.onrender.com/api/certificate/notverify/${certificateId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }).then((response) => response.json())
+    .then((data) => {})
+    // console.log("Validated");
+    closenotValidModal();
   };
 
   // notvalid modal
   const [notValidModalIsOpen, setnotValidModalIsOpen] = useState(false);
 
-  const opennotValidModal = () => {
-    setnotValidModalIsOpen(true);
-  };
-
-  const closenotValidModal = () => {
-    setnotValidModalIsOpen(false);
-  };
-
-  const handlenotValid = () => {
-    // Implement delete account logic here
-    console.log("Not Validated");
-    closenotValidModal();
-  };
+    const opennotValidModal = () => {
+      setnotValidModalIsOpen(true);
+    };
+  
+    const closenotValidModal = () => {
+      setnotValidModalIsOpen(false);
+    };
+  
+    const handlenotValid = () => {
+      // Implement delete account logic here
+      console.log("Not Validated");
+      closenotValidModal();
+    };
 
   return (
     <div className="dashboard-wrapper">
@@ -122,16 +175,13 @@ const Dashboard = () => {
                 <div>View</div>
                 <div>Status</div>
               </div>
+              {certificates.map((certificate) => (
               <div className="table-row1">
-                <div>Document</div>
-                <div className="profile-table-image-container">
-                  <img
-                    src={userProfileImage}
-                    alt="User Profile"
-                    className="profile-table-image"
-                  />
+                <div>{certificate.courseName}</div>
+                <div>
+                  {certificate.name}
                 </div>
-                <div>11 February 2024</div>
+                <div>{certificate.createdAt}</div>
                 <div>
                   <i className="fas fa-eye"></i>
                 </div>
@@ -144,69 +194,72 @@ const Dashboard = () => {
                   </div>
                 </div>
                 {/* verify Modal */}
-                <Modal
-                  isOpen={verifyModalIsOpen}
-                  onRequestClose={closeVerifyModal}
-                  contentLabel="Verify Account Modal"
-                  className="modal-overlay"
-                  overlayClassName="modal-overlay"
-                >
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <h2 className="modal-title">Status validation </h2>
-                    </div>
-                    <p className="modal-message">
-                      Are you sure this document is valid?
-                    </p>
-                    <div className="modal-buttons">
-                      <button
-                        className="modal-button verify"
-                        onClick={handleVerify}
-                      >
-                        Verify
-                      </button>
-                      <button
-                        className="modal-button cancel"
-                        onClick={closeVerifyModal}
-                      >
-                        Back
-                      </button>
-                    </div>
+              <Modal
+                isOpen={verifyModalIsOpen}
+                onRequestClose={closeVerifyModal}
+                contentLabel="Verify Account Modal"
+                className="modal-overlay"
+                overlayClassName="modal-overlay"
+              >
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h2 className="modal-title">Status validation </h2>
                   </div>
-                </Modal>
+                  <p className="modal-message">
+                  Are you sure this document is valid? 
+                  </p>
+                  <div className="modal-buttons">
+                    <button
+                      className="modal-button verify"
+                      onClick={handleVerify}
+                    >
+                      Verify
+                    </button>
+                    <button
+                      className="modal-button cancel"
+                      onClick={closeVerifyModal}
+                    >
+                      Back 
+                    </button>
+                  </div>
+                </div>
+              </Modal>
 
-                {/* not validated modal */}
-                <Modal
-                  isOpen={notValidModalIsOpen}
-                  onRequestClose={closenotValidModal}
-                  contentLabel="Verify Account Modal"
-                  className="modal-overlay"
-                  overlayClassName="modal-overlay"
-                >
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <h2 className="modal-title">Status validation </h2>
-                    </div>
-                    <p className="modal-message">
-                      Are you sure this document is not valid?
-                    </p>
-                    <div className="modal-buttons">
-                      <button
-                        className="modal-button not-valid"
-                        onClick={handlenotValid}
-                      >
-                        Remove
-                      </button>
-                      <button
-                        className="modal-button cancel"
-                        onClick={closenotValidModal}
-                      >
-                        Back
-                      </button>
-                    </div>
+              {/* not validated modal */}
+              <Modal
+                isOpen={notValidModalIsOpen}
+                onRequestClose={closenotValidModal}
+                contentLabel="Verify Account Modal"
+                className="modal-overlay"
+                overlayClassName="modal-overlay"
+              >
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h2 className="modal-title">Status validation </h2>
                   </div>
-                </Modal>
+                  <p className="modal-message">
+                  Are you sure this document is not valid? 
+                  </p>
+                  <div className="modal-buttons">
+                    <button
+                      className="modal-button not-valid"
+                      onClick={handlenotValid}
+                    >
+                      Remove
+                    </button>
+                    <button
+                      className="modal-button cancel"
+                      onClick={closenotValidModal}
+                    >
+                      Back
+                    </button>
+                  </div>
+                </div>
+              </Modal>
+
+
               </div>
+              ))}
             </div>
           </CardContent>
         </Card>

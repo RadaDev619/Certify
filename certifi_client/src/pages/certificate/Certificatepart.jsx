@@ -1,8 +1,32 @@
 import React, { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../public/logo.png";
 
 const CertificatePart = () => {
+  const navigate = useNavigate();
+  const certId = window.localStorage.getItem("certId");
+  const handleButtonClick = () => {
+    // console.log(signer.email)
+    fetch(`https://prj-certifi-backend.onrender.com/api/certificate/addSigner/${certId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        signer: signer.email,
+      }),
+    }).then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          
+          navigate("/cvalid");
+        } else {
+          alert("Certificate creation failed. Please try again.");
+        }
+      });
+  }
+ 
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [signer, setSigner] = useState(null);
@@ -119,11 +143,12 @@ const CertificatePart = () => {
 
       {/* Buttons */}
       <div className="flex justify-between items-center flex-col gap-4 mt-12">
-        <Link to="/cvalid">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-96">
+        {/* <Link to="/cvalid"> */}
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-96"
+          onClick={handleButtonClick}> 
             Add document
           </button>
-        </Link>
+        {/* </Link> */}
         <button className="text-gray-700 font-bold py-2 px-4 rounded w-96">
           Cancel
         </button>

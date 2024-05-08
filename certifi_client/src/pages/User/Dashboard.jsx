@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { ethers } from "ethers"; //import ethers library
+
 import "../../css/dashboard.css";
 import metamaskLogo from "../../assets/metamask-logo.png";
 import certifiLogo from "../../assets/certifi-logo.png";
@@ -20,9 +22,35 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Modal from "react-modal";
 
-const Dashboard = () => {
+const Dashboard = ({ state }) => {
   const [showCreateDropdown, setShowCreateDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [certificates, setCertificates] = useState([]); // State to store fetched certificates
+
+  useEffect(() => {
+    // Fetch certificates from backend API
+    fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setCertificates(data.data);
+        } else {
+          alert("Certificate data fetch failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching certificates:", error);
+        alert(
+          "An error occurred while fetching certificates. Please try again."
+        );
+      });
+  }, []);
 
   const toggleCreateDropdown = () => {
     setShowCreateDropdown(!showCreateDropdown);
@@ -35,7 +63,8 @@ const Dashboard = () => {
   const [renameModalIsOpen, setRenameModalIsOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [metamaskPopupIsOpen, setMetamaskPopupIsOpen] = useState(false);
-  const [metamaskPopupPendingIsOpen, setMetamaskPopupPendingIsOpen] = useState(false);
+  const [metamaskPopupPendingIsOpen, setMetamaskPopupPendingIsOpen] =
+    useState(false);
 
   const openMetamaskPopup = () => {
     setMetamaskPopupIsOpen(true);
@@ -90,6 +119,69 @@ const Dashboard = () => {
     closeDeleteModal();
   };
 
+  // const { ethereum } = window;
+
+  const invokeConnection = async (event) => {
+    event.preventDefault();
+
+    // try {
+    //   //invoke the metamask wallet
+    //   const accounts = await ethereum.request({
+    //     method: "eth_requestAccounts",
+    //   });
+
+    //   //reload the window on changing the account
+    //   window.ethereum.on("accountsChanged", (newAccounts) => {
+    //     setAccount(newAccounts[0]);
+    //   });
+
+    //   setAccount(accounts[0]);
+    // } catch (error) {
+    //   console.error("Error connecting to MetaMask:", error);
+    //   // Handle the error
+    // }
+  };
+
+  const storeHash = async (event) => {
+    event.preventDefault();
+    alert("reached here");
+    const { contract, provider } = state;
+    alert("reached here1");
+
+    // if (!window.ethereum) {
+    //   alert("Metamask not detected");
+    //   console.log();
+    //   // Handle the case where MetaMask is not detected
+    //   openMetamaskPopup();
+    // } else {
+    //   alert("Please install and connect Metamask");
+    // }
+    const identifier = 663242625;
+    const hash = "dfadfdsafadsfffg";
+    alert("reached here2");
+
+    try {
+      alert("reached here3");
+
+      // Send the transaction with the estimated gas limit
+      const transaction = contract.storeCertificate(identifier, hash);
+      alert("reached here4");
+
+      console.log("Waiting for transaction...");
+      const receipt = await transaction.wait(); // Wait for the transaction to be mined
+      alert("Transaction is Successful!");
+      const concatenatedString = receipt.logs[2].data;
+      alert("Concatenated String: " + concatenatedString);
+
+      console.log("Transaction is Successful!", concatenatedString);
+
+      // window.location.reload();
+    } catch (error) {
+      console.error("Error adding hash:", error);
+      alert("Error adding hash. Please try again later.");
+    }
+  };
+
   return (
     <div className="dashboard-wrapper">
       <Modal
@@ -107,16 +199,16 @@ const Dashboard = () => {
             Please connect your Metamask account to upload documents.
           </p>
 
-
           <div className="modal-buttons">
-          <button className="metamask-logo-container">
-            <img
-              src={metamaskLogo}
-              alt="Metamask Logo"
-              className="metamask-logo"
-            />
-            Connect Wallet
-          </button>
+            <button className="metamask-logo-container">
+              <img
+                src={metamaskLogo}
+                alt="Metamask Logo"
+                className="metamask-logo"
+                onClick={invokeConnection}
+              />
+              Connect Wallet
+            </button>
             <button className="modal-button" onClick={closeMetamaskPopup}>
               Close
             </button>
@@ -143,9 +235,11 @@ const Dashboard = () => {
             You cannot upload the document since it has not been varified.
           </p>
 
-
           <div className="modal-buttons">
-            <button className="modal-button" onClick={closeMetamaskPopupPending}>
+            <button
+              className="modal-button"
+              onClick={closeMetamaskPopupPending}
+            >
               Close
             </button>
           </div>
@@ -309,16 +403,22 @@ const Dashboard = () => {
                 <div className="status valids">Valid</div>
                 <div>User name</div>
                 <div>11 February 2024</div>
-                <Link to="/cvalid" className="view-icon curser-pointer">
+                <div className="view-icon">
                   <i className="fas fa-eye "></i>
-                </Link>
+                </div>
                 <div className="view-icon">
                   <i className="fas fa-upload" onClick={openMetamaskPopup}></i>
                 </div>
 
-                <div className="action-icons">
-                  <div className="icon-container" onClick={openRenameModal}>
-                    <FaEdit className="icon" /> Rename
+              {certificates.map((certificate) => (
+                <div className="table-rows table-rowss" key={certificate._id}>
+                  <div>{certificate.courseName}</div>
+                  <div
+                    className={`status ${
+                      certificate.verified === true ? true : false
+                    }`}
+                  >
+                    {certificate.verified}
                   </div>
 
                   <div className="icon-container" onClick={openDeleteModal}>
@@ -332,24 +432,25 @@ const Dashboard = () => {
                 <div className="status pendings">Pending</div>
                 <div>User name</div>
                 <div>11 February 2024</div>
-                <Link to="/cvalid" className="view-icon curser-pointer">
+                <div className="view-icon">
                   <i className="fas fa-eye"></i>
-                </Link>
+                </div>
                 <div className="view-icon">
                   <i className="fas fa-upload" onClick={openMetamaskPopupPending}></i>
                 </div>
 
-                <div className="action-icons">
-                  <div className="icon-container" onClick={openRenameModal}>
-                    <FaEdit className="icon" /> Rename
-                  </div>
+                  <div className="action-icons">
+                    <div className="icon-container" onClick={openRenameModal}>
+                      <FaEdit className="icon" /> Rename
+                    </div>
 
-                  <div className="icon-container" onClick={openDeleteModal}>
-                    <FaTrashAlt className="icon" />
-                    Delete
+                    <div className="icon-container" onClick={openDeleteModal}>
+                      <FaTrashAlt className="icon" />
+                      Delete
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>

@@ -1,24 +1,28 @@
-require("@nomiclabs/hardhat-waffle");
-require('dotenv').config()
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
-/** @type import('hardhat/config').HardhatUserConfig */
+// require("@nomicfoundation/hardhat-toolbox");
+
+// /** @type import('hardhat/config').HardhatUserConfig */
+// module.exports = {
+//   solidity: "0.8.24",
+// };
+/**
+* @type import('hardhat/config').HardhatUserConfig
+*/
+
+require('dotenv').config();
+require("@nomiclabs/hardhat-ethers");
+
+const { sepolia_url, private_key } = process.env;
+
 module.exports = {
-  solidity: "0.8.24",
-  settings: {
-    optimizer: {
-      enabled: true,
-      runs: 200
+  solidity: "0.8.11",
+  defaultNetwork: "sepolia",
+  networks: {
+    hardhat: {},
+    sepolia: {
+      url: sepolia_url,
+      accounts: [`0x${private_key}`],
+      gas: 290000000,
+      gasPrice: 800000000000,
     }
   },
-  networks: {
-    sepolia: {
-      url: process.env.sepolia_url, // Replace with the actual Sepolia URL
-      accounts: process.env.private_key, // Replace with your private key
-    },
-  }
-};
+}

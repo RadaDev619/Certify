@@ -39,7 +39,7 @@ function InsOtpEntry() {
     event.preventDefault();
     const otpValue = otp.join("");
     // Validate OTP (you would typically call your backend API here)
-    fetch("https://prj-certifi-backend.onrender.com/api/auth/verify", {
+    fetch("https://prj-certifi-backend.onrender.com/api/institute/verify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
