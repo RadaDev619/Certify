@@ -1,7 +1,38 @@
-import React from "react";
-import "../css/avatarpopup.css"
+import React, { useState } from "react";
+import "../css/avatarpopup.css";
 
 const AvatarPopup = ({ onClose }) => {
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const handleSave = () => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append("avatar", selectedFile);
+
+      fetch("http://localhost:5173/upload-avatar", { // Corrected URL
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => {
+          console.log("Upload response:", response);
+          if (response.ok) {
+            onClose();
+          } else {
+            console.error("Failed to upload avatar");
+          }
+        })
+        .catch((error) => {
+          console.error("Error uploading avatar:", error);
+        });
+    } else {
+      console.error("No file selected");
+    }
+  };
+
   return (
     <div className="avatar-popup-overlay">
       <div className="avatar-popup">
@@ -12,19 +43,23 @@ const AvatarPopup = ({ onClose }) => {
           </button>
         </div>
         <div className="avatar-popup-content">
-          <p>Drag and drop a image to the filed or select file a image from your PC</p>
+          <p>
+            Drag and drop an image to the field or select a file from your PC
+          </p>
           <div className="upload-area">
-            <div className="upload-icon">
-              <span>&#8593;</span>
-              <span>&#8595;</span>
-            </div>
-            <p>Drop files here or click to upload</p>
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              onChange={handleFileChange}
+            />
             <p>Only JPG, PNG files smaller than 10MB</p>
           </div>
         </div>
         <div className="avatar-popup-footer">
           <button onClick={onClose}>Cancel</button>
-          <button className="change-button">Change</button>
+          <button className="change-button" onClick={handleSave}>
+            Change
+          </button>
         </div>
       </div>
     </div>

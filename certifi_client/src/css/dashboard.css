@@ -130,6 +130,7 @@
 }
 
 .metamask-logo-container {
+  color: white;
   background-color: #8000ff;
   padding: 5px 15px;
   border-radius: 4px;
@@ -137,6 +138,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  
 }
 
 .metamask-logo {
@@ -182,7 +184,7 @@
   font-weight: bold;
 }
 
-.table-rows {
+.table-rowss {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
   padding: 10px !important;
@@ -202,12 +204,22 @@
   background-color: #def7c4 !important;
 }
 
-.pendings {
+.true{
+  background-color: #def7c4 !important;
+}
+
+.false {
   background-color: #f7c4c4 !important;
   align-items: center;
   border-radius: 15px;
   padding: 5px 20px;
 }
+/* .pendings {
+  background-color: #f7c4c4 !important;
+  align-items: center;
+  border-radius: 15px;
+  padding: 5px 20px;
+} */
 
 .action-icons {
   display: flex;

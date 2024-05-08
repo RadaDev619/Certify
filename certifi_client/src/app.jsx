@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Login from "./component/Login"; // Corrected import statement
 
-import abi from "./contractJson/Booklist.json";
+import abi from "./contractJson/Certify.json";
 import { ethers } from "ethers"; //import ethers library
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./component/Layout";
@@ -10,11 +10,11 @@ import UserRegister from "./pages/UserRegister";
 import InstitutionRegister from "./pages/InstitutionRegister";
 import ForgotPassword from "./pages/Forgetpassword";
 import UserChoice from "./pages/UserChoice";
-import ChangeP from"./pages/Changep"
-import OtpEnter from "./pages/OtpEnter"
-import Certificatepart from "./pages/certificate/Certificatepart"
-import Certificateform from "./pages/certificate/Certificateform"
-import Certificatevalidation from "./pages/certificate/certificatevalidation"
+import ChangeP from "./pages/Changep";
+import OtpEnter from "./pages/OtpEnter";
+import Certificatepart from "./pages/certificate/Certificatepart";
+import Certificateform from "./pages/certificate/Certificateform";
+import Certificatevalidation from "./pages/certificate/certificatevalidation";
 import Dashboard from "./pages/User/Dashboard";
 import Dashboard1 from "./pages/User/Dashboard1";
 import Accountsetting from "./pages/User/Accountsetting";
@@ -46,7 +46,7 @@ function App() {
       }
 
       //1. Fetching the contract details as indicated in step xvi
-      const contractAddress = "0x394c6E6BF7CaE7D4Ace2fB1063B2279857CeFA40";
+      const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
       const contractABI = abi.abi;
 
       //Metamask connection
@@ -89,15 +89,15 @@ function App() {
 
   return (
     <>
-    <Routes>
+      <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Public />} />
+          <Route index element={<Public state={state} />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/uregister" element={<UserRegister />} />
         <Route path="/iregister" element={<InstitutionRegister />} />
-        <Route path="/forgotpassword" element={<ForgotPassword />} /> 
-        <Route path="/userchoice" element={<UserChoice />} /> 
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/userchoice" element={<UserChoice />} />
         <Route path="/changep" element={<ChangeP />} />
         <Route path="/otpenter" element={<OtpEnter />} />
         <Route path="/insotpver" element={<InsOtpVer />} />
@@ -105,16 +105,24 @@ function App() {
         <Route path="/csigner" element={<Certificatepart />} />
         <Route path="/cform" element={<Certificateform />} />
         <Route path="/cvalid" element={<Certificatevalidation />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard state={state} />} />
         <Route path="/dashboard1" element={<Dashboard1 />} />
         <Route path="/accountsetting" element={<Accountsetting />} />
-        <Route path="/institutiondashboard" element={<Institutiondashboard />} />
-        <Route path="/institutionaccountsetting" element={<Institutionaccountsetting />} />
+        <Route
+          path="/institutiondashboard"
+          element={<Institutiondashboard />}
+        />
+        <Route
+          path="/institutionaccountsetting"
+          element={<Institutionaccountsetting />}
+        />
         <Route path="/InstituteLogin" element={<InstituteLogin />} />
-        <Route path="/certificateofcompletion" element={<CertificateOfCompletion />} />
+        <Route
+          path="/certificateofcompletion"
+          element={<CertificateOfCompletion />}
+        />
         <Route path="/admindashboard" element={<Admindashboard />} />
-
-    </Routes>
+      </Routes>
     </>
   );
 }

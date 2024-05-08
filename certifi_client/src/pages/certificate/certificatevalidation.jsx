@@ -6,32 +6,76 @@ import backgroundImage from "../../../public/background.jpeg";
 
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");
+  const crtId = window.localStorage.getItem("certId");
+  const [fetchedData, setFetchedData] = useState(null); // State to store fetched data
+  const [recipients, setRecipients] = useState([]);
+    // State for certificate information (replace with your actual data or fetching mechanism)
+    const [certificateInfo, setCertificateInfo] = useState([]);
 
-  // State for recipient information (replace with your actual data or fetching mechanism)
-  const [recipients, setRecipients] = useState([
-    { name: "Author Name ", email: "ngawngg927@gmail.com", role: "Author (You)" },
-    { name: "Signer Name", email: "signer@example.com", role: "Signer" }, // Add more recipients as needed
-  ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`https://prj-certifi-backend.onrender.com/api/certificate/get/${crtId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+          setFetchedData(data.data); // Set fetched data in state
+        } else {
+          throw new Error("Certificate data fetch failed. Please try again.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    };
 
-  // State for certificate information (replace with your actual data or fetching mechanism)
-  const [certificateInfo, setCertificateInfo] = useState({
-    certificateName: "React JS Fundamentals",
-    createdOn: new Date().toLocaleDateString("en-US", { // Automatic today's date
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }),
-    documentId: "784174184789-32432843-23008408373",
-  });
+    fetchData();
+  }, [crtId]);
+
+  // Update recipients when fetchedData changes
+  useEffect(() => {
+    if (fetchedData) {
+      setRecipients([
+        { name: "Author Name ", mail: fetchedData.email, role: "Author (You)" },
+        { name: "Signer Name", mail: fetchedData.signer, role: "Signer" }
+      ]);
+      setCertificateInfo({ // Update certificate information
+        certificateName: fetchedData.courseName,
+        createdOn: new Date().toLocaleDateString("en-US", { // Automatic today's date
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }),
+        documentId: fetchedData._id,
+      });
+    }
+  }, [fetchedData]);
+
+  // Use fetchedData directly or fallback to empty strings if fetchedData is null
+  const authorMail = fetchedData?.email || "";
+  const authorName = fetchedData?.name || "";
+  const signerMail = fetchedData?.signer || "";
+  const courseName = fetchedData?.courseName || "";
+  const courseDuration = fetchedData?.courseDuration || "";
+  const courseDetails = fetchedData?.courseDetails || "";
+  const issueDate = fetchedData?.createdAt || "";
+  const ID = fetchedData?.cid || "";
+  const certId = fetchedData?._id || "";
+
+
 
   // Assuming you have these variables defined somewhere
-  const personName = "John Doe"; // Replace with actual data or state variable
-  const courseName = "React JS Fundamentals";
-  const courseHours = 6;
-  const courseDetails = "Introduction to React, components, state, props, hooks, etc.";
-  const ID = "123456789";
-  const durationType = "year";
-  const certificationDate = new Date(); // Get the current date
+  // const personName = authorName; // Replace with actual data or state variable
+  // const courseName = courseName;
+  // const courseHours = 6;
+  // const courseDetails = courseDetails;
+  // const ID = cid;
+  // const durationType = "year";
+  // const certificationDate = new Date(); // Get the current date
 
   const formatDate = (date) => {
     const formattedDate = new Date(date).toLocaleDateString("en-US", {
@@ -103,16 +147,16 @@ useEffect(() => {
           CERTIFICATE OF COMPLETION
         </h1>
         <p className="text-lg text-center mt-4">Awarded to</p>
-        <h2 className="text-4xl text-center mt-2">{personName}</h2>
+        <h2 className="text-4xl text-center mt-2">{authorName}</h2>
         <p className="text-lg text-center mt-4">For completing the course</p>
         <h3 className="text-3xl font-bold text-center mt-2">{courseName}</h3>
         <p className="text-left px-[400px] mt-60 ">
-          Course duration: {courseHours} {durationType}
+          Course duration: {courseDuration}
         </p>
         <p className=" text-left px-[400px]">Course detail: {courseDetails}</p>
         <p className=" text-left px-[400px] ">ID : {ID}</p>
         <p className="text-left px-[400px]">
-          Issue date : {formatDate(certificationDate)}
+          Issue date : {formatDate(issueDate)}
         </p>
       </div>
 
@@ -155,13 +199,14 @@ useEffect(() => {
           <div className="mt-4">
             <div>
               {recipients.map((recipient) => (
-                <div key={recipient.email}>
+                <div key={recipient.mail}>
                   <h1 className=" text-lg pb-2">{recipient.role}</h1>
                   <p className="pb-2 font-bold">
-                    {recipient.email} ({recipient.role})
+                    {recipient.mail} ({recipient.role})
                   </p>
                 </div>
-              ))}
+              )
+              )}
             </div>
           </div>
         )}

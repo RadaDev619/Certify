@@ -103,9 +103,9 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
-            <div className="logout-icon-container">
+            <Link to="/" className="logout-icon-container">
               <FaSignOutAlt />
-            </div>
+            </Link>
           </div>
         </div>
         <Card>

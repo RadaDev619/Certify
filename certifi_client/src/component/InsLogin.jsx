@@ -22,7 +22,7 @@ const navigate = useNavigate()
       alert("All fields are required")
     }
     else {
-      fetch ("https://prj-certifi-backend.onrender.com/api/institution/login", {
+      fetch ("https://prj-certifi-backend.onrender.com/api/institute/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

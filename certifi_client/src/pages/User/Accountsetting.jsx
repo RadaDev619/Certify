@@ -1,10 +1,10 @@
 import React, {useState} from "react";
+import { Link } from "react-router-dom";
 import "../../css/accountsetting.css";
 import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
-import metamaskLogo from "../../assets/metamask-logo.png";
 import "@fortawesome/fontawesome-free/css/all.css";
-import { FaSignOutAlt, FaSearch, FaUser, FaEdit } from "react-icons/fa";
+import { FaSignOutAlt, FaUser, FaEdit } from "react-icons/fa";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -98,9 +98,9 @@ const Account = () => {
               />
               <span className="username">Username</span>
             </div>
-            <div className="logout-icon-container">
+            <Link to="/" className="logout-icon-container">
               <FaSignOutAlt />
-            </div>
+            </Link>
           </div>
         </div>
         <Card className="account-settings-card">

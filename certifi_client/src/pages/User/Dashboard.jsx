@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { ethers } from "ethers"; //import ethers library
+
 import "../../css/dashboard.css";
+import metamaskLogo from "../../assets/metamask-logo.png";
 import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
-import metamaskLogo from "../../assets/metamask-logo.png";
 import "@fortawesome/fontawesome-free/css/all.css";
 import {
   FaSignOutAlt,
@@ -20,9 +22,35 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Modal from "react-modal";
 
-const Dashboard = () => {
+const Dashboard = ({ state }) => {
   const [showCreateDropdown, setShowCreateDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [certificates, setCertificates] = useState([]); // State to store fetched certificates
+
+  useEffect(() => {
+    // Fetch certificates from backend API
+    fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setCertificates(data.data);
+        } else {
+          alert("Certificate data fetch failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching certificates:", error);
+        alert(
+          "An error occurred while fetching certificates. Please try again."
+        );
+      });
+  }, []);
 
   const toggleCreateDropdown = () => {
     setShowCreateDropdown(!showCreateDropdown);
@@ -34,6 +62,27 @@ const Dashboard = () => {
 
   const [renameModalIsOpen, setRenameModalIsOpen] = useState(false);
   const [newName, setNewName] = useState("");
+  const [metamaskPopupIsOpen, setMetamaskPopupIsOpen] = useState(false);
+  const [metamaskPopupPendingIsOpen, setMetamaskPopupPendingIsOpen] =
+    useState(false);
+
+  const openMetamaskPopup = () => {
+    setMetamaskPopupIsOpen(true);
+  };
+
+  // Function to close Metamask popup
+  const closeMetamaskPopup = () => {
+    setMetamaskPopupIsOpen(false);
+  };
+
+  const openMetamaskPopupPending = () => {
+    setMetamaskPopupPendingIsOpen(true);
+  };
+
+  // Function to close Metamask popup
+  const closeMetamaskPopupPending = () => {
+    setMetamaskPopupPendingIsOpen(false);
+  };
 
   const openRenameModal = () => {
     setRenameModalIsOpen(true);
@@ -70,8 +119,133 @@ const Dashboard = () => {
     closeDeleteModal();
   };
 
+  // const { ethereum } = window;
+
+  const invokeConnection = async (event) => {
+    event.preventDefault();
+
+    // try {
+    //   //invoke the metamask wallet
+    //   const accounts = await ethereum.request({
+    //     method: "eth_requestAccounts",
+    //   });
+
+    //   //reload the window on changing the account
+    //   window.ethereum.on("accountsChanged", (newAccounts) => {
+    //     setAccount(newAccounts[0]);
+    //   });
+
+    //   setAccount(accounts[0]);
+    // } catch (error) {
+    //   console.error("Error connecting to MetaMask:", error);
+    //   // Handle the error
+    // }
+  };
+
+  const storeHash = async (event) => {
+    event.preventDefault();
+    alert("reached here");
+    const { contract, provider } = state;
+    alert("reached here1");
+
+    // if (!window.ethereum) {
+    //   alert("Metamask not detected");
+    //   console.log();
+    //   // Handle the case where MetaMask is not detected
+    //   openMetamaskPopup();
+    // } else {
+    //   alert("Please install and connect Metamask");
+    // }
+    const identifier = 663242625;
+    const hash = "dfadfdsafadsfffg";
+    alert("reached here2");
+
+    try {
+      alert("reached here3");
+
+      // Send the transaction with the estimated gas limit
+      const transaction = contract.storeCertificate(identifier, hash);
+      alert("reached here4");
+
+      console.log("Waiting for transaction...");
+      const receipt = await transaction.wait(); // Wait for the transaction to be mined
+      alert("Transaction is Successful!");
+      const concatenatedString = receipt.logs[2].data;
+      alert("Concatenated String: " + concatenatedString);
+
+      console.log("Transaction is Successful!", concatenatedString);
+
+      // window.location.reload();
+    } catch (error) {
+      console.error("Error adding hash:", error);
+      alert("Error adding hash. Please try again later.");
+    }
+  };
+
   return (
     <div className="dashboard-wrapper">
+      <Modal
+        isOpen={metamaskPopupIsOpen}
+        onRequestClose={closeMetamaskPopup}
+        contentLabel="Metamask Connection Modal"
+        className="modal-overlay"
+        overlayClassName="modal-overlay"
+      >
+        <div className="modal-content">
+          <div className="modal-header">
+            <h2 className="modal-title">Metamask Connection Required</h2>
+          </div>
+          <p className="modal-message">
+            Please connect your Metamask account to upload documents.
+          </p>
+
+          <div className="modal-buttons">
+            <button className="metamask-logo-container">
+              <img
+                src={metamaskLogo}
+                alt="Metamask Logo"
+                className="metamask-logo"
+                onClick={invokeConnection}
+              />
+              Connect Wallet
+            </button>
+            <button className="modal-button" onClick={closeMetamaskPopup}>
+              Close
+            </button>
+            {/* <button className="modal-button connect-wallet-button">
+        <img src={metamaskLogo} alt="Metamask Logo" className="connect-wallet-logo" />
+        Connect Wallet
+      </button> */}
+          </div>
+        </div>
+      </Modal>
+      {/* popup pending */}
+      <Modal
+        isOpen={metamaskPopupPendingIsOpen}
+        onRequestClose={closeMetamaskPopupPending}
+        contentLabel="Metamask Connection Modal"
+        className="modal-overlay"
+        overlayClassName="modal-overlay"
+      >
+        <div className="modal-content">
+          <div className="modal-header">
+            <h2 className="modal-title">Document Pending</h2>
+          </div>
+          <p className="modal-message">
+            You cannot upload the document since it has not been varified.
+          </p>
+
+          <div className="modal-buttons">
+            <button
+              className="modal-button"
+              onClick={closeMetamaskPopupPending}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </Modal>
+
       <div className="sidebar">
         <div className="logo-container">
           <div className="logo-circle">
@@ -112,13 +286,6 @@ const Dashboard = () => {
             <input type="text" placeholder="Search Document or Folder" />
           </div>
           <div className="user-info">
-            <div className="metamask-logo-container">
-              <img
-                src={metamaskLogo}
-                alt="MetaMask Logo"
-                className="metamask-logo"
-              />
-            </div>
             <div
               className="profile-image-container"
               onClick={toggleUserDropdown}
@@ -138,29 +305,9 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
-
-            {/* <div
-              className="profile-image-container"
-              onClick={toggleUserDropdown}
-            >
-              <img
-                src={userProfileImage}
-                alt="User Profile"
-                className="profile-image"
-              />
-              <span className="username">Username</span>
-              {showUserDropdown && (
-                <div className="user-dropdown">
-                  <div className="user-dropdown-content">
-                    <FaCog className="settings-icon" />
-                    <span>Settings</span>
-                  </div>
-                </div>
-              )}
-            </div> */}
-            <div className="logout-icon-container">
+            <Link to="/" className="logout-icon-container">
               <FaSignOutAlt />
-            </div>
+            </Link>
           </div>
         </div>
         {/* Rest of the code remains the same */}
@@ -251,52 +398,41 @@ const Dashboard = () => {
                 <div>Upload</div>
                 <div>Actions</div>
               </div>
-              <div className="table-row table-rows">
-                <div>Document</div>
-                <div className="status valids">Valid</div>
-                <div>User name</div>
-                <div>11 February 2024</div>
-                <div className="view-icon">
-                  <i className="fas fa-eye "></i>
-                </div>
-                <div className="view-icon">
-                  <i className="fas fa-upload"></i>
-                </div>
 
-                <div className="action-icons">
-                  <div className="icon-container" onClick={openRenameModal}>
-                    <FaEdit className="icon" /> Rename
+              {certificates.map((certificate) => (
+                <div className="table-rows table-rowss" key={certificate._id}>
+                  <div>{certificate.courseName}</div>
+                  <div
+                    className={`status ${
+                      certificate.verified === true ? true : false
+                    }`}
+                  >
+                    {certificate.verified}
+                  </div>
+                  <div>{certificate.name}</div>
+                  <div>{certificate.createdAt}</div>
+                  <div className="view-icon">
+                    <i className="fas fa-eye"></i>
+                  </div>
+                  <div className="view-icon">
+                    <i
+                      className="fas fa-upload"
+                      onClick={openMetamaskPopupPending}
+                    ></i>
                   </div>
 
-                  <div className="icon-container" onClick={openDeleteModal}>
-                    <FaTrashAlt className="icon" />
-                    Delete
-                  </div>
-                </div>
-              </div>
-              <div className="table-row table-rows">
-                <div>Document</div>
-                <div className="status pendings">Pending</div>
-                <div>User name</div>
-                <div>11 February 2024</div>
-                <div className="view-icon">
-                  <i className="fas fa-eye"></i>
-                </div>
-                <div className="view-icon">
-                  <i className="fas fa-upload"></i>
-                </div>
+                  <div className="action-icons">
+                    <div className="icon-container" onClick={openRenameModal}>
+                      <FaEdit className="icon" /> Rename
+                    </div>
 
-                <div className="action-icons">
-                  <div className="icon-container" onClick={openRenameModal}>
-                    <FaEdit className="icon" /> Rename
-                  </div>
-
-                  <div className="icon-container" onClick={openDeleteModal}>
-                    <FaTrashAlt className="icon" />
-                    Delete
+                    <div className="icon-container" onClick={openDeleteModal}>
+                      <FaTrashAlt className="icon" />
+                      Delete
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
