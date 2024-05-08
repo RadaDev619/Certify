@@ -10,6 +10,10 @@ contract IPFSStorage {
     constructor(){
         owner = msg.sender;
     }
+    event CertificateStored(address indexed owner, uint indexed identifier, string concatenatedString);
+
+    event getCertificate(string concatenatedString);
+
 
     // Function to store an IPFS hash
     function storeCertificate(uint identifier, string memory _hash) external returns (string memory) {
@@ -23,6 +27,7 @@ contract IPFSStorage {
 
         // Concatenate the strings
         string memory concatenatedString = string(abi.encodePacked(senderAddressStr, identifierStr, _hash));
+        emit CertificateStored(msg.sender, identifier, concatenatedString);
 
         return concatenatedString;
     }
@@ -66,7 +71,7 @@ contract IPFSStorage {
     function parseConcatenatedString(string memory concatenatedString) internal pure returns (address, uint, string memory) {
         // Define lengths of address, identifier, and hash
         uint addrLength = 42; // length of address string (including '0x' prefix)
-        uint idLength = 24; // assuming identifier is a single digit
+        uint idLength = 9; // assuming identifier is a single digit
         uint hashLength = bytes(concatenatedString).length - addrLength - idLength;
 
         // Extract address, identifier, and hash parts
@@ -133,7 +138,7 @@ contract IPFSStorage {
 
 
     // Function to retrieve an IPFS hash
-    function getIPFSHash(string memory identifier) public view returns (string memory _certi) {
+    function getIPFSHash(string memory identifier) public returns (string memory _certi) {
                 
         // Call the parseConcatenatedString function
         (address certiOwner, uint _identifier, string memory _hash) = parseConcatenatedString(identifier);
@@ -150,7 +155,11 @@ contract IPFSStorage {
             for (uint i = 0; i < bytesB.length; i++) {
                 concatenatedString[k++] = bytesB[i];
             }
-            return string(concatenatedString);
+            string memory finalConcatenatedString = string(concatenatedString);
+
+            emit getCertificate(finalConcatenatedString);
+
+            return finalConcatenatedString;
         }else{
             revert("Certificate not found");
         }

@@ -10,11 +10,18 @@ const Public = ({ state }) => {
     const { contract, provider } = state;
 
     try {
+      alert("reach");
       // Send the transaction with the estimated gas limit
       const transaction = await contract.getIPFSHash(ID);
 
       console.log("Waiting for transaction...");
-      await transaction.wait();
+      alert("reach1");
+      const receipt = await transaction.wait(); // Wait for the transaction to be mined
+      alert("Transaction is Successful!");
+      const concatenatedString = receipt.logs[0].data;
+      alert("Concatenated String: " + concatenatedString);
+
+      // await transaction.wait();
       alert("Transaction is Successful!");
       console.log("transaction", transaction);
 
