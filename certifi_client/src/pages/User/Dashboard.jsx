@@ -398,17 +398,6 @@ const Dashboard = ({ state }) => {
                 <div>Upload</div>
                 <div>Actions</div>
               </div>
-              <div className="table-rows table-rowss">
-                <div>Document</div>
-                <div className="status valids">Valid</div>
-                <div>User name</div>
-                <div>11 February 2024</div>
-                <div className="view-icon">
-                  <i className="fas fa-eye "></i>
-                </div>
-                <div className="view-icon">
-                  <i className="fas fa-upload" onClick={openMetamaskPopup}></i>
-                </div>
 
               {certificates.map((certificate) => (
                 <div className="table-rows table-rowss" key={certificate._id}>
@@ -420,24 +409,17 @@ const Dashboard = ({ state }) => {
                   >
                     {certificate.verified}
                   </div>
-
-                  <div className="icon-container" onClick={openDeleteModal}>
-                    <FaTrashAlt className="icon" />
-                    Delete
+                  <div>{certificate.name}</div>
+                  <div>{certificate.createdAt}</div>
+                  <div className="view-icon">
+                    <i className="fas fa-eye"></i>
                   </div>
-                </div>
-              </div>
-              <div className="table-rows table-rowss">
-                <div>Document</div>
-                <div className="status pendings">Pending</div>
-                <div>User name</div>
-                <div>11 February 2024</div>
-                <div className="view-icon">
-                  <i className="fas fa-eye"></i>
-                </div>
-                <div className="view-icon">
-                  <i className="fas fa-upload" onClick={openMetamaskPopupPending}></i>
-                </div>
+                  <div className="view-icon">
+                    <i
+                      className="fas fa-upload"
+                      onClick={openMetamaskPopupPending}
+                    ></i>
+                  </div>
 
                   <div className="action-icons">
                     <div className="icon-container" onClick={openRenameModal}>
