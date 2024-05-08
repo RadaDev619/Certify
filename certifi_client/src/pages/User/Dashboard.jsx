@@ -309,9 +309,9 @@ const Dashboard = () => {
                 <div className="status valids">Valid</div>
                 <div>User name</div>
                 <div>11 February 2024</div>
-                <div className="view-icon">
+                <Link to="/cvalid" className="view-icon curser-pointer">
                   <i className="fas fa-eye "></i>
-                </div>
+                </Link>
                 <div className="view-icon">
                   <i className="fas fa-upload" onClick={openMetamaskPopup}></i>
                 </div>
@@ -332,9 +332,9 @@ const Dashboard = () => {
                 <div className="status pendings">Pending</div>
                 <div>User name</div>
                 <div>11 February 2024</div>
-                <div className="view-icon">
+                <Link to="/cvalid" className="view-icon curser-pointer">
                   <i className="fas fa-eye"></i>
-                </div>
+                </Link>
                 <div className="view-icon">
                   <i className="fas fa-upload" onClick={openMetamaskPopupPending}></i>
                 </div>

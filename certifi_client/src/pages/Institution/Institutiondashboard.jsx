@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "../../css/institutiondashboard.css";
 import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
@@ -42,22 +43,22 @@ const Dashboard = () => {
     closeVerifyModal();
   };
 
-    // notvalid modal
-    const [notValidModalIsOpen, setnotValidModalIsOpen] = useState(false);
+  // notvalid modal
+  const [notValidModalIsOpen, setnotValidModalIsOpen] = useState(false);
 
-    const opennotValidModal = () => {
-      setnotValidModalIsOpen(true);
-    };
-  
-    const closenotValidModal = () => {
-      setnotValidModalIsOpen(false);
-    };
-  
-    const handlenotValid = () => {
-      // Implement delete account logic here
-      console.log("Not Validated");
-      closenotValidModal();
-    };
+  const opennotValidModal = () => {
+    setnotValidModalIsOpen(true);
+  };
+
+  const closenotValidModal = () => {
+    setnotValidModalIsOpen(false);
+  };
+
+  const handlenotValid = () => {
+    // Implement delete account logic here
+    console.log("Not Validated");
+    closenotValidModal();
+  };
 
   return (
     <div className="dashboard-wrapper">
@@ -79,13 +80,6 @@ const Dashboard = () => {
             <input type="text" placeholder="Search Document or Folder" />
           </div>
           <div className="user-info">
-            <div className="metamask-logo-container">
-              <img
-                src={metamaskLogo}
-                alt="MetaMask Logo"
-                className="metamask-logo"
-              />
-            </div>
             <div
               className="profile-image-container"
               onClick={toggleUserDropdown}
@@ -97,17 +91,17 @@ const Dashboard = () => {
               />
               <span className="username">Username</span>
               {showUserDropdown && (
-                <div className="user-dropdown">
+                <Link to="/institutionaccountsetting" className="user-dropdown">
                   <div className="user-dropdown-content">
                     <FaCog className="settings-icon" />
                     <span>Settings</span>
                   </div>
-                </div>
+                </Link>
               )}
             </div>
-            <div className="logout-icon-container">
+            <Link to="/" className="logout-icon-container">
               <FaSignOutAlt />
-            </div>
+            </Link>
           </div>
         </div>
         <Card>
@@ -150,70 +144,68 @@ const Dashboard = () => {
                   </div>
                 </div>
                 {/* verify Modal */}
-              <Modal
-                isOpen={verifyModalIsOpen}
-                onRequestClose={closeVerifyModal}
-                contentLabel="Verify Account Modal"
-                className="modal-overlay"
-                overlayClassName="modal-overlay"
-              >
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h2 className="modal-title">Status validation </h2>
+                <Modal
+                  isOpen={verifyModalIsOpen}
+                  onRequestClose={closeVerifyModal}
+                  contentLabel="Verify Account Modal"
+                  className="modal-overlay"
+                  overlayClassName="modal-overlay"
+                >
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h2 className="modal-title">Status validation </h2>
+                    </div>
+                    <p className="modal-message">
+                      Are you sure this document is valid?
+                    </p>
+                    <div className="modal-buttons">
+                      <button
+                        className="modal-button verify"
+                        onClick={handleVerify}
+                      >
+                        Verify
+                      </button>
+                      <button
+                        className="modal-button cancel"
+                        onClick={closeVerifyModal}
+                      >
+                        Back
+                      </button>
+                    </div>
                   </div>
-                  <p className="modal-message">
-                  Are you sure this document is valid? 
-                  </p>
-                  <div className="modal-buttons">
-                    <button
-                      className="modal-button verify"
-                      onClick={handleVerify}
-                    >
-                      Verify
-                    </button>
-                    <button
-                      className="modal-button cancel"
-                      onClick={closeVerifyModal}
-                    >
-                      Back 
-                    </button>
-                  </div>
-                </div>
-              </Modal>
+                </Modal>
 
-              {/* not validated modal */}
-              <Modal
-                isOpen={notValidModalIsOpen}
-                onRequestClose={closenotValidModal}
-                contentLabel="Verify Account Modal"
-                className="modal-overlay"
-                overlayClassName="modal-overlay"
-              >
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h2 className="modal-title">Status validation </h2>
+                {/* not validated modal */}
+                <Modal
+                  isOpen={notValidModalIsOpen}
+                  onRequestClose={closenotValidModal}
+                  contentLabel="Verify Account Modal"
+                  className="modal-overlay"
+                  overlayClassName="modal-overlay"
+                >
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h2 className="modal-title">Status validation </h2>
+                    </div>
+                    <p className="modal-message">
+                      Are you sure this document is not valid?
+                    </p>
+                    <div className="modal-buttons">
+                      <button
+                        className="modal-button not-valid"
+                        onClick={handlenotValid}
+                      >
+                        Remove
+                      </button>
+                      <button
+                        className="modal-button cancel"
+                        onClick={closenotValidModal}
+                      >
+                        Back
+                      </button>
+                    </div>
                   </div>
-                  <p className="modal-message">
-                  Are you sure this document is not valid? 
-                  </p>
-                  <div className="modal-buttons">
-                    <button
-                      className="modal-button not-valid"
-                      onClick={handlenotValid}
-                    >
-                      Remove
-                    </button>
-                    <button
-                      className="modal-button cancel"
-                      onClick={closenotValidModal}
-                    >
-                      Back
-                    </button>
-                  </div>
-                </div>
-              </Modal>
-
-
+                </Modal>
               </div>
             </div>
           </CardContent>
