@@ -105,34 +105,37 @@ function CertificateValidation() {
       });
   };
 
-  // State for valid badge color
-  const [validBadgeColor, setValidBadgeColor] = useState("#80FF00"); // Initial color: green
+// State for valid badge color and text
+const [validStatus, setValidStatus] = useState({
+  text: "Document pending",
+  color: "#FFA500", // Initial color: orange for pending
+});
 
-  // Function to update the badge color based on validation logic
-  const updateBadgeColor = () => {
-    // Example validation: Check if document ID is a number and has 10 digits
-    const isValidDocumentId =
-      !isNaN(certificateInfo.documentId) &&
-      certificateInfo.documentId.toString().length === 10;
+// Function to update the badge color and text based on validation logic
+const updateBadgeStatus = () => {
+  // Example validation: Check if document ID is a number and has 10 digits
+  const isValidDocumentId = 
+    !isNaN(certificateInfo.documentId) && 
+    certificateInfo.documentId.toString().length === 10;
 
-    // Update badge color based on validation result
-    if (isValidDocumentId) {
-      setValidBadgeColor("#80FF00"); // Green for valid
-    } else {
-      setValidBadgeColor("#FF0000"); // Red for invalid
-    }
-  };
+  // Update badge status based on validation result
+  if (isValidDocumentId) {
+    setValidStatus({ text: "Document valid", color: "#80FF00" }); // Green for valid
+  } else {
+    setValidStatus({ text: "Document not valid", color: "#FF0000" }); // Red for invalid
+  }
+};
 
-  // useEffect to update the badge color when necessary
-  useEffect(() => {
-    updateBadgeColor();
-  }, [certificateInfo.documentId]); // Update when documentId changes
+// useEffect to update the badge status when necessary
+useEffect(() => {
+  updateBadgeStatus();
+}, [certificateInfo.documentId]); // Update when documentId changes
 
   return (
     <div className="flex h-screen">
       <nav className="w-full flex justify-between pl-20 pb-5 fixed top-0 left-0">
         <p className="">
-          <Link to={"/login"} className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500">
+          <Link to={"/dashboard"} className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500">
             <img src={logo} alt="" />
           </Link>
         </p>
@@ -165,11 +168,13 @@ function CertificateValidation() {
           created is shown
         </p>
         <div className="py-5">
-          {/* Valid badge with dynamic color */}
-          <div className={`bg-[${validBadgeColor}] text-[white] text-bg font-medium px-4 py-5 rounded text-center`}>
-            Document valid
-          </div>
-        </div>
+      {/* Valid badge with dynamic color and text */}
+      <div 
+        className={`bg-[${validStatus.color}] text-[white] text-bg font-medium px-4 py-5 rounded text-center`}
+      >
+        {validStatus.text}
+      </div>
+    </div>
         <div className="flex justify-between ">
           <button
             className={`border border-[black] w-[45%] px-4 py-2 rounded font-medium ${
