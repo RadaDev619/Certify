@@ -411,13 +411,13 @@ const Dashboard = ({ state }) => {
                   </div>
                   <div>{certificate.name}</div>
                   <div>{certificate.createdAt}</div>
-                  <div className="view-icon">
+                  <Link to="/cvalid" className="view-icon">
                     <i className="fas fa-eye"></i>
-                  </div>
+                  </Link>
                   <div className="view-icon">
                     <i
                       className="fas fa-upload"
-                      onClick={openMetamaskPopupPending}
+                      onClick={openMetamaskPopup}
                     ></i>
                   </div>
 
