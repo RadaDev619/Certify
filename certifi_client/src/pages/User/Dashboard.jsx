@@ -156,15 +156,15 @@ const Dashboard = ({ state }) => {
     // } else {
     //   alert("Please install and connect Metamask");
     // }
-    const identifier = 663242625;
+    const identifier = 266342625;
     const hash = "dfadfdsafadsfffg";
     alert("reached here2");
 
     try {
       alert("reached here3");
-
+      console.log(contract);
       // Send the transaction with the estimated gas limit
-      const transaction = contract.storeCertificate(identifier, hash);
+      const transaction = await contract.storeCertificate(identifier, hash);
       alert("reached here4");
 
       console.log("Waiting for transaction...");
@@ -417,7 +417,8 @@ const Dashboard = ({ state }) => {
                   <div className="view-icon">
                     <i
                       className="fas fa-upload"
-                      onClick={openMetamaskPopupPending}
+                      // onClick={openMetamaskPopupPending}storeHash
+                      onClick={storeHash}
                     ></i>
                   </div>
 

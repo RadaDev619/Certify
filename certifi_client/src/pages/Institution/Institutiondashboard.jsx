@@ -72,6 +72,7 @@ const Dashboard = () => {
     .then((data) => {
       if (data.status === "success") {
         console.log(data.data)
+        
         alert("Document verified successfully.");  
       }
       else{
