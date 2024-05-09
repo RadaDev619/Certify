@@ -396,7 +396,6 @@ const Dashboard = ({ state }) => {
                 <div>Update date</div>
                 <div>View</div>
                 <div>Upload</div>
-                <div>Actions</div>
               </div>
 
               {certificates.map((certificate) => (
@@ -414,24 +413,13 @@ const Dashboard = ({ state }) => {
                   <Link to="/cvalid" className="view-icon">
                     <i className="fas fa-eye"></i>
                   </Link>
-                  <div className="view-icon">
+                  <div className="view-icon ">
                     <i
                       className="fas fa-upload"
                       // onClick={openMetamaskPopupPending}storeHash
                       onClick={storeHash}
                       onClick={openMetamaskPopup}
                     ></i>
-                  </div>
-
-                  <div className="action-icons">
-                    <div className="icon-container" onClick={openRenameModal}>
-                      <FaEdit className="icon" /> Rename
-                    </div>
-
-                    <div className="icon-container" onClick={openDeleteModal}>
-                      <FaTrashAlt className="icon" />
-                      Delete
-                    </div>
                   </div>
                 </div>
               ))}
