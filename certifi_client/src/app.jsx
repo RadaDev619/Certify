@@ -27,71 +27,11 @@ import CertificateOfCompletion from "./pages/CertificateOfCompletion";
 import Admindashboard from "./pages/Admin/Admindashboard";
 
 function App() {
-  const [state, setState] = useState({
-    provider: null,
-    signer: null,
-    contract: null,
-  });
-
-  const [account, setAccount] = useState("Not connected");
-
-  useEffect(() => {
-    const template = async () => {
-      //checking if there is metamask installed or not
-      if (!window.ethereum) {
-        alert(
-          "MetaMask is not installed. Please install MetaMask to use this dApp."
-        );
-        return;
-      }
-
-      //1. Fetching the contract details as indicated in step xvi
-      const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-      const contractABI = abi.abi;
-
-      //Metamask connection
-      //1. for transaction on sepholia testnets
-      //2. consit of alchemy api which autually help in connecting to the frontend
-      const { ethereum } = window;
-
-      //3.Define provider and signer that will help connect with the blockchain
-      //will be used to read from the blockchain
-      const provider = new ethers.providers.Web3Provider(ethereum);
-
-      //Define signer that will help in transaction to change the blockchain state
-      //wil be used to write to the blockchain
-      const signer = provider.getSigner();
-
-      //4. create the instance of the contract communicate with the smart contract
-      const contract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
-
-      console.log(contract);
-
-      setState({ provider, signer, contract });
-
-      //invoke the metamask wallet
-      const account = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      //reload the window on changing the account
-      window.ethereum.on("Account changed", () => {
-        window.location.reload();
-      });
-      setAccount(account);
-    };
-    template();
-  }, []);
-
   return (
     <>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Public state={state} />} />
+          <Route index element={<Public />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/uregister" element={<UserRegister />} />
@@ -105,7 +45,7 @@ function App() {
         <Route path="/csigner" element={<Certificatepart />} />
         <Route path="/cform" element={<Certificateform />} />
         <Route path="/cvalid" element={<Certificatevalidation />} />
-        <Route path="/dashboard" element={<Dashboard state={state} />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard1" element={<Dashboard1 />} />
         <Route path="/accountsetting" element={<Accountsetting />} />
         <Route

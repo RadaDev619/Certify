@@ -109,7 +109,6 @@ function CertificateValidation() {
     setnotValidModalIsOpen(false);
   };
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -357,74 +356,69 @@ function CertificateValidation() {
           </div>
         )}
 
-                            {/* verify Modal */}
-                            <Modal
-                      isOpen={verifyModalIsOpen}
-                      onRequestClose={closeVerifyModal}
-                      contentLabel="Verify Account Modal"
-                      className="modal-overlay"
-                      overlayClassName="modal-overlay"
-                    >
-                      <div className="modal-content">
-                        <div className="modal-header">
-                          <h2 className="modal-title">Status validation </h2>
-                        </div>
-                        <p className="modal-message">
-                          Are you sure this document is valid?
-                        </p>
-                        <div className="modal-buttons">
-                          <button
-                            className="modal-button verify"
-                            onClick={() =>
-                              handleVerify(currentVerifyCertificateId)
-                            }
-                          >
-                            Approve
-                          </button>
-                          <button
-                            className="modal-button cancel"
-                            onClick={closeVerifyModal}
-                          >
-                            Back
-                          </button>
-                        </div>
-                      </div>
-                    </Modal>
+        {/* verify Modal */}
+        <Modal
+          isOpen={verifyModalIsOpen}
+          onRequestClose={closeVerifyModal}
+          contentLabel="Verify Account Modal"
+          className="modal-overlay"
+          overlayClassName="modal-overlay"
+        >
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">Status validation </h2>
+            </div>
+            <p className="modal-message">
+              Are you sure this document is valid?
+            </p>
+            <div className="modal-buttons">
+              <button
+                className="modal-button verify"
+                onClick={() => handleVerify(currentVerifyCertificateId)}
+              >
+                Approve
+              </button>
+              <button
+                className="modal-button cancel"
+                onClick={closeVerifyModal}
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        </Modal>
 
-                    {/* not validated modal */}
-                    <Modal
-                      isOpen={notValidModalIsOpen}
-                      onRequestClose={closenotValidModal}
-                      contentLabel="Verify Account Modal"
-                      className="modal-overlay"
-                      overlayClassName="modal-overlay"
-                    >
-                      <div className="modal-content">
-                        <div className="modal-header">
-                          <h2 className="modal-title">Status validation </h2>
-                        </div>
-                        <p className="modal-message">
-                          Are you sure this document is not valid?
-                        </p>
-                        <div className="modal-buttons">
-                          <button
-                            className="modal-button not-valid"
-                            onClick={() =>
-                              handleNotValid(currentNotValidCertificateId)
-                            }
-                          >
-                            Reject
-                          </button>
-                          <button
-                            className="modal-button cancel"
-                            onClick={closenotValidModal}
-                          >
-                            Back
-                          </button>
-                        </div>
-                      </div>
-                    </Modal>
-
+        {/* not validated modal */}
+        <Modal
+          isOpen={notValidModalIsOpen}
+          onRequestClose={closenotValidModal}
+          contentLabel="Verify Account Modal"
+          className="modal-overlay"
+          overlayClassName="modal-overlay"
+        >
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">Status validation </h2>
+            </div>
+            <p className="modal-message">
+              Are you sure this document is not valid?
+            </p>
+            <div className="modal-buttons">
+              <button
+                className="modal-button not-valid"
+                onClick={() => handleNotValid(currentNotValidCertificateId)}
+              >
+                Reject
+              </button>
+              <button
+                className="modal-button cancel"
+                onClick={closenotValidModal}
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        </Modal>
 
         {/* Actions section */}
         <div className="mt-8">
@@ -432,13 +426,15 @@ function CertificateValidation() {
           <div className="flex justify-between">
             <button
               className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-[45%]"
-              onClick={handleAccept} onClick={openVerifyModal}
+              onClick={handleAccept}
+              onClick={openVerifyModal}
             >
               Approve
             </button>
             <button
               className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-[45%]"
-              onClick={handleReject} onClick={opennotValidModal}
+              onClick={handleReject}
+              onClick={opennotValidModal}
             >
               Reject
             </button>
