@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import "../../css/institutiondashboard.css";
 import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
-import metamaskLogo from "../../assets/metamask-logo.png";
 import "@fortawesome/fontawesome-free/css/all.css";
+import { Link } from "react-router-dom";
+
 import {
   FaSignOutAlt,
   FaSearch,
@@ -25,6 +26,12 @@ const Dashboard = () => {
     useState(null);
   const [currentNotValidCertificateId, setCurrentNotValidCertificateId] =
     useState(null);
+  const [filteredCertificates, setFilteredCertificates] = useState([]); // State to store filtered certificates
+  const [filterText, setFilterText] = useState(""); // State to store filter text
+  const [filterModal, setFilterModal] = useState(false); // State to control filter modal
+  const [filterDocumentName, setFilterDocumentName] = useState(""); // State to store filter document name
+  const [filterAuthorName, setFilterAuthorName] = useState(""); // State to store filter author name
+
   useEffect(() => {
     // Fetch certificates from backend API
     fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
@@ -38,6 +45,7 @@ const Dashboard = () => {
         if (data.status === "success") {
           // Update certificates state with fetched data
           setCertificates(data.data);
+          setFilteredCertificates(data.data); // Set initial filtered certificates
         } else {
           alert("Certificate data fetch failed. Please try again.");
         }
@@ -50,10 +58,42 @@ const Dashboard = () => {
       });
   }, []);
 
+  // Filter certificates based on name and author
+  useEffect(() => {
+    const filtered = certificates.filter(
+      (certificate) =>
+        certificate.courseName
+          .toLowerCase()
+          .includes(filterText.toLowerCase()) ||
+        certificate.name.toLowerCase().includes(filterText.toLowerCase()) ||
+        (filterDocumentName &&
+          certificate.courseName
+            .toLowerCase()
+            .includes(filterDocumentName.toLowerCase())) ||
+        (filterAuthorName &&
+          certificate.name
+            .toLowerCase()
+            .includes(filterAuthorName.toLowerCase()))
+    );
+    setFilteredCertificates(filtered);
+  }, [filterText, certificates, filterDocumentName, filterAuthorName]);
+
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
   };
 
+  // Filter modal handlers
+  const openFilterModal = () => {
+    setFilterModal(true);
+  };
+
+  const closeFilterModal = () => {
+    setFilterModal(false);
+  };
+
+  const applyFilters = () => {
+    closeFilterModal();
+  };
   // verify modal
   const [verifyModalIsOpen, setVerifyModalIsOpen] = useState(false);
 
@@ -108,7 +148,6 @@ const Dashboard = () => {
   };
 
   // notvalid modal
-  const [notValidModalIsOpen, setnotValidModalIsOpen] = useState(false);
 
   const opennotValidModal = (certificateId) => {
     setCurrentNotValidCertificateId(certificateId);
@@ -142,16 +181,14 @@ const Dashboard = () => {
         <div className="search-bar">
           <div className="search-container">
             <FaSearch className="search-icon" />
-            <input type="text" placeholder="Search Document or Folder" />
+            <input
+              type="text"
+              placeholder="Search Document or Folder"
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+            />
           </div>
           <div className="user-info">
-            <div className="metamask-logo-container">
-              <img
-                src={metamaskLogo}
-                alt="MetaMask Logo"
-                className="metamask-logo"
-              />
-            </div>
             <div
               className="profile-image-container"
               onClick={toggleUserDropdown}
@@ -164,16 +201,19 @@ const Dashboard = () => {
               <span className="username">Username</span>
               {showUserDropdown && (
                 <div className="user-dropdown">
-                  <div className="user-dropdown-content">
+                  <Link
+                    to="/institutionaccountsetting"
+                    className="user-dropdown-content"
+                  >
                     <FaCog className="settings-icon" />
                     <span>Settings</span>
-                  </div>
+                  </Link>
                 </div>
               )}
             </div>
-            <div className="logout-icon-container">
+            <Link to="/" className="logout-icon-container">
               <FaSignOutAlt />
-            </div>
+            </Link>
           </div>
         </div>
         <Card>
@@ -183,7 +223,7 @@ const Dashboard = () => {
                 Documents
               </Typography>
               <div className="action-icons">
-                <FaFilter className="icon" /> Filter
+                <FaFilter className="icon" onClick={openFilterModal} /> Filter
               </div>
             </div>
             <div className="documents-table">
@@ -192,99 +232,66 @@ const Dashboard = () => {
                 <div>Author</div>
                 <div>Update date</div>
                 <div>View</div>
-                <div>Status</div>
               </div>
               {certificates.map((certificate) => (
                 <div className="table-row1" key={certificate.id}>
-                  <div className="table-row1">
-                    <div>{certificate.courseName}</div>
-                    <div>{certificate.name}</div>
-                    <div>{certificate.createdAt}</div>
+                  <div>{certificate.courseName}</div>
+                  <div>{certificate.name}</div>
+                  <div>{certificate.createdAt}</div>
+                  <Link to="/cvalid">
+                    {" "}
                     <div>
                       <i className="fas fa-eye"></i>
                     </div>
-                    <div className="status pad-status">
-                      <div className="valid" onClick={openVerifyModal}>
-                        <FaCheck />
-                      </div>
-                      <div className="pending" onClick={opennotValidModal}>
-                        <FaTimes />
-                      </div>
-                    </div>
-                    {/* verify Modal */}
-                    <Modal
-                      isOpen={verifyModalIsOpen}
-                      onRequestClose={closeVerifyModal}
-                      contentLabel="Verify Account Modal"
-                      className="modal-overlay"
-                      overlayClassName="modal-overlay"
-                    >
-                      <div className="modal-content">
-                        <div className="modal-header">
-                          <h2 className="modal-title">Status validation </h2>
-                        </div>
-                        <p className="modal-message">
-                          Are you sure this document is valid?
-                        </p>
-                        <div className="modal-buttons">
-                          <button
-                            className="modal-button verify"
-                            onClick={() =>
-                              handleVerify(currentVerifyCertificateId)
-                            }
-                          >
-                            Verify
-                          </button>
-                          <button
-                            className="modal-button cancel"
-                            onClick={closeVerifyModal}
-                          >
-                            Back
-                          </button>
-                        </div>
-                      </div>
-                    </Modal>
-
-                    {/* not validated modal */}
-                    <Modal
-                      isOpen={notValidModalIsOpen}
-                      onRequestClose={closenotValidModal}
-                      contentLabel="Verify Account Modal"
-                      className="modal-overlay"
-                      overlayClassName="modal-overlay"
-                    >
-                      <div className="modal-content">
-                        <div className="modal-header">
-                          <h2 className="modal-title">Status validation </h2>
-                        </div>
-                        <p className="modal-message">
-                          Are you sure this document is not valid?
-                        </p>
-                        <div className="modal-buttons">
-                          <button
-                            className="modal-button not-valid"
-                            onClick={() =>
-                              handleNotValid(currentNotValidCertificateId)
-                            }
-                          >
-                            Remove
-                          </button>
-                          <button
-                            className="modal-button cancel"
-                            onClick={closenotValidModal}
-                          >
-                            Back
-                          </button>
-                        </div>
-                      </div>
-                    </Modal>
-                  </div>
+                  </Link>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
+      {/* Filter Modal */}
+      <Modal
+        isOpen={filterModal}
+        onRequestClose={closeFilterModal}
+        contentLabel="Filter Modal"
+        className="modal-overlay"
+        overlayClassName="modal-overlay"
+      >
+        <div className="modal-content">
+          <div className="modal-header">
+            <h2 className="modal-title">Filter Documents</h2>
+          </div>
+          <div className="modal-body">
+            <div className="form-group">
+              <label htmlFor="documentName">Document Name</label>
+              <input
+                type="text"
+                id="documentName"
+                value={filterDocumentName}
+                onChange={(e) => setFilterDocumentName(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="authorName">Author Name</label>
+              <input
+                type="text"
+                id="authorName"
+                value={filterAuthorName}
+                onChange={(e) => setFilterAuthorName(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="modal-buttons">
+            <button className="modal-button apply" onClick={applyFilters}>
+              Apply
+            </button>
+            <button className="modal-button cancel" onClick={closeFilterModal}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

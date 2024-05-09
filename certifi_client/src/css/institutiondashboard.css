@@ -187,7 +187,7 @@
   
   .table-header1 {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     color: #7a7878;
     /* background-color: #f0f0f0; */
     padding: 10px;
@@ -197,7 +197,7 @@
   
   .table-row1 {
     display: grid !important; 
-    grid-template-columns: repeat(5, 1fr) !important;
+    grid-template-columns: repeat(4, 1fr) !important;
     padding: 10px !important;
     border-bottom: 1px solid #e4e4e4 !important;
   }
