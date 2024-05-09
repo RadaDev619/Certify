@@ -9,18 +9,21 @@ function CertificateValidation() {
   const crtId = window.localStorage.getItem("certId");
   const [fetchedData, setFetchedData] = useState(null); // State to store fetched data
   const [recipients, setRecipients] = useState([]);
-    // State for certificate information (replace with your actual data or fetching mechanism)
-    const [certificateInfo, setCertificateInfo] = useState([]);
+  // State for certificate information (replace with your actual data or fetching mechanism)
+  const [certificateInfo, setCertificateInfo] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://prj-certifi-backend.onrender.com/api/certificate/get/${crtId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `https://prj-certifi-backend.onrender.com/api/certificate/get/${crtId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const data = await response.json();
         if (data.status === "success") {
           setFetchedData(data.data); // Set fetched data in state
@@ -41,11 +44,13 @@ function CertificateValidation() {
     if (fetchedData) {
       setRecipients([
         { name: "Author Name ", mail: fetchedData.email, role: "Author (You)" },
-        { name: "Signer Name", mail: fetchedData.signer, role: "Signer" }
+        { name: "Signer Name", mail: fetchedData.signer, role: "Signer" },
       ]);
-      setCertificateInfo({ // Update certificate information
+      setCertificateInfo({
+        // Update certificate information
         certificateName: fetchedData.courseName,
-        createdOn: new Date().toLocaleDateString("en-US", { // Automatic today's date
+        createdOn: new Date().toLocaleDateString("en-US", {
+          // Automatic today's date
           year: "numeric",
           month: "short",
           day: "numeric",
@@ -65,8 +70,6 @@ function CertificateValidation() {
   const issueDate = fetchedData?.createdAt || "";
   const ID = fetchedData?.cid || "";
   const certId = fetchedData?._id || "";
-
-
 
   // Assuming you have these variables defined somewhere
   // const personName = authorName; // Replace with actual data or state variable
@@ -91,7 +94,8 @@ function CertificateValidation() {
 
   const handleCopyDocumentId = () => {
     const documentIdText = documentIdRef.current.textContent;
-    navigator.clipboard.writeText(documentIdText)
+    navigator.clipboard
+      .writeText(documentIdText)
       .then(() => {
         setCopySuccess(true);
         setTimeout(() => {
@@ -105,37 +109,40 @@ function CertificateValidation() {
       });
   };
 
-// State for valid badge color and text
-const [validStatus, setValidStatus] = useState({
-  text: "Document pending",
-  color: "#FFA500", // Initial color: orange for pending
-});
+  // State for valid badge color and text
+  const [validStatus, setValidStatus] = useState({
+    text: "Document pending",
+    color: "#FFA500", // Initial color: orange for pending
+  });
 
-// Function to update the badge color and text based on validation logic
-const updateBadgeStatus = () => {
-  // Example validation: Check if document ID is a number and has 10 digits
-  const isValidDocumentId = 
-    !isNaN(certificateInfo.documentId) && 
-    certificateInfo.documentId.toString().length === 10;
+  // Function to update the badge color and text based on validation logic
+  const updateBadgeStatus = () => {
+    // Example validation: Check if document ID is a number and has 10 digits
+    const isValidDocumentId =
+      !isNaN(certificateInfo.documentId) &&
+      certificateInfo.documentId.toString().length === 10;
 
-  // Update badge status based on validation result
-  if (isValidDocumentId) {
-    setValidStatus({ text: "Document valid", color: "#80FF00" }); // Green for valid
-  } else {
-    setValidStatus({ text: "Document not valid", color: "#FF0000" }); // Red for invalid
-  }
-};
+    // Update badge status based on validation result
+    if (isValidDocumentId) {
+      setValidStatus({ text: "Document valid", color: "#80FF00" }); // Green for valid
+    } else {
+      setValidStatus({ text: "Document not valid", color: "#FF0000" }); // Red for invalid
+    }
+  };
 
-// useEffect to update the badge status when necessary
-useEffect(() => {
-  updateBadgeStatus();
-}, [certificateInfo.documentId]); // Update when documentId changes
+  // useEffect to update the badge status when necessary
+  useEffect(() => {
+    updateBadgeStatus();
+  }, [certificateInfo.documentId]); // Update when documentId changes
 
   return (
     <div className="flex h-screen">
       <nav className="w-full flex justify-between pl-20 pb-5 fixed top-0 left-0">
         <p className="">
-          <Link to={"/dashboard"} className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500">
+          <Link
+            to={"/dashboard"}
+            className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500"
+          >
             <img src={logo} alt="" />
           </Link>
         </p>
@@ -168,17 +175,19 @@ useEffect(() => {
           created is shown
         </p>
         <div className="py-5">
-      {/* Valid badge with dynamic color and text */}
-      <div 
-        className={`bg-[${validStatus.color}] text-[white] text-bg font-medium px-4 py-5 rounded text-center`}
-      >
-        {validStatus.text}
-      </div>
-    </div>
+          {/* Valid badge with dynamic color and text */}
+          <div
+            className={`bg-[${validStatus.color}] text-[white] text-bg font-medium px-4 py-5 rounded text-center`}
+          >
+            {validStatus.text}
+          </div>
+        </div>
         <div className="flex justify-between ">
           <button
             className={`border border-[black] w-[45%] px-4 py-2 rounded font-medium ${
-              activeTab === "recipients" ? "bg-[#8000FF] text-white" : "text-gray-600"
+              activeTab === "recipients"
+                ? "bg-[#8000FF] text-white"
+                : "text-gray-600"
             }`}
             onClick={() => setActiveTab("recipients")}
           >
@@ -186,7 +195,9 @@ useEffect(() => {
           </button>
           <button
             className={` border border-[black] w-[45%] px-4 py-2 rounded font-medium ${
-              activeTab === "information" ? "bg-[#8000FF] text-white" : "text-gray-600"
+              activeTab === "information"
+                ? "bg-[#8000FF] text-white"
+                : "text-gray-600"
             }`}
             onClick={() => setActiveTab("information")}
           >
@@ -205,8 +216,7 @@ useEffect(() => {
                     {recipient.mail} ({recipient.role})
                   </p>
                 </div>
-              )
-              )}
+              ))}
             </div>
           </div>
         )}
@@ -224,12 +234,17 @@ useEffect(() => {
 
             <p>Document identification</p>
             {/* Added flex container */}
-            <div className="flex items-center relative"> {/* Add relative positioning */}
+            <div className="flex items-center relative">
+              {" "}
+              {/* Add relative positioning */}
               <p ref={documentIdRef} className="font-bold pb-3 pr-6">
                 {certificateInfo.documentId}
               </p>
               {/* Added copy button */}
-              <button className="px-6 py-2 mb-3 border " onClick={handleCopyDocumentId}>
+              <button
+                className="px-6 py-2 mb-3 border "
+                onClick={handleCopyDocumentId}
+              >
                 Copy
               </button>
               {/* Momentary Message */}
@@ -241,7 +256,7 @@ useEffect(() => {
             </div>
           </div>
         )}
-      </div> 
+      </div>
     </div>
   );
 }

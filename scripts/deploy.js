@@ -3,7 +3,7 @@ const main = async () => {
   //1.name of the contract type string
   //2. Abi  (Application Binary Interface) - it is optional - type array
   //3. bytecode -byte code of the contract - optional - type string
-  const contractFactory = await ethers.getContractFactory("IPFSStorage");//returns a promise that resolves to a ContractFactory object
+  const contractFactory = await ethers.getContractFactory("Certify");//returns a promise that resolves to a ContractFactory object
   //deploying new instance of COntractFactory object
   const contract = await contractFactory.deploy();//returns a promise which resolves to a new instance of contract object
   await contract.deployed();
