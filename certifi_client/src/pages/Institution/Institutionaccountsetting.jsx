@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import { Link } from "react-router-dom";
 import "../../css/institutionaccountsetting.css";
 import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
@@ -74,12 +75,12 @@ const Account = () => {
         <DeleteAccountPopup onClose={handleCloseDeleteAccountPopup} />
       )}
       <div className="sidebar">
-        <div className="logo-container">
+        <Link to="institutiondashboard" className="logo-container">
           <div className="logo-circle">
             <img src={certifiLogo} alt="CertiFi Logo" className="logo" />
           </div>
           <span className="company-name">CertiFi</span>
-        </div>
+        </Link>
         <div className="home">
           <FaUser className="icon" /> Account
         </div>
@@ -99,9 +100,9 @@ const Account = () => {
               />
               <span className="username">Username</span>
             </div>
-            <div className="logout-icon-container">
+            <Link to="/" className="logout-icon-container">
               <FaSignOutAlt />
-            </div>
+            </Link>
           </div>
         </div>
         <Card className="account-settings-card">
