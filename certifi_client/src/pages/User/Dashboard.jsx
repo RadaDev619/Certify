@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ethers } from "ethers"; //import ethers library
-
+import abi from "../../contractJson/Certify.json";
 import "../../css/dashboard.css";
 import metamaskLogo from "../../assets/metamask-logo.png";
 import certifiLogo from "../../assets/certifi-logo.png";
@@ -93,15 +93,15 @@ const Dashboard = ({ state }) => {
     setNewName("");
   };
 
-  const handleNameChange = (e) => {
-    setNewName(e.target.value);
-  };
+  // const handleNameChange = (e) => {
+  //   setNewName(e.target.value);
+  // };
 
-  const handleSubmit = () => {
-    // Handle the renaming logic here
-    console.log("New name:", newName);
-    closeRenameModal();
-  };
+  // const handleSubmit = () => {
+  //   // Handle the renaming logic here
+  //   console.log("New name:", newName);
+  //   closeRenameModal();
+  // };
 
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
 
@@ -119,65 +119,49 @@ const Dashboard = ({ state }) => {
     closeDeleteModal();
   };
 
-  // const { ethereum } = window;
-
-  const invokeConnection = async (event) => {
+  const invokeConnection = (event) => {
     event.preventDefault();
-
-    // try {
-    //   //invoke the metamask wallet
-    //   const accounts = await ethereum.request({
-    //     method: "eth_requestAccounts",
-    //   });
-
-    //   //reload the window on changing the account
-    //   window.ethereum.on("accountsChanged", (newAccounts) => {
-    //     setAccount(newAccounts[0]);
-    //   });
-
-    //   setAccount(accounts[0]);
-    // } catch (error) {
-    //   console.error("Error connecting to MetaMask:", error);
-    //   // Handle the error
-    // }
+    return;
   };
 
   const storeHash = async (event) => {
     event.preventDefault();
-    alert("reached here");
-    const { contract, provider } = state;
-    alert("reached here1");
+    const { ethereum } = window;
 
-    // if (!window.ethereum) {
-    //   alert("Metamask not detected");
-    //   console.log();
-    //   // Handle the case where MetaMask is not detected
-    //   openMetamaskPopup();
-    // } else {
-    //   alert("Please install and connect Metamask");
-    // }
-    const identifier = 266342625;
-    const hash = "dfadfdsafadsfffg";
-    alert("reached here2");
+    if (!ethereum && !ethereum.selectedAddress) {
+      openMetamaskPopup();
+      return;
+    }
+
+    const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
+    const contractABI = abi.abi;
+
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
-      alert("reached here3");
-      console.log(contract);
-      // Send the transaction with the estimated gas limit
+      const identifier = "623y4d6b5448bca5f8b7e230";
+      const hash = "ddddsqqqqqqqqqqssssdfsdfsdfd";
       const transaction = await contract.storeCertificate(identifier, hash);
-      alert("reached here4");
-
       console.log("Waiting for transaction...");
-      const receipt = await transaction.wait(); // Wait for the transaction to be mined
+      const receipt = await transaction.wait();
+      console.log(" object:", receipt);
+
+      // Access the event object from the logs array
+      // 0xbe432921b52531829ffdad541feec82dd15af5e2623y4d6b5448bca5f8b7e230ddddsqqqqqqqqqqssssdfsdfsdfd
+      const event = receipt.events;
+      console.log("Event object:", event);
+
+      // Access the concatenatedString from the args array
+      const concatenatedString = event[0].args[2];
+      console.log("Concatenated String:", concatenatedString);
       alert("Transaction is Successful!");
-      const concatenatedString = receipt.logs[2].data;
-      alert("Concatenated String: " + concatenatedString);
-
-      console.log("Transaction is Successful!", concatenatedString);
-
-      // window.location.reload();
+      // console.log("Transaction receipt:", receipt);
+      // const concatenatedString = receipt.logs[2].data;
+      // alert("Concatenated String: " + concatenatedString);
     } catch (error) {
-      console.error("Error adding hash:", error);
+      console.error("Error adding hash:", error.message);
       alert("Error adding hash. Please try again later.");
     }
   };
@@ -317,7 +301,7 @@ const Dashboard = ({ state }) => {
               <Typography variant="h5" component="div">
                 Documents
               </Typography>
-
+              {/* 
               <Modal
                 isOpen={renameModalIsOpen}
                 onRequestClose={closeRenameModal}
@@ -354,7 +338,7 @@ const Dashboard = ({ state }) => {
                     </button>
                   </div>
                 </div>
-              </Modal>
+              </Modal> */}
               {/* Delete Modal */}
               <Modal
                 isOpen={deleteModalIsOpen}
@@ -414,12 +398,7 @@ const Dashboard = ({ state }) => {
                     <i className="fas fa-eye"></i>
                   </Link>
                   <div className="view-icon ">
-                    <i
-                      className="fas fa-upload"
-                      // onClick={openMetamaskPopupPending}storeHash
-                      onClick={storeHash}
-                      onClick={openMetamaskPopup}
-                    ></i>
+                    <i className="fas fa-upload" onClick={storeHash}></i>
                   </div>
                 </div>
               ))}

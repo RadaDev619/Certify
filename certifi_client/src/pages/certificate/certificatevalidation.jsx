@@ -13,6 +13,102 @@ function CertificateValidation() {
   // State for certificate information (replace with your actual data or fetching mechanism)
   const [certificateInfo, setCertificateInfo] = useState([]);
 
+  // document approval
+  const [certificates, setCertificates] = useState([]); // State to store fetched certificates
+  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] =
+    useState(null);
+  const [currentNotValidCertificateId, setCurrentNotValidCertificateId] =
+    useState(null);
+  useEffect(() => {
+    // Fetch certificates from backend API
+    fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setCertificates(data.data);
+        } else {
+          alert("Certificate data fetch failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching certificates:", error);
+        alert(
+          "An error occurred while fetching certificates. Please try again."
+        );
+      });
+  }, []);
+
+  // verify modal
+  const [verifyModalIsOpen, setVerifyModalIsOpen] = useState(false);
+
+  const openVerifyModal = (certificateId) => {
+    setCurrentVerifyCertificateId(certificateId);
+    setVerifyModalIsOpen(true);
+  };
+
+  const closeVerifyModal = () => {
+    setVerifyModalIsOpen(false);
+  };
+
+  const handleVerify = (certificateId) => {
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/certificate/verify/${certificateId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          console.log(data.data);
+
+          alert("Document verified successfully.");
+        } else {
+          console.log(data);
+          alert("Document verification failed. Please try again.");
+        }
+      });
+    // console.log("Validated");
+    closeVerifyModal();
+  };
+
+  const handleNotValid = (certificateId) => {
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/certificate/notverify/${certificateId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {});
+    // console.log("Validated");
+    closenotValidModal();
+  };
+
+  // notvalid modal
+  const [notValidModalIsOpen, setnotValidModalIsOpen] = useState(false);
+
+  const opennotValidModal = (certificateId) => {
+    setCurrentNotValidCertificateId(certificateId);
+    setnotValidModalIsOpen(true);
+  };
+
+  const closenotValidModal = () => {
+    setnotValidModalIsOpen(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -257,6 +353,91 @@ function CertificateValidation() {
             </div>
           </div>
         )}
+
+        {/* verify Modal */}
+        <Modal
+          isOpen={verifyModalIsOpen}
+          onRequestClose={closeVerifyModal}
+          contentLabel="Verify Account Modal"
+          className="modal-overlay"
+          overlayClassName="modal-overlay"
+        >
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">Status validation </h2>
+            </div>
+            <p className="modal-message">
+              Are you sure this document is valid?
+            </p>
+            <div className="modal-buttons">
+              <button
+                className="modal-button verify"
+                onClick={() => handleVerify(currentVerifyCertificateId)}
+              >
+                Approve
+              </button>
+              <button
+                className="modal-button cancel"
+                onClick={closeVerifyModal}
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/* not validated modal */}
+        <Modal
+          isOpen={notValidModalIsOpen}
+          onRequestClose={closenotValidModal}
+          contentLabel="Verify Account Modal"
+          className="modal-overlay"
+          overlayClassName="modal-overlay"
+        >
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">Status validation </h2>
+            </div>
+            <p className="modal-message">
+              Are you sure this document is not valid?
+            </p>
+            <div className="modal-buttons">
+              <button
+                className="modal-button not-valid"
+                onClick={() => handleNotValid(currentNotValidCertificateId)}
+              >
+                Reject
+              </button>
+              <button
+                className="modal-button cancel"
+                onClick={closenotValidModal}
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Actions section */}
+        <div className="mt-8">
+          <h2 className="text-lg font-bold mb-4">Document Approval</h2>
+          <div className="flex justify-between">
+            <button
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-[45%]"
+              onClick={handleAccept}
+              // onClick={openVerifyModal}
+            >
+              Approve
+            </button>
+            <button
+              className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-[45%]"
+              onClick={handleReject}
+              // onClick={opennotValidModal}
+            >
+              Reject
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
