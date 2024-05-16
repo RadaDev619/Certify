@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import logo from "../../../public/logo.png";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../../public/background.jpeg";
+import Modal from "react-modal";
 
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");

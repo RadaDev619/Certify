@@ -286,7 +286,7 @@ const Dashboard = () => {
 
                     {/* not validated modal */}
                     <Modal
-                      isOpen={notValidModalIsOpen}
+                      // isOpen={notValidModalIsOpen}
                       onRequestClose={closenotValidModal}
                       contentLabel="Verify Account Modal"
                       className="modal-overlay"
