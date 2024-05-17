@@ -168,15 +168,6 @@ function CertificateValidation() {
   const ID = fetchedData?.cid || "";
   const certId = fetchedData?._id || "";
 
-  // Assuming you have these variables defined somewhere
-  // const personName = authorName; // Replace with actual data or state variable
-  // const courseName = courseName;
-  // const courseHours = 6;
-  // const courseDetails = courseDetails;
-  // const ID = cid;
-  // const durationType = "year";
-  // const certificationDate = new Date(); // Get the current date
-
   const formatDate = (date) => {
     const formattedDate = new Date(date).toLocaleDateString("en-US", {
       year: "numeric",
@@ -232,6 +223,17 @@ function CertificateValidation() {
     updateBadgeStatus();
   }, [certificateInfo.documentId]); // Update when documentId changes
 
+  // Add event handlers for Accept and Reject buttons
+  const handleAccept = () => {
+    // Add your logic for accepting the certificate here
+    console.log("Certificate accepted");
+  };
+
+  const handleReject = () => {
+    // Add your logic for rejecting the certificate here
+    console.log("Certificate rejected");
+  };
+
   return (
     <div className="flex h-screen">
       <nav className="w-full flex justify-between pl-20 pb-5 fixed top-0 left-0">
@@ -274,7 +276,7 @@ function CertificateValidation() {
         <div className="py-5">
           {/* Valid badge with dynamic color and text */}
           <div
-            className={`bg-[${validStatus.color}] text-[white] text-bg font-medium px-4 py-5 rounded text-center`}
+            className={`bg-[${validStatus.color}] text-[black] text-bg font-medium px-4 py-5 rounded text-center`}
           >
             {validStatus.text}
           </div>

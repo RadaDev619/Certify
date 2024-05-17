@@ -235,89 +235,15 @@ const Dashboard = () => {
               </div>
               {certificates.map((certificate) => (
                 <div className="table-row1" key={certificate.id}>
-                  <div className="table-row1">
-                    <div>{certificate.courseName}</div>
-                    <div>{certificate.name}</div>
-                    <div>{certificate.createdAt}</div>
+                  <div>{certificate.courseName}</div>
+                  <div>{certificate.name}</div>
+                  <div>{certificate.createdAt}</div>
+                  <Link to="/cvalid">
+                    {" "}
                     <div>
                       <i className="fas fa-eye"></i>
                     </div>
-                    <div className="status pad-status">
-                      <div className="valid" onClick={openVerifyModal}>
-                        <FaCheck />
-                      </div>
-                      <div className="pending" onClick={opennotValidModal}>
-                        <FaTimes />
-                      </div>
-                    </div>
-                    {/* verify Modal */}
-                    <Modal
-                      isOpen={verifyModalIsOpen}
-                      onRequestClose={closeVerifyModal}
-                      contentLabel="Verify Account Modal"
-                      className="modal-overlay"
-                      overlayClassName="modal-overlay"
-                    >
-                      <div className="modal-content">
-                        <div className="modal-header">
-                          <h2 className="modal-title">Status validation </h2>
-                        </div>
-                        <p className="modal-message">
-                          Are you sure this document is valid?
-                        </p>
-                        <div className="modal-buttons">
-                          <button
-                            className="modal-button verify"
-                            onClick={() =>
-                              handleVerify(currentVerifyCertificateId)
-                            }
-                          >
-                            Verify
-                          </button>
-                          <button
-                            className="modal-button cancel"
-                            onClick={closeVerifyModal}
-                          >
-                            Back
-                          </button>
-                        </div>
-                      </div>
-                    </Modal>
-
-                    {/* not validated modal */}
-                    <Modal
-                      // isOpen={notValidModalIsOpen}
-                      onRequestClose={closenotValidModal}
-                      contentLabel="Verify Account Modal"
-                      className="modal-overlay"
-                      overlayClassName="modal-overlay"
-                    >
-                      <div className="modal-content">
-                        <div className="modal-header">
-                          <h2 className="modal-title">Status validation </h2>
-                        </div>
-                        <p className="modal-message">
-                          Are you sure this document is not valid?
-                        </p>
-                        <div className="modal-buttons">
-                          <button
-                            className="modal-button not-valid"
-                            onClick={() =>
-                              handleNotValid(currentNotValidCertificateId)
-                            }
-                          >
-                            Remove
-                          </button>
-                          <button
-                            className="modal-button cancel"
-                            onClick={closenotValidModal}
-                          >
-                            Back
-                          </button>
-                        </div>
-                      </div>
-                    </Modal>
-                  </div>
+                  </Link>
                 </div>
               ))}
             </div>
