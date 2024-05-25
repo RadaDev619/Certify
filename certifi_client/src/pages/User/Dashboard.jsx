@@ -22,10 +22,14 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Modal from "react-modal";
 
+const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
+const contractABI = abi.abi;
+
 const Dashboard = ({ state }) => {
   const [showCreateDropdown, setShowCreateDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [certificates, setCertificates] = useState([]); // State to store fetched certificates
+  const [Hash, setHash] = useState("");
 
   useEffect(() => {
     // Fetch certificates from backend API
@@ -124,26 +128,73 @@ const Dashboard = ({ state }) => {
     return;
   };
 
-  const storeHash = async (event) => {
+  const [provider, setProvider] = useState(null);
+  const [signer, setSigner] = useState(null);
+  const [contract, setContract] = useState(null);
+  const [account, setAccount] = useState(null);
+
+  useEffect(() => {
+    const connectWallet = async () => {
+      try {
+        if (window.ethereum) {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          setProvider(provider);
+
+          const accounts = await provider.send("eth_requestAccounts", []);
+          setAccount(accounts[0]);
+
+          const signer = provider.getSigner();
+          setSigner(signer);
+
+          const contract = new ethers.Contract(
+            contractAddress,
+            contractABI,
+            signer
+          );
+          setContract(contract);
+        } else {
+          console.error("Please install MetaMask!");
+        }
+      } catch (error) {
+        console.error("Error connecting wallet:", error);
+      }
+    };
+
+    connectWallet();
+  }, []);
+
+  const storeHash = (certificateId) => async (event) => {
     event.preventDefault();
-    const { ethereum } = window;
+    // const { ethereum } = window;
 
-    if (!ethereum && !ethereum.selectedAddress) {
-      openMetamaskPopup();
-      return;
-    }
+    // if (!ethereum && !ethereum.selectedAddress) {
+    //   openMetamaskPopup();
+    //   return;
+    // }
 
-    const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
-    const contractABI = abi.abi;
+    // const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
+    // const contractABI = abi.abi;
 
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    // const provider = new ethers.providers.Web3Provider(ethereum);
+    // const signer = provider.getSigner();
+    // const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
-      const identifier = "623y4d6b5448bca5f8b7e230";
-      const hash = "ddddsqqqqqqqqqqssssdfsdfsdfd";
-      const transaction = await contract.storeCertificate(identifier, hash);
+      fetch(
+        `https://prj-certifi-backend.onrender.com/api/certificate/get/${certificateId}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Response data:", data.data.ipfsHash);
+          setHash(String(data.data.ipfsHash));
+        })
+        .catch((error) => {
+          console.error("Error fetching community data:", error);
+        });
+      const identifier = String(certificateId);
+      console.log("signer", signer);
+
+      const transaction = await contract.storeCertificate(identifier, Hash);
       console.log("Waiting for transaction...");
       const receipt = await transaction.wait();
       console.log(" object:", receipt);
@@ -398,7 +449,10 @@ const Dashboard = ({ state }) => {
                     <i className="fas fa-eye"></i>
                   </Link>
                   <div className="view-icon ">
-                    <i className="fas fa-upload" onClick={storeHash}></i>
+                    <i
+                      className="fas fa-upload"
+                      onClick={storeHash(certificate.id)}
+                    ></i>
                   </div>
                 </div>
               ))}

@@ -4,6 +4,7 @@ import logo from "../../../public/logo.png";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../../public/background.jpeg";
 import Modal from "react-modal";
+import axios from "axios";
 
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");
@@ -56,7 +57,39 @@ function CertificateValidation() {
     setVerifyModalIsOpen(false);
   };
 
-  const handleVerify = (certificateId) => {
+  const handleVerify = async (certificateId) => {
+    const imageUrl = certificateInfo.image;
+    console.log(imageUrl);
+
+    // Fetch the image as a Blob
+    const response = await fetch(imageUrl);
+    const imageBlob = await response.blob();
+    // alert("reached here2");
+
+    // Create FormData object to send the image
+    const formDataForUpload = new FormData();
+    formDataForUpload.append("file", imageBlob, "image.png");
+    // alert("reached here4");
+
+    // Make the API request to Pinata to upload the image
+    const responseData = await axios({
+      method: "post",
+      url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+      data: formDataForUpload,
+      headers: {
+        pinata_api_key: import.meta.env.VITE_PINATA_API_KEY,
+        pinata_secret_api_key: import.meta.env.VITE_PINATA_SECRET_KEY,
+        "Content-Type": `multipart/form-data`,
+      },
+    });
+
+    // // Set the file URL
+    // const fileUrl =
+    //   "https://gateway.pinata.cloud/ipfs/" + responseData.data.IpfsHash;
+
+    const ipfsHash = String(responseData.data.IpfsHash);
+    console.log(ipfsHash);
+
     fetch(
       `https://prj-certifi-backend.onrender.com/api/certificate/verify/${certificateId}`,
       {
@@ -64,6 +97,9 @@ function CertificateValidation() {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          ipfsHash,
+        }),
       }
     )
       .then((response) => response.json())
@@ -153,6 +189,7 @@ function CertificateValidation() {
           day: "numeric",
         }),
         documentId: fetchedData._id,
+        image: fetchedData.image,
       });
     }
   }, [fetchedData]);
@@ -226,6 +263,7 @@ function CertificateValidation() {
   // Add event handlers for Accept and Reject buttons
   const handleAccept = () => {
     // Add your logic for accepting the certificate here
+    openVerifyModal();
     console.log("Certificate accepted");
   };
 
