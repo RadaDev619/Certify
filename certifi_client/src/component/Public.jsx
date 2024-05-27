@@ -1,37 +1,28 @@
-import React, { useState, useRef } from "react";
-import earth from "../../public/earth.png"
-import cub from "../../public/cub.png"
-import comp from "../../public/comp.png"
-import logo from "../../public/logo.png"
+import React, { useState, useRef } from 'react';
+import earth from '../../public/earth.png';
+import cub from '../../public/cub.png';
+import comp from '../../public/comp.png';
+import logo from '../../public/logo.png';
 
-const Public = ({ state }) => {
+const Public = () => {
   const [ID, setID] = useState("");
-  const [Url, setUrl] = useState(""); // State for the fetched URL
-  const [searchResult, setSearchResult] = useState(""); // State for search results
-  const searchButtonRef = useRef(null); 
-  const inputRef = useRef(null); 
+  const [Url, setUrl] = useState("");
+  const [searchResult, setSearchResult] = useState(""); 
+  const inputRef = useRef(null);
 
-
+  // Mocked searchCertificate function (replace with your real logic)
   const searchCertificate = async () => {
-    const { contract, provider } = state;
-
     try {
-      // Send the transaction with the estimated gas limit
-      const transaction = await contract.getIPFSHash(ID);
+      // Simulate a delay for demonstration
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      console.log("Waiting for transaction...");
-      const receipt = await transaction.wait(); // Wait for the transaction to be mined
-      console.log("Transaction is Successful!");
-      const concatenatedString = receipt.logs[0].data;
-      console.log("Concatenated String: " + concatenatedString);
-
-      setUrl(concatenatedString);
-      setSearchResult(`Certificate found! URL: ${concatenatedString}`); // Update searchResult state
-      //setSearchResult(`Certificate found! URL: <a href="${concatenatedString}" target="_blank" rel="noopener noreferrer">${concatenatedString}</a>`);
+      // Replace this with your actual logic for retrieving the IPFSHash
+      const mockIPFSHash = `https://example.com/certificate/${ID}`; 
+      setUrl(mockIPFSHash); 
+      setSearchResult(`Certificate found! URL: ${mockIPFSHash}`);
     } catch (error) {
-      console.error("Error adding hash:", error);
-      alert("Certificate invalid!");
-      setSearchResult("Certificate invalid!"); // Update searchResult state
+      console.error("Error fetching certificate:", error);
+      setSearchResult("Certificate invalid!");
     }
   };
 
@@ -40,17 +31,16 @@ const Public = ({ state }) => {
   };
 
   const handleKeyDown = (event) => {
-    // Only trigger on Enter key press inside the input field
-    if (event.key === "Enter" && inputRef.current === document.activeElement) { 
-      searchCertificate(); // Call searchCertificate instead of searchButtonRef.current.click()
+    if (event.key === "Enter" && inputRef.current === document.activeElement) {
+      searchCertificate();
     }
   };
 
   const handleClearInput = () => {
-    setID(""); // Clear the input field
-    inputRef.current.focus(); // Focus back on the input field
+    setID("");
+    inputRef.current.focus();
+    setSearchResult("");
   };
-
   return (
     <div className="pt-40 px-16">
       <div className="relative validate pb-40">
@@ -58,7 +48,7 @@ const Public = ({ state }) => {
         <h3 className="text-center text-3xl pb-10">Protect your documents! <br /> Check their integrity and authenticity</h3>
         <p className="text-center text-xl pb-10">Enter the document ID number or check its authenticity by adding the file</p>
      
-        <form class="form relative">
+        <form class="form relative" onKeyDown={handleKeyDown}> 
   <button class="absolute left-2 -translate-y-1/2 top-1/2 p-1">
     <svg
       width="17"
@@ -79,15 +69,14 @@ const Public = ({ state }) => {
     </svg>
   </button>
   <input
-    class="input rounded-full px-8 py-3 border-2 border-transparent focus:outline-none w-full focus:border-[black] placeholder-gray-400 transition-all duration-300 shadow-md"
-    required=""
-    
-    ref={inputRef} 
-    value={ID}
-    onChange={handleInputChange} 
-    onKeyDown={handleKeyDown} 
-    placeholder="Search by document id/address or file hash"
-  />
+            className="input rounded-full px-8 py-3 border-2 border-transparent focus:outline-none w-full focus:border-[black] placeholder-gray-400 transition-all duration-300 shadow-md"
+            required=""
+            ref={inputRef} 
+            value={ID}
+            onChange={handleInputChange} 
+            placeholder="Enter document ID or file hash" // Updated placeholder
+          />
+
   <button type="button" class="absolute right-3 -translate-y-1/2 top-1/2 p-1" onClick={handleClearInput}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -109,14 +98,13 @@ const Public = ({ state }) => {
       
 
 {/* search end   */}
-        {/* Area to display the search results */}
-        <div className="mt-5"> {/* Add some spacing */}
+         {/* Display search results */}
+         <div className="mt-5"> 
           <p className="text-center">{searchResult}</p> 
         </div>
       </div>
 
 {/* search  */}
-
 
       <div className="Aboutus ">
         <h1 className="text-center font-bold py-10">About Us </h1>
@@ -157,7 +145,6 @@ const Public = ({ state }) => {
       <div className="members "> 
       <h1 className="text-5xl text-center p-10">Members </h1>
       </div>
-      
 
       <footer className="bg-white py-16 mt-20">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
