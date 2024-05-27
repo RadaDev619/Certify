@@ -9,7 +9,7 @@ const Navbar = () => {
   return (
     <div className='px-16 py-8 flex w-full justify-between items-center bg-black/15 fixed backdrop-blur-sm' >
       <div>
-        <Link to={"/"}>
+        <Link to={"/"}>-
         <img src={logo} alt="" />
         </Link>
       </div>
