@@ -47,7 +47,8 @@ const Public = ({ state }) => {
   };
 
   const handleClearInput = () => {
-    setID(""); // Clear the input value
+    setID(""); // Clear the input field
+    inputRef.current.focus(); // Focus back on the input field
   };
 
   return (
@@ -87,7 +88,7 @@ const Public = ({ state }) => {
     onKeyDown={handleKeyDown} 
     placeholder="Search by document id/address or file hash"
   />
-  <button type="reset" class="absolute right-3 -translate-y-1/2 top-1/2 p-1" onClick={handleClearInput}>
+  <button type="button" class="absolute right-3 -translate-y-1/2 top-1/2 p-1" onClick={handleClearInput}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="w-5 h-5 text-gray-700"
@@ -115,6 +116,7 @@ const Public = ({ state }) => {
       </div>
 
 {/* search  */}
+
 
       <div className="Aboutus ">
         <h1 className="text-center font-bold py-10">About Us </h1>
@@ -286,6 +288,10 @@ const Public = ({ state }) => {
         </div>
       </footer>
 
+
+      
+
+      
     </div>
   );
 };

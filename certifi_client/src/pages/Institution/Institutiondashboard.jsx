@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import "../../css/institutiondashboard.css";
 import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
-import metamaskLogo from "../../assets/metamask-logo.png";
 import "@fortawesome/fontawesome-free/css/all.css";
+import { Link } from "react-router-dom";
+
 import {
   FaSignOutAlt,
   FaSearch,
@@ -22,8 +22,16 @@ import Modal from "react-modal";
 const Dashboard = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [certificates, setCertificates] = useState([]); // State to store fetched certificates
-  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] = useState(null);
-  const [currentNotValidCertificateId, setCurrentNotValidCertificateId] = useState(null);
+  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] =
+    useState(null);
+  const [currentNotValidCertificateId, setCurrentNotValidCertificateId] =
+    useState(null);
+  const [filteredCertificates, setFilteredCertificates] = useState([]); // State to store filtered certificates
+  const [filterText, setFilterText] = useState(""); // State to store filter text
+  const [filterModal, setFilterModal] = useState(false); // State to control filter modal
+  const [filterDocumentName, setFilterDocumentName] = useState(""); // State to store filter document name
+  const [filterAuthorName, setFilterAuthorName] = useState(""); // State to store filter author name
+
   useEffect(() => {
     // Fetch certificates from backend API
     fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
@@ -37,25 +45,60 @@ const Dashboard = () => {
         if (data.status === "success") {
           // Update certificates state with fetched data
           setCertificates(data.data);
+          setFilteredCertificates(data.data); // Set initial filtered certificates
         } else {
           alert("Certificate data fetch failed. Please try again.");
         }
       })
       .catch((error) => {
         console.error("Error fetching certificates:", error);
-        alert("An error occurred while fetching certificates. Please try again.");
+        alert(
+          "An error occurred while fetching certificates. Please try again."
+        );
       });
   }, []);
+
+  // Filter certificates based on name and author
+  useEffect(() => {
+    const filtered = certificates.filter(
+      (certificate) =>
+        certificate.courseName
+          .toLowerCase()
+          .includes(filterText.toLowerCase()) ||
+        certificate.name.toLowerCase().includes(filterText.toLowerCase()) ||
+        (filterDocumentName &&
+          certificate.courseName
+            .toLowerCase()
+            .includes(filterDocumentName.toLowerCase())) ||
+        (filterAuthorName &&
+          certificate.name
+            .toLowerCase()
+            .includes(filterAuthorName.toLowerCase()))
+    );
+    setFilteredCertificates(filtered);
+  }, [filterText, certificates, filterDocumentName, filterAuthorName]);
 
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
   };
 
+  // Filter modal handlers
+  const openFilterModal = () => {
+    setFilterModal(true);
+  };
+
+  const closeFilterModal = () => {
+    setFilterModal(false);
+  };
+
+  const applyFilters = () => {
+    closeFilterModal();
+  };
   // verify modal
   const [verifyModalIsOpen, setVerifyModalIsOpen] = useState(false);
 
   const openVerifyModal = (certificateId) => {
-    setCurrentVerifyCertificateId(certificateId)
+    setCurrentVerifyCertificateId(certificateId);
     setVerifyModalIsOpen(true);
   };
 
@@ -64,54 +107,62 @@ const Dashboard = () => {
   };
 
   const handleVerify = (certificateId) => {
-    fetch(`https://prj-certifi-backend.onrender.com/api/certificate/verify/${certificateId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/certificate/verify/${certificateId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    }).then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success") {
-        console.log(data.data)
-        alert("Document verified successfully.");  
-      }
-      else{
-        console.log(data)
-        alert("Document verification failed. Please try again.");
-      }
-    })
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          console.log(data.data);
+
+          alert("Document verified successfully.");
+        } else {
+          console.log(data);
+          alert("Document verification failed. Please try again.");
+        }
+      });
     // console.log("Validated");
     closeVerifyModal();
   };
 
   const handleNotValid = (certificateId) => {
-    fetch(`https://prj-certifi-backend.onrender.com/api/certificate/notverify/${certificateId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/certificate/notverify/${certificateId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    }).then((response) => response.json())
-    .then((data) => {})
+    )
+      .then((response) => response.json())
+      .then((data) => {});
     // console.log("Validated");
     closenotValidModal();
   };
 
   // notvalid modal
-  const [notValidModalIsOpen, setnotValidModalIsOpen] = useState(false);
 
-    const opennotValidModal = () => {
-      setnotValidModalIsOpen(true);
-    };
-  
-    const closenotValidModal = () => {
-      setnotValidModalIsOpen(false);
-    };
-  
-    const handlenotValid = () => {
-      // Implement delete account logic here
-      console.log("Not Validated");
-      closenotValidModal();
-    };
+  const opennotValidModal = (certificateId) => {
+    setCurrentNotValidCertificateId(certificateId);
+    setnotValidModalIsOpen(true);
+  };
+
+  const closenotValidModal = () => {
+    setnotValidModalIsOpen(false);
+  };
+
+  // const handlenotValid = () => {
+  //   // Implement delete account logic here
+  //   console.log("Not Validated");
+  //   closenotValidModal();
+  // };
 
   return (
     <div className="dashboard-wrapper">
@@ -130,7 +181,12 @@ const Dashboard = () => {
         <div className="search-bar">
           <div className="search-container">
             <FaSearch className="search-icon" />
-            <input type="text" placeholder="Search Document or Folder" />
+            <input
+              type="text"
+              placeholder="Search Document or Folder"
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+            />
           </div>
           <div className="user-info">
             <div
@@ -144,12 +200,15 @@ const Dashboard = () => {
               />
               <span className="username">Username</span>
               {showUserDropdown && (
-                <Link to="/institutionaccountsetting" className="user-dropdown">
-                  <div className="user-dropdown-content">
+                <div className="user-dropdown">
+                  <Link
+                    to="/institutionaccountsetting"
+                    className="user-dropdown-content"
+                  >
                     <FaCog className="settings-icon" />
                     <span>Settings</span>
-                  </div>
-                </Link>
+                  </Link>
+                </div>
               )}
             </div>
             <Link to="/" className="logout-icon-container">
@@ -164,7 +223,7 @@ const Dashboard = () => {
                 Documents
               </Typography>
               <div className="action-icons">
-                <FaFilter className="icon" /> Filter
+                <FaFilter className="icon" onClick={openFilterModal} /> Filter
               </div>
             </div>
             <div className="documents-table">
@@ -173,99 +232,70 @@ const Dashboard = () => {
                 <div>Author</div>
                 <div>Update date</div>
                 <div>View</div>
-                <div>Status</div>
               </div>
               {certificates.map((certificate) => (
-              <div className="table-row1">
-                <div>{certificate.courseName}</div>
-                <div>
-                  {certificate.name}
+                <div className="table-row1" key={certificate.id}>
+                  <div>{certificate.courseName}</div>
+                  <div>{certificate.name}</div>
+                  <div>{certificate.createdAt}</div>
+                  <Link to="/cvalid">
+                    {" "}
+                    <div>
+                      <i className="fas fa-eye"></i>
+                    </div>
+                  </Link>
                 </div>
-                <div>{certificate.createdAt}</div>
-                <div>
-                  <i className="fas fa-eye"></i>
-                </div>
-                <div className="status pad-status">
-                  <div className="valid" onClick={openVerifyModal}>
-                    <FaCheck />
-                  </div>
-                  <div className="pending" onClick={opennotValidModal}>
-                    <FaTimes />
-                  </div>
-                </div>
-                {/* verify Modal */}
-              <Modal
-                isOpen={verifyModalIsOpen}
-                onRequestClose={closeVerifyModal}
-                contentLabel="Verify Account Modal"
-                className="modal-overlay"
-                overlayClassName="modal-overlay"
-              >
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h2 className="modal-title">Status validation </h2>
-                  </div>
-                  <p className="modal-message">
-                  Are you sure this document is valid? 
-                  </p>
-                  <div className="modal-buttons">
-                    <button
-                      className="modal-button verify"
-                      onClick={handleVerify}
-                    >
-                      Verify
-                    </button>
-                    <button
-                      className="modal-button cancel"
-                      onClick={closeVerifyModal}
-                    >
-                      Back 
-                    </button>
-                  </div>
-                </div>
-              </Modal>
-
-              {/* not validated modal */}
-              <Modal
-                isOpen={notValidModalIsOpen}
-                onRequestClose={closenotValidModal}
-                contentLabel="Verify Account Modal"
-                className="modal-overlay"
-                overlayClassName="modal-overlay"
-              >
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h2 className="modal-title">Status validation </h2>
-                  </div>
-                  <p className="modal-message">
-                  Are you sure this document is not valid? 
-                  </p>
-                  <div className="modal-buttons">
-                    <button
-                      className="modal-button not-valid"
-                      onClick={handlenotValid}
-                    >
-                      Remove
-                    </button>
-                    <button
-                      className="modal-button cancel"
-                      onClick={closenotValidModal}
-                    >
-                      Back
-                    </button>
-                  </div>
-                </div>
-              </Modal>
-
-
-              </div>
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
+      {/* Filter Modal */}
+      <Modal
+        isOpen={filterModal}
+        onRequestClose={closeFilterModal}
+        contentLabel="Filter Modal"
+        className="modal-overlay"
+        overlayClassName="modal-overlay"
+      >
+        <div className="modal-content">
+          <div className="modal-header">
+            <h2 className="modal-title">Filter Documents</h2>
+          </div>
+          <div className="modal-body">
+            <div className="form-group">
+              <label htmlFor="documentName">Document Name</label>
+              <input
+                type="text"
+                id="documentName"
+                value={filterDocumentName}
+                onChange={(e) => setFilterDocumentName(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="authorName">Author Name</label>
+              <input
+                type="text"
+                id="authorName"
+                value={filterAuthorName}
+                onChange={(e) => setFilterAuthorName(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="modal-buttons">
+            <button className="modal-button apply" onClick={applyFilters}>
+              Apply
+            </button>
+            <button className="modal-button cancel" onClick={closeFilterModal}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
 
 export default Dashboard;
+
+// updates

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ethers } from "ethers"; //import ethers library
-
+import abi from "../../contractJson/Certify.json";
 import "../../css/dashboard.css";
 import metamaskLogo from "../../assets/metamask-logo.png";
 import certifiLogo from "../../assets/certifi-logo.png";
@@ -22,10 +22,14 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Modal from "react-modal";
 
+const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
+const contractABI = abi.abi;
+
 const Dashboard = ({ state }) => {
   const [showCreateDropdown, setShowCreateDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [certificates, setCertificates] = useState([]); // State to store fetched certificates
+  const [Hash, setHash] = useState("");
 
   useEffect(() => {
     // Fetch certificates from backend API
@@ -93,15 +97,15 @@ const Dashboard = ({ state }) => {
     setNewName("");
   };
 
-  const handleNameChange = (e) => {
-    setNewName(e.target.value);
-  };
+  // const handleNameChange = (e) => {
+  //   setNewName(e.target.value);
+  // };
 
-  const handleSubmit = () => {
-    // Handle the renaming logic here
-    console.log("New name:", newName);
-    closeRenameModal();
-  };
+  // const handleSubmit = () => {
+  //   // Handle the renaming logic here
+  //   console.log("New name:", newName);
+  //   closeRenameModal();
+  // };
 
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
 
@@ -119,65 +123,96 @@ const Dashboard = ({ state }) => {
     closeDeleteModal();
   };
 
-  // const { ethereum } = window;
-
-  const invokeConnection = async (event) => {
+  const invokeConnection = (event) => {
     event.preventDefault();
-
-    // try {
-    //   //invoke the metamask wallet
-    //   const accounts = await ethereum.request({
-    //     method: "eth_requestAccounts",
-    //   });
-
-    //   //reload the window on changing the account
-    //   window.ethereum.on("accountsChanged", (newAccounts) => {
-    //     setAccount(newAccounts[0]);
-    //   });
-
-    //   setAccount(accounts[0]);
-    // } catch (error) {
-    //   console.error("Error connecting to MetaMask:", error);
-    //   // Handle the error
-    // }
+    return;
   };
 
-  const storeHash = async (event) => {
-    event.preventDefault();
-    alert("reached here");
-    const { contract, provider } = state;
-    alert("reached here1");
+  const [provider, setProvider] = useState(null);
+  const [signer, setSigner] = useState(null);
+  const [contract, setContract] = useState(null);
+  const [account, setAccount] = useState(null);
 
-    // if (!window.ethereum) {
-    //   alert("Metamask not detected");
-    //   console.log();
-    //   // Handle the case where MetaMask is not detected
+  useEffect(() => {
+    const connectWallet = async () => {
+      try {
+        if (window.ethereum) {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          setProvider(provider);
+
+          const accounts = await provider.send("eth_requestAccounts", []);
+          setAccount(accounts[0]);
+
+          const signer = provider.getSigner();
+          setSigner(signer);
+
+          const contract = new ethers.Contract(
+            contractAddress,
+            contractABI,
+            signer
+          );
+          setContract(contract);
+        } else {
+          console.error("Please install MetaMask!");
+        }
+      } catch (error) {
+        console.error("Error connecting wallet:", error);
+      }
+    };
+
+    connectWallet();
+  }, []);
+
+  const storeHash = (certificateId) => async (event) => {
+    event.preventDefault();
+    // const { ethereum } = window;
+
+    // if (!ethereum && !ethereum.selectedAddress) {
     //   openMetamaskPopup();
-    // } else {
-    //   alert("Please install and connect Metamask");
+    //   return;
     // }
-    const identifier = 663242625;
-    const hash = "dfadfdsafadsfffg";
-    alert("reached here2");
+
+    // const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
+    // const contractABI = abi.abi;
+
+    // const provider = new ethers.providers.Web3Provider(ethereum);
+    // const signer = provider.getSigner();
+    // const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
-      alert("reached here3");
+      fetch(
+        `https://prj-certifi-backend.onrender.com/api/certificate/get/${certificateId}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Response data:", data.data.ipfsHash);
+          setHash(String(data.data.ipfsHash));
+        })
+        .catch((error) => {
+          console.error("Error fetching community data:", error);
+        });
+      const identifier = String(certificateId);
+      console.log("signer", signer);
 
-      // Send the transaction with the estimated gas limit
-      const transaction = contract.storeCertificate(identifier, hash);
-      alert("reached here4");
-
+      const transaction = await contract.storeCertificate(identifier, Hash);
       console.log("Waiting for transaction...");
-      const receipt = await transaction.wait(); // Wait for the transaction to be mined
+      const receipt = await transaction.wait();
+      console.log(" object:", receipt);
+
+      // Access the event object from the logs array
+      // 0xbe432921b52531829ffdad541feec82dd15af5e2623y4d6b5448bca5f8b7e230ddddsqqqqqqqqqqssssdfsdfsdfd
+      const event = receipt.events;
+      console.log("Event object:", event);
+
+      // Access the concatenatedString from the args array
+      const concatenatedString = event[0].args[2];
+      console.log("Concatenated String:", concatenatedString);
       alert("Transaction is Successful!");
-      const concatenatedString = receipt.logs[2].data;
-      alert("Concatenated String: " + concatenatedString);
-
-      console.log("Transaction is Successful!", concatenatedString);
-
-      // window.location.reload();
+      // console.log("Transaction receipt:", receipt);
+      // const concatenatedString = receipt.logs[2].data;
+      // alert("Concatenated String: " + concatenatedString);
     } catch (error) {
-      console.error("Error adding hash:", error);
+      console.error("Error adding hash:", error.message);
       alert("Error adding hash. Please try again later.");
     }
   };
@@ -317,7 +352,7 @@ const Dashboard = ({ state }) => {
               <Typography variant="h5" component="div">
                 Documents
               </Typography>
-
+              {/* 
               <Modal
                 isOpen={renameModalIsOpen}
                 onRequestClose={closeRenameModal}
@@ -354,7 +389,7 @@ const Dashboard = ({ state }) => {
                     </button>
                   </div>
                 </div>
-              </Modal>
+              </Modal> */}
               {/* Delete Modal */}
               <Modal
                 isOpen={deleteModalIsOpen}
@@ -396,7 +431,6 @@ const Dashboard = ({ state }) => {
                 <div>Update date</div>
                 <div>View</div>
                 <div>Upload</div>
-                <div>Actions</div>
               </div>
 
               {certificates.map((certificate) => (
@@ -414,22 +448,11 @@ const Dashboard = ({ state }) => {
                   <Link to="/cvalid" className="view-icon">
                     <i className="fas fa-eye"></i>
                   </Link>
-                  <div className="view-icon">
+                  <div className="view-icon ">
                     <i
                       className="fas fa-upload"
-                      onClick={openMetamaskPopup}
+                      onClick={storeHash(certificate.id)}
                     ></i>
-                  </div>
-
-                  <div className="action-icons">
-                    <div className="icon-container" onClick={openRenameModal}>
-                      <FaEdit className="icon" /> Rename
-                    </div>
-
-                    <div className="icon-container" onClick={openDeleteModal}>
-                      <FaTrashAlt className="icon" />
-                      Delete
-                    </div>
                   </div>
                 </div>
               ))}

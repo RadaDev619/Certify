@@ -5,16 +5,18 @@ import logo from "../../../public/logo.png";
 const CertificatePart = () => {
   const navigate = useNavigate();
   const certId = window.localStorage.getItem("certId");
+
   const handleButtonClick = () => {
     // console.log(signer.email)
+    const formData = new FormData();
+
+    formData.append("image", image);
+    formData.append("signer", signer.email);
+
+
     fetch(`https://prj-certifi-backend.onrender.com/api/certificate/addSigner/${certId}`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        signer: signer.email,
-      }),
+      body: formData,
     }).then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
@@ -26,8 +28,7 @@ const CertificatePart = () => {
       });
   }
  
-
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [image, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [signer, setSigner] = useState(null);
   const [availableSigners, setAvailableSigners] = useState([
@@ -38,14 +39,14 @@ const CertificatePart = () => {
   const previewRef = useRef(null);
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedFile(file);
+    const image = e.target.files[0];
+    setSelectedFile(image);
 
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreviewUrl(reader.result);
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(image);
   };
 
   const handleChooseSigner = (signerEmail) => {
@@ -86,9 +87,9 @@ const CertificatePart = () => {
               type="file"
               onChange={handleFileChange}
             />
-            {selectedFile && (
+            {image && (
               <div className="mt-2 flex gap-6 ">
-                <p className="text-sm pt-4">Selected file: {selectedFile.name}</p>
+                <p className="text-sm pt-4">Selected file: {image.name}</p>
                 <div className="w-10 h-10 rounded-full overflow-hidden inline-block mt-2 cursor-pointer" onClick={togglePreview}>
                   <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                 </div>

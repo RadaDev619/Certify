@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import logo from "../../../public/logo.png";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../../public/background.jpeg";
+import Modal from "react-modal";
+import axios from "axios";
 
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");
@@ -11,6 +13,137 @@ function CertificateValidation() {
   const [recipients, setRecipients] = useState([]);
   // State for certificate information (replace with your actual data or fetching mechanism)
   const [certificateInfo, setCertificateInfo] = useState([]);
+
+  // document approval
+  const [certificates, setCertificates] = useState([]); // State to store fetched certificates
+  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] =
+    useState(null);
+  const [currentNotValidCertificateId, setCurrentNotValidCertificateId] =
+    useState(null);
+  useEffect(() => {
+    // Fetch certificates from backend API
+    fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setCertificates(data.data);
+        } else {
+          alert("Certificate data fetch failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching certificates:", error);
+        alert(
+          "An error occurred while fetching certificates. Please try again."
+        );
+      });
+  }, []);
+
+  // verify modal
+  const [verifyModalIsOpen, setVerifyModalIsOpen] = useState(false);
+
+  const openVerifyModal = (certificateId) => {
+    setCurrentVerifyCertificateId(certificateId);
+    setVerifyModalIsOpen(true);
+  };
+
+  const closeVerifyModal = () => {
+    setVerifyModalIsOpen(false);
+  };
+
+  const handleVerify = async (certificateId) => {
+    const imageUrl = certificateInfo.image;
+    console.log(imageUrl);
+
+    // Fetch the image as a Blob
+    const response = await fetch(imageUrl);
+    const imageBlob = await response.blob();
+    // alert("reached here2");
+
+    // Create FormData object to send the image
+    const formDataForUpload = new FormData();
+    formDataForUpload.append("file", imageBlob, "image.png");
+    // alert("reached here4");
+
+    // Make the API request to Pinata to upload the image
+    const responseData = await axios({
+      method: "post",
+      url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+      data: formDataForUpload,
+      headers: {
+        pinata_api_key: import.meta.env.VITE_PINATA_API_KEY,
+        pinata_secret_api_key: import.meta.env.VITE_PINATA_SECRET_KEY,
+        "Content-Type": `multipart/form-data`,
+      },
+    });
+
+    // // Set the file URL
+    // const fileUrl =
+    //   "https://gateway.pinata.cloud/ipfs/" + responseData.data.IpfsHash;
+
+    const ipfsHash = String(responseData.data.IpfsHash);
+    console.log(ipfsHash);
+
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/certificate/verify/${certificateId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ipfsHash,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          console.log(data.data);
+
+          alert("Document verified successfully.");
+        } else {
+          console.log(data);
+          alert("Document verification failed. Please try again.");
+        }
+      });
+    // console.log("Validated");
+    closeVerifyModal();
+  };
+
+  const handleNotValid = (certificateId) => {
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/certificate/notverify/${certificateId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {});
+    // console.log("Validated");
+    closenotValidModal();
+  };
+
+  // notvalid modal
+  const [notValidModalIsOpen, setnotValidModalIsOpen] = useState(false);
+
+  const opennotValidModal = (certificateId) => {
+    setCurrentNotValidCertificateId(certificateId);
+    setnotValidModalIsOpen(true);
+  };
+
+  const closenotValidModal = () => {
+    setnotValidModalIsOpen(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,6 +189,7 @@ function CertificateValidation() {
           day: "numeric",
         }),
         documentId: fetchedData._id,
+        image: fetchedData.image,
       });
     }
   }, [fetchedData]);
@@ -70,15 +204,6 @@ function CertificateValidation() {
   const issueDate = fetchedData?.createdAt || "";
   const ID = fetchedData?.cid || "";
   const certId = fetchedData?._id || "";
-
-  // Assuming you have these variables defined somewhere
-  // const personName = authorName; // Replace with actual data or state variable
-  // const courseName = courseName;
-  // const courseHours = 6;
-  // const courseDetails = courseDetails;
-  // const ID = cid;
-  // const durationType = "year";
-  // const certificationDate = new Date(); // Get the current date
 
   const formatDate = (date) => {
     const formattedDate = new Date(date).toLocaleDateString("en-US", {
@@ -135,6 +260,18 @@ function CertificateValidation() {
     updateBadgeStatus();
   }, [certificateInfo.documentId]); // Update when documentId changes
 
+  // Add event handlers for Accept and Reject buttons
+  const handleAccept = () => {
+    // Add your logic for accepting the certificate here
+    openVerifyModal();
+    console.log("Certificate accepted");
+  };
+
+  const handleReject = () => {
+    // Add your logic for rejecting the certificate here
+    console.log("Certificate rejected");
+  };
+
   return (
     <div className="flex h-screen">
       <nav className="w-full flex justify-between pl-20 pb-5 fixed top-0 left-0">
@@ -179,7 +316,7 @@ function CertificateValidation() {
         <div className="py-5">
           {/* Valid badge with dynamic color and text */}
           <div
-            className={`bg-[${validStatus.color}] text-[white] text-bg font-medium px-4 py-5 rounded text-center`}
+            className={`bg-[${validStatus.color}] text-[black] text-bg font-medium px-4 py-5 rounded text-center`}
           >
             {validStatus.text}
           </div>
@@ -258,6 +395,91 @@ function CertificateValidation() {
             </div>
           </div>
         )}
+
+        {/* verify Modal */}
+        <Modal
+          isOpen={verifyModalIsOpen}
+          onRequestClose={closeVerifyModal}
+          contentLabel="Verify Account Modal"
+          className="modal-overlay"
+          overlayClassName="modal-overlay"
+        >
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">Status validation </h2>
+            </div>
+            <p className="modal-message">
+              Are you sure this document is valid?
+            </p>
+            <div className="modal-buttons">
+              <button
+                className="modal-button verify"
+                onClick={() => handleVerify(currentVerifyCertificateId)}
+              >
+                Approve
+              </button>
+              <button
+                className="modal-button cancel"
+                onClick={closeVerifyModal}
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/* not validated modal */}
+        <Modal
+          isOpen={notValidModalIsOpen}
+          onRequestClose={closenotValidModal}
+          contentLabel="Verify Account Modal"
+          className="modal-overlay"
+          overlayClassName="modal-overlay"
+        >
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">Status validation </h2>
+            </div>
+            <p className="modal-message">
+              Are you sure this document is not valid?
+            </p>
+            <div className="modal-buttons">
+              <button
+                className="modal-button not-valid"
+                onClick={() => handleNotValid(currentNotValidCertificateId)}
+              >
+                Reject
+              </button>
+              <button
+                className="modal-button cancel"
+                onClick={closenotValidModal}
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Actions section */}
+        <div className="mt-8">
+          <h2 className="text-lg font-bold mb-4">Document Approval</h2>
+          <div className="flex justify-between">
+            <button
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-[45%]"
+              onClick={handleAccept}
+              // onClick={openVerifyModal}
+            >
+              Approve
+            </button>
+            <button
+              className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-[45%]"
+              onClick={handleReject}
+              // onClick={opennotValidModal}
+            >
+              Reject
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
