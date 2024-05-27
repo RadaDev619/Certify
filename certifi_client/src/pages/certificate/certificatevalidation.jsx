@@ -184,44 +184,26 @@ function CertificateValidation() {
             {validStatus.text}
           </div>
         </div>
-
         <div className="flex justify-between ">
-          {/* New button for Recipients */}
           <button
-          className={`border w-[45%] rounded font-medium cursor-pointer relative group overflow-hidden  px-8 py-2 border-[#8000FF] ${
+            className={`border border-[black] w-[45%] px-4 py-2 rounded font-medium ${
               activeTab === "recipients"
-                ? "bg-[#ffffff] "
-                : "text-[black]"
+                ? "bg-[#8000FF] text-white"
+                : "text-gray-600"
             }`}
             onClick={() => setActiveTab("recipients")}
           >
-            <span className="font-bold text-white text-xl relative z-10 group-hover:text-[#8000FF] duration-300">
-              Recipients
-              </span>
-            <span className="absolute top-0 left-0 w-full bg-[#8000FF] duration-200 group-hover:-translate-x-full h-full"></span>
-            <span className="absolute top-0 left-0 w-full bg-[#8000FF] duration-200 group-hover:translate-x-full h-full"></span>
-
-            <span className="absolute top-0 left-0 w-full bg-[#8000FF] duration-200 delay-200 group-hover:-translate-y-full h-full"></span>
-            <span className="absolute delay-200 top-0 left-0 w-full bg-[#8000FF] duration-200 group-hover:translate-y-full h-full"></span>
+            Recipients
           </button>
-
-          {/* New button for Information */}
           <button
-            className={`border w-[45%] rounded font-medium cursor-pointer relative group overflow-hidden  px-8 py-2 border-[#8000FF] ${
+            className={` border border-[black] w-[45%] px-4 py-2 rounded font-medium ${
               activeTab === "information"
-                ? "bg-[#ffffff] "
+                ? "bg-[#8000FF] text-white"
                 : "text-gray-600"
             }`}
             onClick={() => setActiveTab("information")}
           >
-            <span className="font-bold text-white text-xl relative z-10 group-hover:text-[#8000FF] duration-300">
-              Information
-            </span>
-            <span className="absolute top-0 left-0 w-full bg-[#8000FF] duration-200 group-hover:-translate-x-full h-full"></span>
-            <span className="absolute top-0 left-0 w-full bg-[#8000FF] duration-200 group-hover:translate-x-full h-full"></span>
-
-            <span className="absolute top-0 left-0 w-full bg-[#8000FF] duration-200 delay-200 group-hover:-translate-y-full h-full"></span>
-            <span className="absolute delay-200 top-0 left-0 w-full bg-[#8000FF] duration-200 group-hover:translate-y-full h-full"></span>
+            Information
           </button>
         </div>
 
@@ -253,7 +235,6 @@ function CertificateValidation() {
             </div>
 
             <p>Document identification</p>
-
             {/* Added flex container */}
             <div className="flex items-center relative">
               {" "}
@@ -270,7 +251,7 @@ function CertificateValidation() {
               </button>
               {/* Momentary Message */}
               {copySuccess && (
-                <span className="absolute top-[-30px] left-[300px] text-sm text-[#4d4d4d] ">
+                <span className="absolute top-[-30px] left-[300px] text-sm text-[black]">
                   Copied!
                 </span>
               )}
