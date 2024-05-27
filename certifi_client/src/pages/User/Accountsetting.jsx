@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../../css/accountsetting.css";
 import certifiLogo from "../../assets/certifi-logo.png";
@@ -63,9 +63,7 @@ const Account = () => {
 
   return (
     <div className="dashboard-wrapper">
-      {showAvatarPopup && (
-        <AvatarPopup onClose={handleCloseAvatarPopup} />
-      )}
+      {showAvatarPopup && <AvatarPopup onClose={handleCloseAvatarPopup} />}
       {showNamePopup && <NamePopup onClose={handleCloseNamePopup} />}
       {showPasswordPopup && (
         <PasswordPopup onClose={handleClosePasswordPopup} />
@@ -88,9 +86,7 @@ const Account = () => {
       <div className="main-content">
         <div className="search-bar">
           <div className="user-info">
-            <div
-              className="profile-image-container"
-            >
+            <div className="profile-image-container">
               <img
                 src={userProfileImage}
                 alt="User Profile"
@@ -133,10 +129,15 @@ const Account = () => {
                 <div className="account-detail">
                   <span className="label">Name</span>
                   <div className="input-container">
-                    <input type="text" value="Name" className="input-field" readOnly />
+                    <input
+                      type="text"
+                      value="Name"
+                      className="input-field"
+                      readOnly
+                    />
                   </div>
                   <div className="edit-container" onClick={handleEditName}>
-                    <span className="edit-text" >Edit</span>
+                    <span className="edit-text">Edit</span>
                     <FaEdit className="edit-icon" />
                   </div>
                 </div>
@@ -149,7 +150,10 @@ const Account = () => {
                       className="input-field"
                       readOnly
                     />
-                    <div className="edit-container" onClick={handleEditPassword}>
+                    <div
+                      className="edit-container"
+                      onClick={handleEditPassword}
+                    >
                       <span className="edit-text">Edit</span>
                       <FaEdit className="edit-icon" />
                     </div>{" "}
@@ -179,6 +183,7 @@ const Account = () => {
                 >
                   Delete account
                 </Typography>
+            
                 <Typography
                   variant="body2"
                   component="div"
@@ -188,7 +193,10 @@ const Account = () => {
                   services associated with your CertiFi account and permanent
                   deletion of your personal information.
                 </Typography>
-                <button className="delete-account-button" onClick={handleDeleteAccount}>
+                <button
+                  className="delete-account-button"
+                  onClick={handleDeleteAccount}
+                >
                   Delete Account
                 </button>
               </div>

@@ -53,3 +53,38 @@ input[type="radio"]:checked + .radio-btn::after {
     transform: translate(-50%, -50%) scale(1);
 }
 
+
+/* button navbar  */
+.loginBut {
+    @apply bg-white border-none px-6 py-3 inline-block font-semibold text-sm uppercase cursor-pointer;
+    width: 120px;
+    transform: skew(-21deg);
+  }
+  
+  .loginBut span {
+    @apply inline-block;
+    transform: skew(21deg);
+  }
+  
+  .loginBut::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 100%;
+    left: 0;
+    background: rgb(20, 20, 20);
+    opacity: 0;
+    z-index: -1;
+    transition: all 0.5s;
+  }
+  
+  .loginBut:hover {
+    @apply text-white;
+  }
+  
+  .loginBut:hover::before {
+    left: 0;
+    right: 0;
+    opacity: 1;
+  }
