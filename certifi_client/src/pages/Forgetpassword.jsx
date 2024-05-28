@@ -54,7 +54,7 @@ function ForgotPassword() {
         </p>
       </nav>
 
-      <div className="form-container w-[50vw] xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
+      <div className="form-container  xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
         <p className="text-center text-4xl pb-12">Forgot Password</p>
         <form onSubmit={handleSubmit} className="flex justify-center items-center flex-col w-full gap-6">
           <div className="w-full">
@@ -63,7 +63,7 @@ function ForgotPassword() {
               value={email}
               onChange={handleEmailChange}
               placeholder="Enter your email address"
-              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
+              className="h-12 border-2  w-full rounded-md px-2"
             />
           </div>
 
@@ -77,18 +77,16 @@ function ForgotPassword() {
           )}
 
           <div className="w-full flex gap-4">
-            <button
-              type="submit"
-              className="w-full bg-[#8000FF] h-14 rounded-md shadow-xl text-white text-xl hover:bg-[#5808a8] hover:transition-all hover:duration-500"
-            >
-              Send OTP
+          <button type="submit" className="loginBut w-[400px] ">
+              <span> Send OTP</span>
             </button>
 
             {isOtpSent && (
               <Link to="/otpenter" className="w-full flex">
-                <button className="w-full bg-[#8000FF] h-14 rounded-md shadow-xl text-white text-xl hover:bg-[#5808a8] hover:transition-all hover:duration-500">
-                  Continue
-                </button>
+                <button  className="loginBut w-[400px] ">
+              <span>Continue</span>
+            </button>
+                
               </Link>
             )}
           </div>

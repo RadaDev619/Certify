@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../../public/logo.png"
+import logo from "../../public/logo.png";
 import { useNavigate } from "react-router-dom";
+import "../css/index.css";
 
 
 function InsLogin() {
   // Define state   variables for form inputs
 const [email, setEmail ] = useState("")
 const [password,setPassword] = useState("")
+const [rememberMe, setRememberMe] = useState(false); // Add rememberMe state
 
 const navigate = useNavigate()
 
@@ -46,6 +48,10 @@ const navigate = useNavigate()
     }
 
 };
+const handleRememberMeChange = (event) => {
+  setRememberMe(event.target.checked);
+};
+
 
   return (
     <div className="flex justify-center items-center flex-col">
@@ -59,7 +65,7 @@ const navigate = useNavigate()
         </p>
       </nav>
 
-      <div className="form-container w-[50vw] xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32"> 
+      <div className="form-container xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32"> 
       <p className="text-center text-4xl pb-12">Log In</p>
       <form onSubmit={handleSubmit} className="flex justify-center items-center flex-col w-full gap-6">
         <div className="w-full">
@@ -67,8 +73,8 @@ const navigate = useNavigate()
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email Address"
-              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
+              placeholder="Institute Email Address"
+              className="h-12 border-2  w-full rounded-md px-2"
             />
         </div>
         <div className="w-full">
@@ -77,20 +83,34 @@ const navigate = useNavigate()
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
+              className="h-12 border-2  w-full rounded-md px-2"
             />
             <div className="py-4 flex justify-between">
-              <div className="flex justify-center items-center gap-2">
-              <input type="radio" className=""/>
-              Remember Me
+              <div className="flex justify-center items-center gap-2 text-sm">
+                <div className="dark:bg-black/10">
+                  <label className="text-white">
+                    <input
+                      className="dark:border-white-400/20 dark:scale-100 transition-all duration-500 ease-in-out dark:hover:scale-110 dark:checked:scale-100 w-5 h-5"
+                      type="checkbox"
+                      checked={rememberMe} // Set checked state
+                      onChange={handleRememberMeChange} // Handle checkbox change
+                    />
+                  </label>
+                </div>
+                <p className="">Remember Me</p>
               </div>
+
               <Link to={"/Forgotpassword"}>
-              <p>Forgot Password?</p>
+                <p className="pl-4 text-sm hover:text-blue-500  hover:duration-300">
+                  Forgot Password?
+                </p>
               </Link>
             </div>
-        </div>
+          </div>
         <div className="w-full  flex justify-center">
-        <button type="submit"  className="w-full bg-[#8000FF] h-14 rounded-md shadow-xl text-white text-xl hover:bg-[#5808a8] hover:transition-all hover:duration-500">Sign In</button>
+        <button type="submit" className="loginBut w-[400px] ">
+              <span>Sign In</span>
+            </button>
         </div>
       </form>
     </div>

@@ -82,8 +82,8 @@ function URegister() {
       </nav>
 
       {/* Registration form container */}
-      <div className="form-container w-[50vw] xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
-        <p className="text-center text-4xl pb-12">Sign Up</p>
+      <div className="form-container  xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
+      <p className="text-center text-4xl pb-12">Sign Up</p>
 
         {/* Form with Tailwind CSS classes */}
         <form onSubmit={handleSubmit} className="flex justify-center items-center flex-col w-full gap-6">
@@ -94,7 +94,7 @@ function URegister() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Full Name"
-              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
+              className="h-12 border-2  w-full rounded-md px-2"
             />
           </div>
 
@@ -105,7 +105,7 @@ function URegister() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email Address"
-              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
+              className="h-12 border-2  w-full rounded-md px-2"
             />
           </div>
 
@@ -116,7 +116,7 @@ function URegister() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
+              className="h-12 border-2  w-full rounded-md px-2"
             />
           </div>
 
@@ -127,17 +127,15 @@ function URegister() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm Password"
-              className="h-14 border-2 border-[#002BFF] w-full rounded-md px-2"
+              className="h-12 border-2  w-full rounded-md px-2"
             />
           </div>
 
           {/* Submit button - similar to login page */}
-          <button 
-            type="submit" 
-            className="w-full bg-[#8000FF] h-14 rounded-md shadow-xl text-white text-xl hover:bg-[#5808a8] hover:transition-all hover:duration-500"
-          >
-            Sign Up
-          </button>
+          <button type="submit" className="loginBut w-[400px] ">
+              <span>Sign Up</span>
+            </button>
+        
         </form>
       </div>
     </div>

@@ -56,9 +56,10 @@ input[type="radio"]:checked + .radio-btn::after {
 
 /* button navbar  */
 .loginBut {
-    @apply bg-white border-none px-6 py-3 inline-block font-semibold text-sm uppercase cursor-pointer;
-    width: 120px;
+    @apply bg-white border-none px-8 py-3 inline-block font-semibold text-sm uppercase cursor-pointer;
     transform: skew(-21deg);
+    background-color: rgb(245, 245, 245);
+
   }
   
   .loginBut span {

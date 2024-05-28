@@ -20,11 +20,12 @@ import Dashboard1 from "./pages/User/Dashboard1";
 import Accountsetting from "./pages/User/Accountsetting";
 import Institutiondashboard from "./pages/Institution/Institutiondashboard";
 import Institutionaccountsetting from "./pages/Institution/Institutionaccountsetting";
-import InstituteLogin from "./component/instituteLogin";
 import InsOtpVer from "./pages/InsOtpVer";
 import InsLogin from "./component/InsLogin";
 import CertificateOfCompletion from "./pages/CertificateOfCompletion";
 import Admindashboard from "./pages/Admin/Admindashboard";
+import Loading from "./component/LoadingAnimation";
+
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard1" element={<Dashboard1 />} />
         <Route path="/accountsetting" element={<Accountsetting />} />
+        <Route path="/Loading" element={<Loading/>} />
         <Route
           path="/institutiondashboard"
           element={<Institutiondashboard />}
@@ -56,7 +58,6 @@ function App() {
           path="/institutionaccountsetting"
           element={<Institutionaccountsetting />}
         />
-        <Route path="/InstituteLogin" element={<InstituteLogin />} />
         <Route
           path="/certificateofcompletion"
           element={<CertificateOfCompletion />}

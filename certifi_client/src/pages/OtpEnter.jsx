@@ -83,7 +83,7 @@ function OtpEntry() {
           </Link>
         </p>
       </nav>
-      <div className="form-container w-[50vw] xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
+      <div className="form-container  xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
         <p className="text-center text-4xl pb-5">Email Verification </p>
         <p className="text-center text-lg pb-12">We have sent a 6-digit verification code to your email</p>
         <form onSubmit={handleSubmit} className="flex justify-center items-center flex-col w-full gap-6">
@@ -91,7 +91,7 @@ function OtpEntry() {
             {otp.map((data, index) => {
               return (
                 <input
-                  className="m-2 border border-blue-500 rounded  h-20 w-14 text-center text-xl "
+                  className="m-2 border  rounded  h-20 w-14 text-center text-xl "
                   type="text"
                   name="otp"
                   maxLength="1"
@@ -103,12 +103,10 @@ function OtpEntry() {
               );
             })}
           </div>
-          <button
-            type="submit"
-            className="w-full bg-[#8000FF] h-14 rounded-md shadow-xl text-white text-xl hover:bg-[#5808a8] hover:transition-all hover:duration-500"
-          >
-            Verify OTP
-          </button>
+       
+          <button type="submit" className="loginBut w-[400px] ">
+              <span>Verify OTP</span>
+            </button>
         </form>
       </div>
     </div>
