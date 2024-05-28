@@ -468,7 +468,7 @@ const Dashboard = ({ state }) => {
                       certificate.verified === true ? true : false
                     }`}
                   >
-                    {certificate.verified}
+                    {certificate.verified === true ? "Approved" : "Rejected"}
                   </div>
                   <div>{certificate.name}</div>
                   <div>{certificate.createdAt}</div>

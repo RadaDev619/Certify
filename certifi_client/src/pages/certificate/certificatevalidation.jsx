@@ -8,7 +8,7 @@ import axios from "axios";
 
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");
-  const [userType, setuserType] = useState(false);
+  const [userType, setuserType] = useState(true);
 
   // const crtId = window.localStorage.getItem("certId");
   const [fetchedData, setFetchedData] = useState(null); // State to store fetched data
@@ -90,6 +90,7 @@ function CertificateValidation() {
   };
 
   const handleVerify = async (certificateId) => {
+    console.log("certi", certificateId);
     const imageUrl = certificateInfo.image;
     console.log(imageUrl);
 
@@ -204,11 +205,13 @@ function CertificateValidation() {
   const authorName = fetchedData?.name || "";
   const signerMail = fetchedData?.signer || "";
   const courseName = fetchedData?.courseName || "";
-  const courseDuration = fetchedData?.courseDuration || "";
+  const courseDuration = fetchedData?.coursePeriod || "";
   const courseDetails = fetchedData?.courseDetails || "";
   const issueDate = fetchedData?.createdAt || "";
   const ID = fetchedData?.cid || "";
   const certId = fetchedData?._id || "";
+  const documentId = fetchedData?.documentIdentification || "";
+  const documentVerified = fetchedData?.verified || "";
 
   const formatDate = (date) => {
     const formattedDate = new Date(date).toLocaleDateString("en-US", {
@@ -289,9 +292,7 @@ function CertificateValidation() {
           </Link>
         </p>
       </nav>
-
-      {/* Certificate Content */}
-      <div className="w-[70%] bg-white p-8 pt-32 shadow-md rounded-lg">
+      {/* <div className="w-[70%] bg-white p-8 pt-32 shadow-md rounded-lg">
         <div>
           <h1 className="text-4xl font-bold text-center font-serif">
             CERTIFICATE OF COMPLETION
@@ -304,13 +305,49 @@ function CertificateValidation() {
             Course duration: {courseDuration}
           </p>
           <p className="text-left px-[400px]">Course detail: {courseDetails}</p>
+          <p className="text-left px-[400px]">DocumentId: {documentId}</p>
           <p className="text-left px-[400px]">ID : {ID}</p>
           <p className="text-left px-[400px]">
             Issue date : {formatDate(issueDate)}
           </p>
         </div>
-      </div>
+      </div> */}
 
+      {/* Certificate Content */}
+      <div
+        className="w-9/12 bg-gray-100 p-8 bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        <div className="p-10 text-center flex flex-col">
+          <h1 className="text-4xl text-center pt-28 uppercase">
+            Certificate of completion
+          </h1>
+          <h2 className="text-center pt-2">Awarded to</h2>
+          <p className="text-4xl text-center py-4 uppercase">{authorName}</p>
+          <p className="text-center">For completing the course</p>
+          <p className="text-3xl text-center py-6">{courseName}</p>
+          <div className="flex pt-40 px-[460px] gap-2">
+            <p>Course duration:</p>
+            <p>{courseDuration}</p>
+          </div>
+          <div className="flex div2 px-[460px]  gap-2">
+            <p>Course detail:</p>
+            <p>{courseDetails}</p>
+          </div>
+          <div className="flex div2 px-[460px]  gap-2">
+            <p>DocumentId:</p>
+            <p className="text-left px-[400px]"> {documentId}</p>
+          </div>
+          <div className="flex pt-2 px-[460px]  gap-2">
+            <p>ID :</p>
+            <p>{ID}</p>
+          </div>
+          <div className="flex pt-2 px-[460px]  gap-2">
+            <p>Issue date :</p>
+            {formatDate(issueDate)}
+          </div>
+        </div>
+      </div>
       {/* Document Overview and Tabs */}
       <div className="w-[30%] bg-gray-100 p-10">
         <h1 className="text-xl font-bold mb-4">Document overview</h1>
@@ -419,7 +456,7 @@ function CertificateValidation() {
             <div className="modal-buttons">
               <button
                 className="modal-button verify"
-                onClick={() => handleVerify(currentVerifyCertificateId)}
+                onClick={() => handleVerify(certId)}
               >
                 Approve
               </button>
@@ -451,7 +488,7 @@ function CertificateValidation() {
             <div className="modal-buttons">
               <button
                 className="modal-button not-valid"
-                onClick={() => handleNotValid(currentNotValidCertificateId)}
+                onClick={() => handleNotValid(certId)}
               >
                 Reject
               </button>
@@ -470,18 +507,40 @@ function CertificateValidation() {
           <div className="mt-8">
             <h2 className="text-lg font-bold mb-4">Document Approval</h2>
             <div className="flex justify-between">
-              <button
-                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-[45%]"
-                onClick={handleAccept}
-              >
-                Approve
-              </button>
-              <button
-                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-[45%]"
-                onClick={handleReject}
-              >
-                Reject
-              </button>
+              {!documentVerified ? (
+                <>
+                  <button
+                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-[45%]"
+                    onClick={handleAccept}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-[45%]"
+                    onClick={handleReject}
+                  >
+                    Reject
+                  </button>
+                </>
+              ) : (
+                <>
+                  {documentVerified === true ? (
+                    <button
+                      className="bg-green-500 text-white font-bold py-2 px-4 rounded w-[100%]"
+                      disabled
+                    >
+                      Approved
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-red-500 text-white font-bold py-2 px-4 rounded w-[100%]"
+                      disabled
+                    >
+                      Rejected
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           </div>
         )}

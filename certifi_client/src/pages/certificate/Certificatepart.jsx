@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../public/logo.png";
 
@@ -35,12 +35,37 @@ const CertificatePart = () => {
   const [image, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [signer, setSigner] = useState(null);
-  const [availableSigners, setAvailableSigners] = useState([
-    { email: "GCIT@rub.edu.bt", name: "GCIT" },
-    { email: "Genic@rub.edu.bt", name: "Genic" },
-    { email: "Sharubtse@rub.edu.bt", name: "Sharubtse" },
-  ]);
+  const [availableSigners, setAvailableSigners] = useState([]);
   const previewRef = useRef(null);
+
+  useEffect(() => {
+    if (localStorage.getItem("documentId")) {
+      localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
+    }
+
+    // Fetch certificates from backend API
+    fetch("https://prj-certifi-backend.onrender.com/api/institute/getAllins", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setAvailableSigners(data.data);
+        } else {
+          alert("Signer data fetch failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching certificates:", error);
+        alert(
+          "An error occurred while fetching certificates. Please try again."
+        );
+      });
+  }, []);
 
   const handleFileChange = (e) => {
     const image = e.target.files[0];

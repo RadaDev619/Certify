@@ -9,21 +9,22 @@ function Login() {
   // Define state variables for form inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false); // Add rememberMe state
+  const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   // Function to handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-   
+
     console.log("Email", email);
     console.log("Password", password);
 
     if (!password || !email) {
       alert("All fields are required");
     } else {
-      setIsLoading(true )
+      setIsLoading(true);
 
       fetch("https://prj-certifi-backend.onrender.com/api/auth/login", {
         method: "POST",
@@ -38,17 +39,10 @@ function Login() {
         .then((response) => response.json())
         .then((data) => {
           if (data.status === "Success") {
-            alert("Login successful!");
-            if (rememberMe) {
-              // Store email in local storage
-              window.localStorage.setItem("email", email);
-            } else {
-              // Clear email from local storage if rememberMe is unchecked
-              window.localStorage.removeItem("email");
-            }
+            window.localStorage.setItem("email", email);
             setEmail("");
             setPassword("");
-            setIsLoading(false)
+            setIsLoading(false);
             navigate("/dashboard");
           } else {
             alert("Login failed. Please try again.");
@@ -56,19 +50,20 @@ function Login() {
         });
     }
   };
-
   const handleRememberMeChange = (event) => {
     setRememberMe(event.target.checked);
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex justify-center items-center flex-col">
       <nav className=" w-full pt-12 pb-20 flex justify-between px-52 items-center">
         <img src={logo} alt="" />
         <p>
           Don't have an account?
           <Link
-            to={"/uregister"}
+            to={"/userchoice"}
             className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500"
           >
             Sign Up
@@ -77,8 +72,7 @@ function Login() {
       </nav>
 
       <div className="form-container  xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
-        <p className="text-center text-4xl pb-12"> Log In</p>
-
+        <p className="text-center text-4xl pb-12">Log In</p>
         <form
           onSubmit={handleSubmit}
           className="flex justify-center items-center flex-col w-full gap-6"
@@ -121,14 +115,8 @@ function Login() {
                 </p>
               </Link>
             </div>
-
-            <Link to={"/Forgotpassword"}>
-              <p className="pl-4 text-sm hover:text-blue-500  hover:duration-300">
-                Forgot Password?
-              </p>
-            </Link>
           </div>
-          <div className="w-full  flex justify-center ">
+          <div className="w-full  flex justify-center">
             <button type="submit" className="loginBut w-[400px] ">
               <span>Sign In</span>
             </button>
@@ -136,7 +124,6 @@ function Login() {
         </form>
       </div>
     </div>
-  </div>)
   );
 }
 

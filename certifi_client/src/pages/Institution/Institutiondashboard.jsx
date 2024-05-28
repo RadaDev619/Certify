@@ -38,13 +38,17 @@ const Dashboard = () => {
     if (localStorage.getItem("documentId")) {
       localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
     }
+    const signer = localStorage.getItem("email");
     // Fetch certificates from backend API
-    fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/certificate/getCert/${signer}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
