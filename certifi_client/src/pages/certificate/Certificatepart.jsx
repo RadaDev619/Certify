@@ -12,22 +12,26 @@ const CertificatePart = () => {
 
     formData.append("image", image);
     formData.append("signer", signer.email);
+    console.log("formaData", image);
 
-
-    fetch(`https://prj-certifi-backend.onrender.com/api/certificate/addSigner/${certId}`, {
-      method: "PATCH",
-      body: formData,
-    }).then((response) => response.json())
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/certificate/addSigner/${certId}`,
+      {
+        method: "PATCH",
+        body: formData,
+      }
+    )
+      .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
-          
+          localStorage.setItem("documentId", certId);
           navigate("/cvalid");
         } else {
           alert("Certificate creation failed. Please try again.");
         }
       });
-  }
- 
+  };
+
   const [image, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [signer, setSigner] = useState(null);
@@ -47,10 +51,13 @@ const CertificatePart = () => {
       setPreviewUrl(reader.result);
     };
     reader.readAsDataURL(image);
+    console.log("formaData", image);
   };
 
   const handleChooseSigner = (signerEmail) => {
-    const selectedSigner = availableSigners.find((s) => s.email === signerEmail);
+    const selectedSigner = availableSigners.find(
+      (s) => s.email === signerEmail
+    );
     setSigner(selectedSigner);
   };
 
@@ -75,10 +82,15 @@ const CertificatePart = () => {
         {/* Upload Certificate Section */}
         <div className="flex items-center justify-between mb-12">
           <div className="w-2/4">
-            <label className="block text-gray-700 font-bold mb-2 text-xl" htmlFor="certificate">
+            <label
+              className="block text-gray-700 font-bold mb-2 text-xl"
+              htmlFor="certificate"
+            >
               Upload the physical certificate
             </label>
-            <p className="text-gray-500 text-sm">Drag and drop a file or select an image from your PC</p>
+            <p className="text-gray-500 text-sm">
+              Drag and drop a file or select an image from your PC
+            </p>
           </div>
           <div className="w-2/4 relative">
             <input
@@ -90,11 +102,25 @@ const CertificatePart = () => {
             {image && (
               <div className="mt-2 flex gap-6 ">
                 <p className="text-sm pt-4">Selected file: {image.name}</p>
-                <div className="w-10 h-10 rounded-full overflow-hidden inline-block mt-2 cursor-pointer" onClick={togglePreview}>
-                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                <div
+                  className="w-10 h-10 rounded-full overflow-hidden inline-block mt-2 cursor-pointer"
+                  onClick={togglePreview}
+                >
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <div ref={previewRef} className="hidden absolute top-16 right-0 z-10 bg-white border rounded-md shadow-md p-4">
-                  <img src={previewUrl} alt="Preview" className="max-w-full h-auto" />
+                <div
+                  ref={previewRef}
+                  className="hidden absolute top-16 right-0 z-10 bg-white border rounded-md shadow-md p-4"
+                >
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="max-w-full h-auto"
+                  />
                 </div>
               </div>
             )}
@@ -106,11 +132,15 @@ const CertificatePart = () => {
         {/* Signer Section */}
         <div className="flex items-center justify-between mt-8">
           <div className="w-2/5">
-            <label className="block text-gray-700 font-bold mb-2 text-xl" htmlFor="signer">
+            <label
+              className="block text-gray-700 font-bold mb-2 text-xl"
+              htmlFor="signer"
+            >
               Signer
             </label>
             <p className="text-gray-500 text-sm mb-2">
-              People who are required to sign the document so that they can verify your certificate for validation
+              People who are required to sign the document so that they can
+              verify your certificate for validation
             </p>
           </div>
           <div className="w-2/4">
@@ -124,7 +154,10 @@ const CertificatePart = () => {
                     {signer.name} ({signer.email})
                   </span>
                 </div>
-                <button className="text-gray-500 hover:text-red-500" onClick={handleRemoveSigner}>
+                <button
+                  className="text-gray-500 hover:text-red-500"
+                  onClick={handleRemoveSigner}
+                >
                   ×
                 </button>
               </div>
@@ -132,7 +165,11 @@ const CertificatePart = () => {
               <div>
                 Choose a signer:
                 {availableSigners.map((s) => (
-                  <button key={s.email} className="mt-2 text-sm text-blue-500 hover:text-blue-700 w-full text-center" onClick={() => handleChooseSigner(s.email)}>
+                  <button
+                    key={s.email}
+                    className="mt-2 text-sm text-blue-500 hover:text-blue-700 w-full text-center"
+                    onClick={() => handleChooseSigner(s.email)}
+                  >
                     {s.name} ({s.email})
                   </button>
                 ))}
@@ -145,10 +182,12 @@ const CertificatePart = () => {
       {/* Buttons */}
       <div className="flex justify-between items-center flex-col gap-4 mt-12">
         {/* <Link to="/cvalid"> */}
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-96"
-          onClick={handleButtonClick}> 
-            Add document
-          </button>
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-96"
+          onClick={handleButtonClick}
+        >
+          Add document
+        </button>
         {/* </Link> */}
         <button className="text-gray-700 font-bold py-2 px-4 rounded w-96">
           Cancel

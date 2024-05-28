@@ -8,40 +8,72 @@ import axios from "axios";
 
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");
-  const crtId = window.localStorage.getItem("certId");
+  const [userType, setuserType] = useState(false);
+
+  // const crtId = window.localStorage.getItem("certId");
   const [fetchedData, setFetchedData] = useState(null); // State to store fetched data
   const [recipients, setRecipients] = useState([]);
   // State for certificate information (replace with your actual data or fetching mechanism)
   const [certificateInfo, setCertificateInfo] = useState([]);
 
   // document approval
-  const [certificates, setCertificates] = useState([]); // State to store fetched certificates
+  // const [certificates, setCertificates] = useState([]); // State to store fetched certificates
   const [currentVerifyCertificateId, setCurrentVerifyCertificateId] =
     useState(null);
   const [currentNotValidCertificateId, setCurrentNotValidCertificateId] =
     useState(null);
+
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const documentId = localStorage.getItem("documentId");
+        console.log(documentId);
+        const response = await fetch(
+          `https://prj-certifi-backend.onrender.com/api/certificate/getCertificatebyId/${documentId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = await response.json();
+        if (data.status === "success") {
+          setFetchedData(data.data); // Set fetched data in state
+        } else {
+          throw new Error("Certificate data fetch failed. Please try again.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const email = localStorage.getItem("email");
     // Fetch certificates from backend API
-    fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/auth/getuser/${email}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
           // Update certificates state with fetched data
-          setCertificates(data.data);
-        } else {
-          alert("Certificate data fetch failed. Please try again.");
+          setuserType(false);
         }
       })
       .catch((error) => {
-        console.error("Error fetching certificates:", error);
-        alert(
-          "An error occurred while fetching certificates. Please try again."
-        );
+        setuserType(true);
       });
   }, []);
 
@@ -144,33 +176,6 @@ function CertificateValidation() {
   const closenotValidModal = () => {
     setnotValidModalIsOpen(false);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `https://prj-certifi-backend.onrender.com/api/certificate/get/${crtId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const data = await response.json();
-        if (data.status === "success") {
-          setFetchedData(data.data); // Set fetched data in state
-        } else {
-          throw new Error("Certificate data fetch failed. Please try again.");
-        }
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-      }
-    };
-
-    fetchData();
-  }, [crtId]);
 
   // Update recipients when fetchedData changes
   useEffect(() => {
@@ -460,26 +465,26 @@ function CertificateValidation() {
           </div>
         </Modal>
 
-        {/* Actions section */}
-        <div className="mt-8">
-          <h2 className="text-lg font-bold mb-4">Document Approval</h2>
-          <div className="flex justify-between">
-            <button
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-[45%]"
-              onClick={handleAccept}
-              // onClick={openVerifyModal}
-            >
-              Approve
-            </button>
-            <button
-              className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-[45%]"
-              onClick={handleReject}
-              // onClick={opennotValidModal}
-            >
-              Reject
-            </button>
+        {/* Conditionally render the actions section based on userType */}
+        {userType && (
+          <div className="mt-8">
+            <h2 className="text-lg font-bold mb-4">Document Approval</h2>
+            <div className="flex justify-between">
+              <button
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-[45%]"
+                onClick={handleAccept}
+              >
+                Approve
+              </button>
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-[45%]"
+                onClick={handleReject}
+              >
+                Reject
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
