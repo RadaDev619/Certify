@@ -32,7 +32,7 @@ function UserChoice() {
         <div className="flex justify-center items-center gap-10">
           <div
             className={`card w-60 h-60 rounded-lg shadow-md flex flex-col justify-center items-center cursor-pointer hover:scale-110 transition-transform ${
-              selectedUser === 1 ? "border-2 border-blue-500" : ""
+              selectedUser === 1 ? "border-2 border-[#8000FF]" : ""
             }`}
             onClick={() => handleCardClick(1)}
           >

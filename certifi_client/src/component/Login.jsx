@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import logo from "../../public/logo.png";
 import { useNavigate } from "react-router-dom";
 import "../css/index.css";
+import LoadingAnimation from "./LoadingAnimation";
 
 function Login() {
   // Define state variables for form inputs
@@ -15,13 +16,15 @@ function Login() {
   // Function to handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-
+   
     console.log("Email", email);
     console.log("Password", password);
 
     if (!password || !email) {
       alert("All fields are required");
     } else {
+      setIsLoading(true )
+
       fetch("https://prj-certifi-backend.onrender.com/api/auth/login", {
         method: "POST",
         headers: {
@@ -45,6 +48,7 @@ function Login() {
             }
             setEmail("");
             setPassword("");
+            setIsLoading(false)
             navigate("/dashboard");
           } else {
             alert("Login failed. Please try again.");
@@ -117,6 +121,12 @@ function Login() {
                 </p>
               </Link>
             </div>
+
+            <Link to={"/Forgotpassword"}>
+              <p className="pl-4 text-sm hover:text-blue-500  hover:duration-300">
+                Forgot Password?
+              </p>
+            </Link>
           </div>
           <div className="w-full  flex justify-center ">
             <button type="submit" className="loginBut w-[400px] ">
@@ -126,6 +136,7 @@ function Login() {
         </form>
       </div>
     </div>
+  </div>)
   );
 }
 
