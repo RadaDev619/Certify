@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { ethers } from "ethers"; //import ethers library
 import abi from "../../contractJson/Certify.json";
 import "../../css/dashboard.css";
@@ -21,6 +21,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Modal from "react-modal";
+import { useNavigate } from "react-router-dom";
 
 const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
 const contractABI = abi.abi;
@@ -30,8 +31,13 @@ const Dashboard = ({ state }) => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [certificates, setCertificates] = useState([]); // State to store fetched certificates
   const [Hash, setHash] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (localStorage.getItem("documentId")) {
+      localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
+    }
+
     // Fetch certificates from backend API
     fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
       method: "GET",
@@ -165,20 +171,6 @@ const Dashboard = ({ state }) => {
 
   const storeHash = (certificateId) => async (event) => {
     event.preventDefault();
-    // const { ethereum } = window;
-
-    // if (!ethereum && !ethereum.selectedAddress) {
-    //   openMetamaskPopup();
-    //   return;
-    // }
-
-    // const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
-    // const contractABI = abi.abi;
-
-    // const provider = new ethers.providers.Web3Provider(ethereum);
-    // const signer = provider.getSigner();
-    // const contract = new ethers.Contract(contractAddress, contractABI, signer);
-
     try {
       fetch(
         `https://prj-certifi-backend.onrender.com/api/certificate/get/${certificateId}`
@@ -205,16 +197,42 @@ const Dashboard = ({ state }) => {
       console.log("Event object:", event);
 
       // Access the concatenatedString from the args array
-      const concatenatedString = event[0].args[2];
-      console.log("Concatenated String:", concatenatedString);
+      const documentIdentification = event[0].args[2];
+      console.log("Concatenated String:", documentIdentification);
       alert("Transaction is Successful!");
-      // console.log("Transaction receipt:", receipt);
-      // const concatenatedString = receipt.logs[2].data;
-      // alert("Concatenated String: " + concatenatedString);
+      fetch(
+        `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${certificateId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            documentIdentification,
+          }),
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            console.log(data.data);
+
+            alert("Document uploaded successfully.");
+          } else {
+            console.log(data);
+            alert("Document uploading failed. Please try again.");
+          }
+        });
     } catch (error) {
       console.error("Error adding hash:", error.message);
       alert("Error adding hash. Please try again later.");
     }
+  };
+
+  const toCertificateForm = (Id) => (event) => {
+    event.preventDefault();
+    localStorage.setItem("documentId", Id);
+    navigate("/cvalid");
   };
 
   return (
@@ -454,13 +472,17 @@ const Dashboard = ({ state }) => {
                   </div>
                   <div>{certificate.name}</div>
                   <div>{certificate.createdAt}</div>
-                  <Link to="/cvalid" className="view-icon">
+
+                  <Link
+                    onClick={toCertificateForm(certificate._id)}
+                    className="view-icon"
+                  >
                     <i className="fas fa-eye"></i>
                   </Link>
                   <div className="view-icon ">
                     <i
                       className="fas fa-upload"
-                      onClick={storeHash(certificate.id)}
+                      onClick={storeHash(certificate._id)}
                     ></i>
                   </div>
                 </div>

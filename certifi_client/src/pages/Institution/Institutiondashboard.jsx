@@ -4,6 +4,7 @@ import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   FaSignOutAlt,
@@ -31,8 +32,12 @@ const Dashboard = () => {
   const [filterModal, setFilterModal] = useState(false); // State to control filter modal
   const [filterDocumentName, setFilterDocumentName] = useState(""); // State to store filter document name
   const [filterAuthorName, setFilterAuthorName] = useState(""); // State to store filter author name
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (localStorage.getItem("documentId")) {
+      localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
+    }
     // Fetch certificates from backend API
     fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
       method: "GET",
@@ -158,11 +163,11 @@ const Dashboard = () => {
     setnotValidModalIsOpen(false);
   };
 
-  // const handlenotValid = () => {
-  //   // Implement delete account logic here
-  //   console.log("Not Validated");
-  //   closenotValidModal();
-  // };
+  const toCertificateForm = (Id) => (event) => {
+    event.preventDefault();
+    localStorage.setItem("documentId", Id);
+    navigate("/cvalid");
+  };
 
   return (
     <div className="dashboard-wrapper">
@@ -247,7 +252,7 @@ const Dashboard = () => {
                   <div>{certificate.courseName}</div>
                   <div>{certificate.name}</div>
                   <div>{certificate.createdAt}</div>
-                  <Link to="/cvalid">
+                  <Link onClick={toCertificateForm(certificate._id)}>
                     {" "}
                     <div>
                       <i className="fas fa-eye"></i>
