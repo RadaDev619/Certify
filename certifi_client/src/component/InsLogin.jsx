@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import logo from "../../public/logo.png";
 import { useNavigate } from "react-router-dom";
 import "../css/index.css";
+import LoadingAnimation from "./LoadingAnimation";
 
 
 function InsLogin() {
-  // Define state   variables for form inputs
 const [email, setEmail ] = useState("")
 const [password,setPassword] = useState("")
-const [rememberMe, setRememberMe] = useState(false); // Add rememberMe state
+const [rememberMe, setRememberMe] = useState(false); 
 
 const navigate = useNavigate()
 
