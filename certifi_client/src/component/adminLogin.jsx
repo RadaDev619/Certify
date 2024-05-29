@@ -1,31 +1,30 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../public/logo.png";
-import { useNavigate } from "react-router-dom";
 import "../css/index.css";
 import LoadingAnimation from "./LoadingAnimation";
 
-function InsLogin() {
+function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
-const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // Function to handle form submission
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
-    console.log("Email", email);
-    console.log("Password", password);
 
     if (!password || !email) {
       alert("All fields are required");
-    } else {
-      setIsLoading(true);
-      fetch("https://prj-certifi-backend.onrender.com/api/institute/login", {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("https://prj-certifi-backend.onrender.com/admin/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,40 +33,55 @@ const navigate = useNavigate()
           email,
           password,
         }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.status === "Success") {
-            window.localStorage.setItem("email", email);
+      });
 
-            alert("Login successful!");
-            setEmail("");
-            setPassword("");
-            setIsLoading(false);
+      if (!response.ok) {
+        // If response is not OK, try to get the error message
+        const textResponse = await response.text();
+        try {
+          const errorData = JSON.parse(textResponse);
+          alert(errorData.message);
+        } catch {
+          alert("An unexpected error occurred. Please try again later.");
+        }
+        setIsLoading(false);
+        return;
+      }
 
-            navigate("/Institutiondashboard");
-          } else {
-            alert("Login failed. Please try again.");
-            setIsLoading(false);
-          }
-        });
+      const data = await response.json();
+
+      if (data.status === "Success") {
+        window.localStorage.setItem("email", email);
+
+        alert("Login successful!");
+        setEmail("");
+        setPassword("");
+        navigate("/admindashboard");
+      } else {
+        alert(data.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during fetch:", error);
+      alert("An error occurred. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
+
   const handleRememberMeChange = (event) => {
     setRememberMe(event.target.checked);
   };
 
-  return isLoading === true ? (
+  return isLoading ? (
     <LoadingAnimation />
   ) : (
     <div className="flex justify-center items-center flex-col">
       <nav className=" w-full pt-12 pb-20 flex justify-between px-52 items-center">
-        <img src={logo} alt="" />
-     
+        <img src={logo} alt="Logo" />
       </nav>
 
       <div className="form-container xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
-        <p className="text-center text-4xl pb-12">Log In</p>
+        <p className="text-center text-4xl pb-12">Admin</p>
         <form
           onSubmit={handleSubmit}
           className="flex justify-center items-center flex-col w-full gap-6"
@@ -96,12 +110,12 @@ const navigate = useNavigate()
                     <input
                       className="dark:border-white-400/20 dark:scale-100 transition-all duration-500 ease-in-out dark:hover:scale-110 dark:checked:scale-100 w-5 h-5"
                       type="checkbox"
-                      checked={rememberMe} // Set checked state
-                      onChange={handleRememberMeChange} // Handle checkbox change
+                      checked={rememberMe}
+                      onChange={handleRememberMeChange}
                     />
                   </label>
                 </div>
-                <p className="">Remember Me</p>
+                <p>Remember Me</p>
               </div>
 
               <Link to={"/Forgotpassword"}>
@@ -111,8 +125,8 @@ const navigate = useNavigate()
               </Link>
             </div>
           </div>
-          <div className="w-full  flex justify-center">
-            <button type="submit" className="loginBut w-[400px] ">
+          <div className="w-full flex justify-center">
+            <button type="submit" className="loginBut w-[400px]">
               <span>Log In</span>
             </button>
           </div>
@@ -122,4 +136,4 @@ const navigate = useNavigate()
   );
 }
 
-export default InsLogin;
+export default AdminLogin;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../css/admindashboard.css";
 import certifiLogo from "../../assets/certifi-logo.png";
@@ -16,6 +16,50 @@ const Dashboard = () => {
   const [visiblePasswords, setVisiblePasswords] = useState(
     Array(formData.length).fill(false)
   );
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [institutionType, setInstitutionType] = useState("");
+  const [location, setLocation] = useState("");
+  const [username, setUserName] = useState("");
+
+ useEffect(()=>{
+  const fetchUser = async()=>{
+    try{
+      const response = await fetch('https://prj-certifi-backend.onrender.com/admin/getadmin', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const responseData = await response.json()
+      // console.log(responseData.data.name)
+      setUserName(responseData.data.name)
+
+    }catch(error){
+      console.log(error)
+    }
+  }
+  const fetchInstitutions = async() =>{
+    try{
+      const response = await fetch("https://prj-certifi-backend.onrender.com/admin/getallins",{
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+      })
+      const responseData = await response.json()
+      console.log(responseData.data)
+      setFormData(responseData.data)
+
+    }catch(error){
+      console.log(error)
+    }
+  }
+  fetchInstitutions()
+  fetchUser()
+ }, []);
 
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
@@ -41,6 +85,26 @@ const Dashboard = () => {
       const password = e.target.elements.password.value.trim();
       const confirmPassword = e.target.elements.confirmPassword.value.trim();
 
+      fetch('https://prj-certifi-backend.onrender.com/admin/registerIns', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          companyName: companyName,
+          instituteType: institutionType,
+          instituteLocation: location,
+          email: emailAddress,
+          password: password,
+        }),
+
+      })
+      .then((response) => response.json())
+      .then((data)=>{
+        if(data.status === 'success'){
+          console.log(data)
+        }
+      })
       if (
         !companyName ||
         !institutionType ||
@@ -139,7 +203,7 @@ const Dashboard = () => {
                 alt="User Profile"
                 className="profile-image"
               />
-              <span className="username">Username</span>
+              <span className="username">{username}</span>
               {showUserDropdown && (
                 <div className="user-dropdown">
                   <Link to="/accountsetting" className="user-dropdown-content">
@@ -181,9 +245,9 @@ const Dashboard = () => {
               {formData.map((data, index) => (
                 <div key={index} className="table-row">
                   <div>{data.companyName}</div>
-                  <div>{data.institutionType}</div>
-                  <div>{data.location}</div>
-                  <div>{data.emailAddress}</div>
+                  <div>{data.instituteType}</div>
+                  <div>{data.instituteLocation}</div>
+                  <div>{data.email}</div>
                   <div className="password-container">
                     {visiblePasswords[index] ? (
                       <span>{data.password}</span>

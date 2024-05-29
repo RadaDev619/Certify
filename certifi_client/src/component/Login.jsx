@@ -6,10 +6,11 @@ import "../css/index.css";
 import LoadingAnimation from "./LoadingAnimation"; // import loading
 
 function Login() {
+  // Define state variables for form inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // loading
+  const [rememberMe, setRememberMe] = useState(false); // Add rememberMe state
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -131,7 +132,7 @@ function Login() {
           </div>
           <div className="w-full  flex justify-center ">
             <button type="submit" className="loginBut w-[400px] ">
-              <span>Sign In</span>
+              <span>Log In</span>
             </button>
           </div>
         </form>
