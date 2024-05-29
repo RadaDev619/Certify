@@ -5,27 +5,27 @@ import { useNavigate } from "react-router-dom";
 import "../css/index.css";
 import LoadingAnimation from "./LoadingAnimation";
 
-
 function InsLogin() {
-const [email, setEmail ] = useState("")
-const [password,setPassword] = useState("")
-const [rememberMe, setRememberMe] = useState(false); 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
 
 const navigate = useNavigate()
 
   // Function to handle form submission
   const handleSubmit = (event) => {
-    event.preventDefault(); 
+    event.preventDefault();
 
-    console.log("Email", email)
-    console.log("Password", password)
-  
-    if (!password || !email){
-      alert("All fields are required")
-    }
-    else {
-      fetch ("https://prj-certifi-backend.onrender.com/api/institute/login", {
+    console.log("Email", email);
+    console.log("Password", password);
+
+    if (!password || !email) {
+      alert("All fields are required");
+    } else {
+      setIsLoading(true);
+      fetch("https://prj-certifi-backend.onrender.com/api/institute/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,36 +35,44 @@ const navigate = useNavigate()
           password,
         }),
       })
-      .then((response) => response.json())
-      .then((data) => {
-        if(data.status === "Success") {
-          alert("Login successful!");
-          setEmail("");
-          setPassword("");
-          navigate("/Institutiondashboard")
-        }else{
-          alert("Login failed. Please try again.");
-        }
-      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "Success") {
+            window.localStorage.setItem("email", email);
+
+            alert("Login successful!");
+            setEmail("");
+            setPassword("");
+            setIsLoading(false);
+
+            navigate("/Institutiondashboard");
+          } else {
+            alert("Login failed. Please try again.");
+            setIsLoading(false);
+          }
+        });
     }
+  };
+  const handleRememberMeChange = (event) => {
+    setRememberMe(event.target.checked);
+  };
 
-};
-const handleRememberMeChange = (event) => {
-  setRememberMe(event.target.checked);
-};
-
-
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex justify-center items-center flex-col">
       <nav className=" w-full pt-12 pb-20 flex justify-between px-52 items-center">
         <img src={logo} alt="" />
      
       </nav>
 
-      <div className="form-container xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32"> 
-      <p className="text-center text-4xl pb-12">Log In</p>
-      <form onSubmit={handleSubmit} className="flex justify-center items-center flex-col w-full gap-6">
-        <div className="w-full">
+      <div className="form-container xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
+        <p className="text-center text-4xl pb-12">Log In</p>
+        <form
+          onSubmit={handleSubmit}
+          className="flex justify-center items-center flex-col w-full gap-6"
+        >
+          <div className="w-full">
             <input
               type="text"
               value={email}
@@ -72,8 +80,8 @@ const handleRememberMeChange = (event) => {
               placeholder="Institute Email Address"
               className="h-12 border-2  w-full rounded-md px-2"
             />
-        </div>
-        <div className="w-full">
+          </div>
+          <div className="w-full">
             <input
               type="password"
               value={password}
@@ -103,13 +111,13 @@ const handleRememberMeChange = (event) => {
               </Link>
             </div>
           </div>
-        <div className="w-full  flex justify-center">
-        <button type="submit" className="loginBut w-[400px] ">
+          <div className="w-full  flex justify-center">
+            <button type="submit" className="loginBut w-[400px] ">
               <span>Sign In</span>
             </button>
-        </div>
-      </form>
-    </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

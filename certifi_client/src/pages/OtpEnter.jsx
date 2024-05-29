@@ -21,6 +21,7 @@ function OtpEntry() {
   const [otp, setOtp] = useState(new Array(6).fill(""));
 
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (element, index) => {
     if (isNaN(element.value)) return;
@@ -32,6 +33,7 @@ function OtpEntry() {
       element.nextSibling.focus();
     }
   };
+  setIsLoading(true);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -51,18 +53,22 @@ function OtpEntry() {
       .then((data) => {
         if (data.status === "Verified") {
           alert("OTP verification successful!");
+
+          setIsLoading(false);
           navigate("/Login");
         } else {
           alert("OTP verification failed. Please try again.");
+          setIsLoading(false);
         }
       });
-
     console.log("Entered OTP:", otpValue);
     // For demonstration, we'll navigate to the password change page
     // In a real application, you would verify the OTP first
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex justify-center items-center flex-col">
       {/* Navigation (same as ForgotPassword) */}
       <nav className="w-full pt-12 pb-20 flex justify-between px-52 items-center">

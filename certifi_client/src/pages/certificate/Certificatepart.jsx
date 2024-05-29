@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../public/logo.png";
 import "../../css/index.css";
@@ -6,6 +6,7 @@ import "../../css/index.css";
 const CertificatePart = () => {
   const navigate = useNavigate();
   const certId = window.localStorage.getItem("certId");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleButtonClick = () => {
     // console.log(signer.email)
@@ -14,6 +15,7 @@ const CertificatePart = () => {
     formData.append("image", image);
     formData.append("signer", signer.email);
     console.log("formaData", image);
+    setIsLoading(true);
 
     fetch(
       `https://prj-certifi-backend.onrender.com/api/certificate/addSigner/${certId}`,
@@ -26,9 +28,12 @@ const CertificatePart = () => {
       .then((data) => {
         if (data.status === "success") {
           localStorage.setItem("documentId", certId);
+          setIsLoading(false);
+
           navigate("/cvalid");
         } else {
           alert("Certificate creation failed. Please try again.");
+          setIsLoading(false);
         }
       });
   };
@@ -36,12 +41,37 @@ const CertificatePart = () => {
   const [image, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [signer, setSigner] = useState(null);
-  const [availableSigners, setAvailableSigners] = useState([
-    { email: "GCIT@rub.edu.bt", name: "GCIT" },
-    { email: "Genic@rub.edu.bt", name: "Genic" },
-    { email: "Sharubtse@rub.edu.bt", name: "Sharubtse" },
-  ]);
+  const [availableSigners, setAvailableSigners] = useState([]);
   const previewRef = useRef(null);
+
+  useEffect(() => {
+    if (localStorage.getItem("documentId")) {
+      localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
+    }
+
+    // Fetch certificates from backend API
+    fetch("https://prj-certifi-backend.onrender.com/api/institute/getAllins", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setAvailableSigners(data.data);
+        } else {
+          alert("Signer data fetch failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching certificates:", error);
+        alert(
+          "An error occurred while fetching certificates. Please try again."
+        );
+      });
+  }, []);
 
   const handleFileChange = (e) => {
     const image = e.target.files[0];
@@ -72,7 +102,9 @@ const CertificatePart = () => {
     }
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex justify-center items-center flex-col">
       {/* Navigation */}
       <nav className="w-full pt-12 pb-20 px-52">

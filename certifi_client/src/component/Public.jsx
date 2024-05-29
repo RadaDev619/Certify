@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import earth from "../../public/earth.png";
 import cub from "../../public/cub.png";
 import comp from "../../public/comp.png";
@@ -16,6 +16,8 @@ const Public = () => {
   const [ID, setID] = useState("");
   const [searchResult, setSearchResult] = useState("");
   const inputRef = useRef(null);
+  const [fetchedData, setFetchedData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const searchCertificate = async (event) => {
     event.preventDefault();
@@ -44,6 +46,7 @@ const Public = () => {
 
       // Extract hash (remaining characters)
       const hash = ID.substring(66);
+      setIsLoading(true);
       const transaction = await contract.getIPFSHash(address, identifier, hash);
 
       console.log("Waiting for transaction...");
@@ -59,8 +62,27 @@ const Public = () => {
 
       // Set the URL state to the concatenated string
       setSearchResult(concatenatedString);
+      const response = await fetch(
+        `https://prj-certifi-backend.onrender.com/api/certificate/getCertificatebyId/${identifier}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.status === "success") {
+        setFetchedData(data.data); // Set fetched data in state
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+
+        throw new Error("Certificate data fetch failed. Please try again.");
+      }
     } catch (error) {
       alert("Certificate invalid!");
+      setIsLoading(false);
     }
   };
 
@@ -150,9 +172,45 @@ const Public = () => {
         </form>
 
         {/* Display search results */}
-        <div className="mt-5">
-          <p className="text-center">{searchResult}</p>
-        </div>
+        {fetchedData && (
+          <div className="mt-5">
+            <div
+              className="w-9/12 bg-gray-100 p-8 bg-center bg-no-repeat"
+              style={{ backgroundImage: `url(${backgroundImage})` }}
+            >
+              <div className="p-10 text-center flex flex-col">
+                <h1 className="text-4xl text-center pt-28 uppercase">
+                  Certificate of completion
+                </h1>
+                <h2 className="text-center pt-2">Awarded to</h2>
+                <p className="text-4xl text-center py-4 uppercase">
+                  {fetchedData.name}
+                </p>
+                <p className="text-center">For completing the course</p>
+                <p className="text-3xl text-center py-6">
+                  {fetchedData.courseName}
+                </p>
+                <div className="flex pt-40 px-[460px] gap-2">
+                  <p>Course duration:</p>
+                  <p>{fetchedData.coursePeriod}</p>
+                </div>
+                <div className="flex pt-2 px-[460px]  gap-2">
+                  <p>Course detail:</p>
+                  <p>{fetchedData.courseDetails}</p>
+                </div>
+                <div className="flex pt-2 px-[460px]  gap-2">
+                  <p>ID :</p>
+                  <p>{ID}</p>
+                </div>
+                <div className="flex pt-2 px-[460px]  gap-2">
+                  <p>Issue date :</p>
+                  {fetchedData.createdAt}
+                </div>
+              </div>
+            </div>
+            <img src={fetchedData.image} />
+          </div>
+        )}
       </div>
 
       {/* search  end*/}

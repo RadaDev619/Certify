@@ -5,16 +5,18 @@ import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../../public/background.jpeg";
 import Modal from "react-modal";
 import axios from "axios";
+import LoadingAnimation from "../../component/LoadingAnimation";
 
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");
-  const [userType, setuserType] = useState(false);
+  const [userType, setuserType] = useState(true);
 
   // const crtId = window.localStorage.getItem("certId");
   const [fetchedData, setFetchedData] = useState(null); // State to store fetched data
   const [recipients, setRecipients] = useState([]);
   // State for certificate information (replace with your actual data or fetching mechanism)
   const [certificateInfo, setCertificateInfo] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // document approval
   // const [certificates, setCertificates] = useState([]); // State to store fetched certificates
@@ -93,6 +95,7 @@ function CertificateValidation() {
   };
 
   const handleVerify = async (certificateId) => {
+    console.log("certi", certificateId);
     const imageUrl = certificateInfo.image;
     console.log(imageUrl);
 
@@ -107,6 +110,8 @@ function CertificateValidation() {
     // alert("reached here4");
 
     // Make the API request to Pinata to upload the image
+    setIsLoading(true);
+
     const responseData = await axios({
       method: "post",
       url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
@@ -143,9 +148,11 @@ function CertificateValidation() {
           console.log(data.data);
 
           alert("Document verified successfully.");
+          setIsLoading(false);
         } else {
           console.log(data);
           alert("Document verification failed. Please try again.");
+          setIsLoading(false);
         }
       });
     // console.log("Validated");
@@ -153,6 +160,8 @@ function CertificateValidation() {
   };
 
   const handleNotValid = (certificateId) => {
+    setIsLoading(true);
+
     fetch(
       `https://prj-certifi-backend.onrender.com/api/certificate/notverify/${certificateId}`,
       {
@@ -164,6 +173,8 @@ function CertificateValidation() {
     )
       .then((response) => response.json())
       .then((data) => {});
+    setIsLoading(false);
+
     // console.log("Validated");
     closenotValidModal();
   };
@@ -207,11 +218,13 @@ function CertificateValidation() {
   const authorName = fetchedData?.name || "";
   const signerMail = fetchedData?.signer || "";
   const courseName = fetchedData?.courseName || "";
-  const courseDuration = fetchedData?.courseDuration || "";
+  const courseDuration = fetchedData?.coursePeriod || "";
   const courseDetails = fetchedData?.courseDetails || "";
   const issueDate = fetchedData?.createdAt || "";
   const ID = fetchedData?.cid || "";
   const certId = fetchedData?._id || "";
+  const documentId = fetchedData?.documentIdentification || "";
+  const documentVerified = fetchedData?.verified || "";
 
   const formatDate = (date) => {
     const formattedDate = new Date(date).toLocaleDateString("en-US", {
@@ -320,7 +333,6 @@ function CertificateValidation() {
           </div>
         </div>
       </div>
-
       {/* Document Overview and Tabs */}
       <div className="w-[30%]  bg-white p-10">
         <h1 className="text-xl font-bold mb-4">Document overview</h1>
@@ -430,7 +442,7 @@ function CertificateValidation() {
             <div className="modal-buttons">
               <button
                 className="modal-button verify"
-                onClick={() => handleVerify(currentVerifyCertificateId)}
+                onClick={() => handleVerify(certId)}
               >
                 Approve
               </button>
@@ -462,7 +474,7 @@ function CertificateValidation() {
             <div className="modal-buttons">
               <button
                 className="modal-button not-valid"
-                onClick={() => handleNotValid(currentNotValidCertificateId)}
+                onClick={() => handleNotValid(certId)}
               >
                 Reject
               </button>
@@ -481,18 +493,40 @@ function CertificateValidation() {
           <div className="mt-8">
             <h2 className="text-lg font-bold mb-4">Document Approval</h2>
             <div className="flex justify-between">
-              <button
-                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-[45%]"
-                onClick={handleAccept}
-              >
-                Approve
-              </button>
-              <button
-                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-[45%]"
-                onClick={handleReject}
-              >
-                Reject
-              </button>
+              {!documentVerified ? (
+                <>
+                  <button
+                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-[45%]"
+                    onClick={handleAccept}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-[45%]"
+                    onClick={handleReject}
+                  >
+                    Reject
+                  </button>
+                </>
+              ) : (
+                <>
+                  {documentVerified === true ? (
+                    <button
+                      className="bg-green-500 text-white font-bold py-2 px-4 rounded w-[100%]"
+                      disabled
+                    >
+                      Approved
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-red-500 text-white font-bold py-2 px-4 rounded w-[100%]"
+                      disabled
+                    >
+                      Rejected
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           </div>
         )}

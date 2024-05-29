@@ -4,7 +4,7 @@ import "../../css/admindashboard.css";
 import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
 import "@fortawesome/fontawesome-free/css/all.css";
-import { FaSignOutAlt, FaHome, FaCog } from "react-icons/fa";
+import { FaHome, FaCog, FaEye, FaEyeSlash } from "react-icons/fa";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -13,6 +13,9 @@ const Dashboard = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState([]);
+  const [visiblePasswords, setVisiblePasswords] = useState(
+    Array(formData.length).fill(false)
+  );
 
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
@@ -27,6 +30,46 @@ const Dashboard = () => {
   };
 
   const InstitutionModal = () => {
+    const handleSubmit = (e) => {
+      e.preventDefault();
+
+      // Validate form fields
+      const companyName = e.target.elements.companyName.value.trim();
+      const institutionType = e.target.elements.institutionType.value.trim();
+      const location = e.target.elements.location.value.trim();
+      const emailAddress = e.target.elements.emailAddress.value.trim();
+      const password = e.target.elements.password.value.trim();
+      const confirmPassword = e.target.elements.confirmPassword.value.trim();
+
+      if (
+        !companyName ||
+        !institutionType ||
+        !location ||
+        !emailAddress ||
+        !password ||
+        !confirmPassword
+      ) {
+        alert("All fields are required");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match");
+        return;
+      }
+
+      // Proceed with form submission if all validations pass
+      const formValues = {
+        companyName,
+        institutionType,
+        location,
+        emailAddress,
+        password,
+      };
+      setFormData([...formData, formValues]);
+      closeModal();
+    };
+
     return (
       <div className={`modal ${showModal ? "show" : ""}`} onClick={closeModal}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -48,24 +91,27 @@ const Dashboard = () => {
               name="emailAddress"
             />
             <input type="password" placeholder="Password" name="password" />
-            <button type="submit">Submit</button>
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              name="confirmPassword"
+            />
+            <button
+              type="submit"
+              className="relative px-8 py-2 rounded-md bg-violet-500 isolation-auto z-10 border-2 border-violet-500 before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded-full before:bg-violet-700 before:-z-10 before:aspect-square before:hover:scale-150 overflow-hidden before:hover:duration-700 text-white"
+            >
+              Submit
+            </button>
           </form>
         </div>
       </div>
     );
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formValues = {
-      companyName: e.target.elements.companyName.value,
-      institutionType: e.target.elements.institutionType.value,
-      location: e.target.elements.location.value,
-      emailAddress: e.target.elements.emailAddress.value,
-      password: e.target.elements.password.value,
-    };
-    setFormData([...formData, formValues]);
-    closeModal();
+  const toggleTablePasswordVisibility = (index) => {
+    const newVisiblePasswords = [...visiblePasswords];
+    newVisiblePasswords[index] = !newVisiblePasswords[index];
+    setVisiblePasswords(newVisiblePasswords);
   };
 
   return (
@@ -104,13 +150,13 @@ const Dashboard = () => {
               )}
             </div>
             <Link to="/">
-              <button class="group flex items-center justify-start w-11 h-11 bg-red-600 rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-32 hover:rounded-lg active:translate-x-1 active:translate-y-1">
-                <div class="flex items-center justify-center w-full transition-all duration-300 group-hover:justify-start group-hover:px-3">
-                  <svg class="w-4 h-4" viewBox="0 0 512 512" fill="white">
+              <button className="group flex items-center justify-start w-10 h-10 bg-red-600 rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-32 hover:rounded-lg active:translate-x-1 active:translate-y-1">
+                <div className="flex items-center justify-center w-full transition-all duration-300 group-hover:justify-start group-hover:px-3">
+                  <svg className="w-4 h-4" viewBox="0 0 512 512" fill="white">
                     <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
                   </svg>
                 </div>
-                <div class="absolute right-5 transform translate-x-full opacity-0 text-white text-lg font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
+                <div className="absolute right-5 transform translate-x-full opacity-0 text-white text-lg font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
                   Logout
                 </div>
               </button>
@@ -138,7 +184,19 @@ const Dashboard = () => {
                   <div>{data.institutionType}</div>
                   <div>{data.location}</div>
                   <div>{data.emailAddress}</div>
-                  <div>{data.password}</div>
+                  <div className="password-container">
+                    {visiblePasswords[index] ? (
+                      <span>{data.password}</span>
+                    ) : (
+                      <span>********</span>
+                    )}
+                    <span
+                      className="password-toggle-icon"
+                      onClick={() => toggleTablePasswordVisibility(index)}
+                    >
+                      {visiblePasswords[index] ? <FaEyeSlash /> : <FaEye />}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -146,7 +204,12 @@ const Dashboard = () => {
               <div className="no-documents-text">
                 {formData.length === 0 ? "No Institutes" : null}
               </div>
-              <button className="add-new-btn" onClick={toggleModal}>
+
+              <button
+                onClick={toggleModal}
+                className="bg-violet-800 text-white border border-violet-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group"
+              >
+                <span className="bg-violet-400 shadow-violet-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
                 Add Institution
               </button>
             </div>
