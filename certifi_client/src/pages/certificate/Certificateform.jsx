@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import logo from "../../../public/logo.png";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../../public/background.jpeg";
+import "../../css/index.css";
 
 function CertificateForm() {
   const navigate = useNavigate();
@@ -100,12 +101,15 @@ function CertificateForm() {
 
   return (
     <div className="flex flex-col h-screen">
-      <nav className="w-full flex justify-between pl-20 pb-5 ">
-        <p className=""> 
-          <Link to={"/login"} className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500"> 
-            <img src={logo} alt="" /> 
-          </Link> 
-        </p> 
+      <nav className="w-full flex justify-between pl-20 pb-5 fixed top-0 left-0">
+        <p className="">
+          <Link
+            to={"/dashboard"}
+            className="pl-4 "
+          >
+            <img src={logo} alt="" />
+          </Link>
+        </p>
       </nav>
       <div className="flex flex-1"> 
         <div className="w-9/12 bg-gray-100 p-8 bg-center bg-no-repeat" style={{backgroundImage: `url(${backgroundImage})`}}> 
@@ -209,10 +213,10 @@ function CertificateForm() {
             </div> 
           </div> 
           <div className="pt-2"> 
-            <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-2 rounded" 
-              onClick={handleButtonClick}> 
-              Create a new certificate 
-            </button> 
+           
+            <button type="submit" className="loginBut w-[400px] " onClick={handleButtonClick} >
+            <span>Create a new certificate </span>
+          </button>
           </div> 
         </div> 
       </div> 

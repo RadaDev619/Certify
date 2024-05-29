@@ -1,8 +1,8 @@
 .spinner {
     width: 70.4px;
     height: 70.4px;
-    --clr: rgb(247, 197, 159);
-    --clr-alpha: rgb(247, 197, 159, 0.1);
+    --clr: rgb(119, 0, 255);
+    --clr-alpha: rgba(172, 159, 247, 0.1);
     animation: spinner 1.6s infinite ease;
     transform-style: preserve-3d;
     /* Centering */

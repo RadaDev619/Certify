@@ -18,10 +18,13 @@ function CertificateValidation() {
 
   // document approval
   // const [certificates, setCertificates] = useState([]); // State to store fetched certificates
-  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] =
-    useState(null);
-  const [currentNotValidCertificateId, setCurrentNotValidCertificateId] =
-    useState(null);
+  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] = useState(
+    null
+  );
+  const [
+    currentNotValidCertificateId,
+    setCurrentNotValidCertificateId,
+  ] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -278,41 +281,48 @@ function CertificateValidation() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-full bg-gray-100 ">
       <nav className="w-full flex justify-between pl-20 pb-5 fixed top-0 left-0">
         <p className="">
-          <Link
-            to={"/dashboard"}
-            className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500"
-          >
+          <Link to={"/dashboard"} className="pl-4 ">
             <img src={logo} alt="" />
           </Link>
         </p>
       </nav>
+      <div className="certificate flex flex-col items-center bg-gray-100 p-8 pt-32 rounded-lg w-[70%]">
+        {/* Certificate Content */}
+        <div className="bg-white p-20 h-[900px] w-[800px] rounded-lg flex flex-col mb-10">
+          <div>
+            <h1 className="text-4xl font-bold text-center font-serif">
+              CERTIFICATE OF COMPLETION
+            </h1>
+            <p className="text-lg text-center mt-4">Awarded to</p>
+            <h2 className="text-4xl text-center mt-2">{authorName}</h2>
+            <p className="text-lg text-center mt-4">
+              For completing the course
+            </p>
+            <h3 className="text-3xl font-bold text-center mt-2">
+              {courseName}
+            </h3>
+            <p className="text-left mt-60">Course duration: {courseDuration}</p>
+            <p className="text-left">Course detail: {courseDetails}</p>
+            <p className="text-left">ID : {ID}</p>
+            <p className="text-left">Issue date : {formatDate(issueDate)}</p>
+          </div>
+        </div>
 
-      {/* Certificate Content */}
-      <div className="w-[70%] bg-white p-8 pt-32 shadow-md rounded-lg">
-        <div>
-          <h1 className="text-4xl font-bold text-center font-serif">
-            CERTIFICATE OF COMPLETION
-          </h1>
-          <p className="text-lg text-center mt-4">Awarded to</p>
-          <h2 className="text-4xl text-center mt-2">{authorName}</h2>
-          <p className="text-lg text-center mt-4">For completing the course</p>
-          <h3 className="text-3xl font-bold text-center mt-2">{courseName}</h3>
-          <p className="text-left px-[400px] mt-60">
-            Course duration: {courseDuration}
-          </p>
-          <p className="text-left px-[400px]">Course detail: {courseDetails}</p>
-          <p className="text-left px-[400px]">ID : {ID}</p>
-          <p className="text-left px-[400px]">
-            Issue date : {formatDate(issueDate)}
-          </p>
+        {/* File Retrieval Area */}
+        <div className=" p-8  rounded-lg">
+          <div className="bg-white p-20 h-[200px] w-[800px] rounded-lg flex flex-col">
+            <div className="file">
+              <p>hay</p>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Document Overview and Tabs */}
-      <div className="w-[30%] bg-gray-100 p-10">
+      <div className="w-[30%]  bg-white p-10">
         <h1 className="text-xl font-bold mb-4">Document overview</h1>
         <p className="text-gray-600 ">
           The details and the information regarding the document that you have
@@ -386,11 +396,12 @@ function CertificateValidation() {
               </p>
               {/* Added copy button */}
               <button
-                className="px-6 py-2 mb-3 border "
+                class="cursor-pointer uppercase bg-white px-4 py-2  mt-5 active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#00ff22,-0.5rem_-0.5rem_#ff0000] transition "
                 onClick={handleCopyDocumentId}
               >
                 Copy
               </button>
+        
               {/* Momentary Message */}
               {copySuccess && (
                 <span className="absolute top-[-30px] left-[300px] text-sm text-[black]">

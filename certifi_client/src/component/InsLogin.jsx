@@ -11,6 +11,7 @@ const [email, setEmail ] = useState("")
 const [password,setPassword] = useState("")
 const [rememberMe, setRememberMe] = useState(false); 
 
+
 const navigate = useNavigate()
 
   // Function to handle form submission
@@ -57,12 +58,7 @@ const handleRememberMeChange = (event) => {
     <div className="flex justify-center items-center flex-col">
       <nav className=" w-full pt-12 pb-20 flex justify-between px-52 items-center">
         <img src={logo} alt="" />
-        <p>
-          Don't have an account? 
-          <Link to={"/userchoice"} className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500">
-          Sign Up
-          </Link>
-        </p>
+     
       </nav>
 
       <div className="form-container xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32"> 

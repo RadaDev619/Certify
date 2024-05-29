@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import logo from "../../public/logo.png";
 import { useNavigate } from "react-router-dom";
 import "../css/index.css";
-import LoadingAnimation from "./LoadingAnimation";
+import LoadingAnimation from "./LoadingAnimation"; // import loading 
 
 function Login() {
   // Define state variables for form inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false); 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false) // loading
 
   const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ function Login() {
     if (!password || !email) {
       alert("All fields are required");
     } else {
-      setIsLoading(true )
+      setIsLoading(true ) // is loading 
 
       fetch("https://prj-certifi-backend.onrender.com/api/auth/login", {
         method: "POST",
@@ -42,7 +42,7 @@ function Login() {
             window.localStorage.setItem("email", email);
             setEmail("");
             setPassword("");
-            setIsLoading(false)
+            setIsLoading(false) //loading 
             navigate("/dashboard");
           } else {
             alert("Login failed. Please try again.");
