@@ -8,7 +8,7 @@ import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
 import "@fortawesome/fontawesome-free/css/all.css";
 import {
-  FaCodepen ,
+  FaCodepen,
   FaSearch,
   FaPlusCircle,
   FaHome,
@@ -478,7 +478,13 @@ const Dashboard = ({ state }) => {
                     {certificate.verified === true ? "Approved" : "Rejected"}
                   </div>
                   <div>{certificate.name}</div>
-                  <div>{certificate.createdAt}</div>
+                  <div>
+                    {
+                      new Date(certificate.createdAt)
+                        .toISOString()
+                        .split("T")[0]
+                    }
+                  </div>
 
                   <Link
                     onClick={toCertificateForm(certificate._id)}
@@ -487,9 +493,9 @@ const Dashboard = ({ state }) => {
                     <i className="fas fa-eye"></i>
                   </Link>
                   <div className="view-icon ">
-                    <i
-                      onClick={storeHash(certificate._id)}
-                    ><FaCodepen /></i>
+                    <i onClick={storeHash(certificate._id)}>
+                      <FaCodepen />
+                    </i>
                   </div>
                 </div>
               ))}

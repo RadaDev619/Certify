@@ -20,13 +20,10 @@ function CertificateValidation() {
 
   // document approval
   // const [certificates, setCertificates] = useState([]); // State to store fetched certificates
-  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] = useState(
-    null
-  );
-  const [
-    currentNotValidCertificateId,
-    setCurrentNotValidCertificateId,
-  ] = useState(null);
+  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] =
+    useState(null);
+  const [currentNotValidCertificateId, setCurrentNotValidCertificateId] =
+    useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -225,6 +222,7 @@ function CertificateValidation() {
   const certId = fetchedData?._id || "";
   const documentId = fetchedData?.documentIdentification || "";
   const documentVerified = fetchedData?.verified || "";
+  const image = fetchedData?.image || "";
 
   const formatDate = (date) => {
     const formattedDate = new Date(date).toLocaleDateString("en-US", {
@@ -304,33 +302,40 @@ function CertificateValidation() {
       </nav>
       <div className="certificate flex flex-col items-center bg-gray-100 p-8 pt-32 rounded-lg w-[70%]">
         {/* Certificate Content */}
-        <div className="bg-white p-20 h-[900px] w-[800px] rounded-lg flex flex-col mb-10">
-          <div>
-            <h1 className="text-4xl font-bold text-center font-serif">
-              CERTIFICATE OF COMPLETION
+        <div
+          className="w-8/12  p-8 bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+        >
+          <div className="p-10 text-center flex flex-col">
+            <h1 className="text-4xl text-center pt-28 uppercase">
+              Certificate of completion
             </h1>
-            <p className="text-lg text-center mt-4">Awarded to</p>
-            <h2 className="text-4xl text-center mt-2">{authorName}</h2>
-            <p className="text-lg text-center mt-4">
-              For completing the course
-            </p>
-            <h3 className="text-3xl font-bold text-center mt-2">
-              {courseName}
-            </h3>
-            <p className="text-left mt-60">Course duration: {courseDuration}</p>
-            <p className="text-left">Course detail: {courseDetails}</p>
-            <p className="text-left">ID : {ID}</p>
-            <p className="text-left">Issue date : {formatDate(issueDate)}</p>
+            <h2 className="text-center pt-2">Awarded to</h2>
+            <p className="text-4xl text-center py-4 uppercase">{authorName}</p>
+            <p className="text-center">For completing the course</p>
+            <p className="text-3xl text-center py-6">{courseName}</p>
+            <div className="flex justify-center pt-40 gap-2">
+              <p>Course duration:</p>
+              <p>{courseDuration}</p>
+            </div>
+            <div className="flex justify-center pt-2 gap-2">
+              <p>Course detail:</p>
+              <p>{courseDetails}</p>
+            </div>
+            <div className="flex justify-center pt-2 gap-2">
+              <p>ID :</p>
+              <p>{ID}</p>
+            </div>
+            <div className="flex justify-center pt-2 gap-2">
+              <p>Issue date :</p>
+              <p>{issueDate}</p>
+            </div>
           </div>
         </div>
 
         {/* File Retrieval Area */}
         <div className=" p-8  rounded-lg">
-          <div className="bg-white p-20 h-[200px] w-[800px] rounded-lg flex flex-col">
-            <div className="file">
-              <p>hay</p>
-            </div>
-          </div>
+          <img src={image} className="p-8  rounded-lg " />
         </div>
       </div>
       {/* Document Overview and Tabs */}
@@ -413,7 +418,6 @@ function CertificateValidation() {
               >
                 Copy
               </button>
-        
               {/* Momentary Message */}
               {copySuccess && (
                 <span className="absolute top-[-30px] left-[300px] text-sm text-[black]">
