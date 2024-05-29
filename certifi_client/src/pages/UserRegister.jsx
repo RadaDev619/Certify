@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../public/logo.png";
 import { useNavigate } from "react-router-dom";
+import LoadingAnimation from "../component/LoadingAnimation";
 
 function URegister() {
   // Define state variables for registration inputs
@@ -9,14 +10,16 @@ function URegister() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   // Function to handle form submission
   const handleSubmit = (event) => {
-
     event.preventDefault();
 
-    document.cookie = `email=${email}; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
+    document.cookie = `email=${email}; expires=${new Date(
+      Date.now() + 86400000
+    ).toUTCString()}; path=/`;
 
     // Basic validation (add more as needed)
     if (!name || !email || !password || !confirmPassword) {
@@ -28,6 +31,7 @@ function URegister() {
       alert("Passwords do not match.");
       return;
     }
+    setIsLoading(true);
 
     // TODO: Call backend API for registration
     fetch("https://prj-certifi-backend.onrender.com/api/auth/register", {
@@ -43,16 +47,18 @@ function URegister() {
     })
       .then((response) => response.json())
       .then((data) => {
-        if(data.status === "success") {
+        if (data.status === "success") {
           alert("Registration successful!");
           setName("");
           setEmail("");
           setPassword("");
           setConfirmPassword("");
-          
+          setIsLoading(false);
+
           navigate("/OtpEnter");
-        }else{
+        } else {
           alert("Registration failed. Please try again.");
+          setIsLoading(false);
         }
       })
       .catch((error) => console.error("Error:", error));
@@ -62,10 +68,11 @@ function URegister() {
     console.log("Password:", password);
 
     // Clear form fields after submission
-
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex justify-center items-center flex-col">
       {/* Navigation bar - similar to login page */}
       <nav className="w-full pt-12 pb-20 flex justify-between px-52 items-center">
@@ -83,10 +90,13 @@ function URegister() {
 
       {/* Registration form container */}
       <div className="form-container  xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
-      <p className="text-center text-4xl pb-12">Sign Up</p>
+        <p className="text-center text-4xl pb-12">Sign Up</p>
 
         {/* Form with Tailwind CSS classes */}
-        <form onSubmit={handleSubmit} className="flex justify-center items-center flex-col w-full gap-6">
+        <form
+          onSubmit={handleSubmit}
+          className="flex justify-center items-center flex-col w-full gap-6"
+        >
           {/* Name input */}
           <div className="w-full">
             <input
@@ -133,9 +143,8 @@ function URegister() {
 
           {/* Submit button - similar to login page */}
           <button type="submit" className="loginBut w-[400px] ">
-              <span>Sign Up</span>
-            </button>
-        
+            <span>Sign Up</span>
+          </button>
         </form>
       </div>
     </div>

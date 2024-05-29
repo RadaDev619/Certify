@@ -38,13 +38,17 @@ const Dashboard = () => {
     if (localStorage.getItem("documentId")) {
       localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
     }
+    const signer = localStorage.getItem("email");
     // Fetch certificates from backend API
-    fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/certificate/getCert/${signer}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
@@ -98,69 +102,6 @@ const Dashboard = () => {
 
   const applyFilters = () => {
     closeFilterModal();
-  };
-  // verify modal
-  const [verifyModalIsOpen, setVerifyModalIsOpen] = useState(false);
-
-  const openVerifyModal = (certificateId) => {
-    setCurrentVerifyCertificateId(certificateId);
-    setVerifyModalIsOpen(true);
-  };
-
-  const closeVerifyModal = () => {
-    setVerifyModalIsOpen(false);
-  };
-
-  const handleVerify = (certificateId) => {
-    fetch(
-      `https://prj-certifi-backend.onrender.com/api/certificate/verify/${certificateId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === "success") {
-          console.log(data.data);
-
-          alert("Document verified successfully.");
-        } else {
-          console.log(data);
-          alert("Document verification failed. Please try again.");
-        }
-      });
-    // console.log("Validated");
-    closeVerifyModal();
-  };
-
-  const handleNotValid = (certificateId) => {
-    fetch(
-      `https://prj-certifi-backend.onrender.com/api/certificate/notverify/${certificateId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {});
-    // console.log("Validated");
-    closenotValidModal();
-  };
-
-  // notvalid modal
-
-  const opennotValidModal = (certificateId) => {
-    setCurrentNotValidCertificateId(certificateId);
-    setnotValidModalIsOpen(true);
-  };
-
-  const closenotValidModal = () => {
-    setnotValidModalIsOpen(false);
   };
 
   const toCertificateForm = (Id) => (event) => {

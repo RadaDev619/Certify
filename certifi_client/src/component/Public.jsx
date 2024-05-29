@@ -1,16 +1,20 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import earth from "../../public/earth.png";
 import cub from "../../public/cub.png";
 import comp from "../../public/comp.png";
 import logo from "../../public/logo.png";
 import { ethers } from "ethers"; //import ethers library
 import abi from "../contractJson/Certify.json";
-import "../css/index.css"
+import "../css/index.css";
+import backgroundImage from "../../public/background.jpeg";
+import LoadingAnimation from "./LoadingAnimation";
 
 const Public = () => {
   const [ID, setID] = useState("");
   const [searchResult, setSearchResult] = useState("");
   const inputRef = useRef(null);
+  const [fetchedData, setFetchedData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const searchCertificate = async (event) => {
     event.preventDefault();
@@ -39,6 +43,7 @@ const Public = () => {
 
       // Extract hash (remaining characters)
       const hash = ID.substring(66);
+      setIsLoading(true);
       const transaction = await contract.getIPFSHash(address, identifier, hash);
 
       console.log("Waiting for transaction...");
@@ -54,8 +59,27 @@ const Public = () => {
 
       // Set the URL state to the concatenated string
       setSearchResult(concatenatedString);
+      const response = await fetch(
+        `https://prj-certifi-backend.onrender.com/api/certificate/getCertificatebyId/${identifier}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.status === "success") {
+        setFetchedData(data.data); // Set fetched data in state
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+
+        throw new Error("Certificate data fetch failed. Please try again.");
+      }
     } catch (error) {
       alert("Certificate invalid!");
+      setIsLoading(false);
     }
   };
 
@@ -75,7 +99,9 @@ const Public = () => {
     inputRef.current.focus();
     setSearchResult("");
   };
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="pt-40 px-16">
       <div className="relative validate pb-40">
         <h1 className="text-center font-bold py-10 ">Validate</h1>
@@ -139,9 +165,45 @@ const Public = () => {
 
         {/* search end   */}
         {/* Display search results */}
-        <div className="mt-5">
-          <p className="text-center">{searchResult}</p>
-        </div>
+        {fetchedData && (
+          <div className="mt-5">
+            <div
+              className="w-9/12 bg-gray-100 p-8 bg-center bg-no-repeat"
+              style={{ backgroundImage: `url(${backgroundImage})` }}
+            >
+              <div className="p-10 text-center flex flex-col">
+                <h1 className="text-4xl text-center pt-28 uppercase">
+                  Certificate of completion
+                </h1>
+                <h2 className="text-center pt-2">Awarded to</h2>
+                <p className="text-4xl text-center py-4 uppercase">
+                  {fetchedData.name}
+                </p>
+                <p className="text-center">For completing the course</p>
+                <p className="text-3xl text-center py-6">
+                  {fetchedData.courseName}
+                </p>
+                <div className="flex pt-40 px-[460px] gap-2">
+                  <p>Course duration:</p>
+                  <p>{fetchedData.coursePeriod}</p>
+                </div>
+                <div className="flex pt-2 px-[460px]  gap-2">
+                  <p>Course detail:</p>
+                  <p>{fetchedData.courseDetails}</p>
+                </div>
+                <div className="flex pt-2 px-[460px]  gap-2">
+                  <p>ID :</p>
+                  <p>{ID}</p>
+                </div>
+                <div className="flex pt-2 px-[460px]  gap-2">
+                  <p>Issue date :</p>
+                  {fetchedData.createdAt}
+                </div>
+              </div>
+            </div>
+            <img src={fetchedData.image} />
+          </div>
+        )}
       </div>
 
       {/* search  */}
@@ -204,82 +266,87 @@ const Public = () => {
       </div>
 
       <div className="members ">
-      
         <h1 className="text-5xl text-center p-10">Members </h1>
-        <div className="MCards flex justify-center gap-10 "> 
-            {/* card 1 */}
-  <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-sky-200 via-orange-200 to-orange-700 before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
-  <div class="w-28 h-28 bg-blue-700 mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500"></div>
-  <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
-    <span class="text-2xl font-semibold">Ngawang Gyeltshen </span>
-    <p>Project Manager </p>
-  </div>
-  <button className='loginBut w-[250px] px-4 py-1'><span><a href="">Ngawang Gyeltshen </a></span></button>
-</div>
-        {/* card 2 */}
+        <div className="MCards flex justify-center gap-10 ">
+          {/* card 1 */}
+          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-sky-200 via-orange-200 to-orange-700 before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+            <div class="w-28 h-28 bg-blue-700 mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500"></div>
+            <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
+              <span class="text-2xl font-semibold">Ngawang Gyeltshen </span>
+              <p>Project Manager </p>
+            </div>
+            <button className="loginBut w-[250px] px-4 py-1">
+              <span>
+                <a href="">Ngawang Gyeltshen </a>
+              </span>
+            </button>
+          </div>
+          {/* card 2 */}
 
-<div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-sky-200 via-orange-200 to-orange-700 before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
-  <div class="w-28 h-28 bg-blue-700 mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500"></div>
-  <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
-    <span class="text-2xl font-semibold">Karma Wangchuk</span>
-    <p>Backend Developer </p>
-  </div>
-  <button className='loginBut w-[200px] px-4 py-1'><span><a href="">Karma Wangchuk</a></span></button>
-</div>
-{/* card 3  */}
+          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-sky-200 via-orange-200 to-orange-700 before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+            <div class="w-28 h-28 bg-blue-700 mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500"></div>
+            <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
+              <span class="text-2xl font-semibold">Karma Wangchuk</span>
+              <p>Backend Developer </p>
+            </div>
+            <button className="loginBut w-[200px] px-4 py-1">
+              <span>
+                <a href="">Karma Wangchuk</a>
+              </span>
+            </button>
+          </div>
+          {/* card 3  */}
 
-<div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-sky-200 via-orange-200 to-orange-700 before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
-  <div class="w-28 h-28 bg-blue-700 mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500"></div>
-  <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
-    <span class="text-2xl font-semibold">Tandin Pema Gyelmo</span>
-    <p>Front End Developer</p>
-  </div>
-  <button className='loginBut w-[200px] px-4 py-1'><span><a href="">Tandn p Gyelmo</a></span></button>
-</div>
-{/* card 4 */}
+          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-sky-200 via-orange-200 to-orange-700 before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+            <div class="w-28 h-28 bg-blue-700 mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500"></div>
+            <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
+              <span class="text-2xl font-semibold">Tandin Pema Gyelmo</span>
+              <p>Front End Developer</p>
+            </div>
+            <button className="loginBut w-[200px] px-4 py-1">
+              <span>
+                <a href="">Tandn p Gyelmo</a>
+              </span>
+            </button>
+          </div>
+          {/* card 4 */}
 
-<div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-sky-200 via-orange-200 to-orange-700 before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
-  <div class="w-28 h-28 bg-blue-700 mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500"></div>
-  <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
-    <span class="text-2xl font-semibold">Rada Dorji</span>
-    <p>Blockchain specilist</p>
-  </div>
-  
-  <button className='loginBut w-[150px] px-4 py-1'><span><a href="">Rada Dorji</a></span></button>
-</div>
-<div
-  class="group flex flex-col justify-start items-start gap-2 w-96 h-56 duration-500 relative rounded-lg p-4 bg-purple-500 hover:-translate-y-2 hover:shadow-xl shadow-purple-400"
->
-  <div
-    class="absolute duration-700 shadow-md group-hover:-translate-y-4 group-hover:-translate-x-4 -bottom-10 -right-10 w-1/2 h-1/2 rounded-lg bg-purple-400"
-    alt="image here"
-  ></div>
+          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-sky-200 via-orange-200 to-orange-700 before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+            <div class="w-28 h-28 bg-blue-700 mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500"></div>
+            <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
+              <span class="text-2xl font-semibold">Rada Dorji</span>
+              <p>Blockchain specilist</p>
+            </div>
 
-  <div class="">
-    <h2 class="text-2xl font-bold mb-2 text-white">Elegant Card</h2>
-    <p class="text-gray-200 line-clamp-3">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean convallis
-      magna quis lectus fermentum, quis scelerisque orci pellentesque. Duis id
-      porta justo. Sed ac enim id justo tincidunt hendrerit id ac lectus.
-      Pellentesque maximus posuere tortor vitae consequat.
-    </p>
-  </div>
-  <button
-    class="hover:bg-purple-400 bg-purple-600 text-white mt-6 rounded p-2 px-6"
-  >
-    Explore
-  </button>
-</div>
+            <button className="loginBut w-[150px] px-4 py-1">
+              <span>
+                <a href="">Rada Dorji</a>
+              </span>
+            </button>
+          </div>
+          <div class="group flex flex-col justify-start items-start gap-2 w-96 h-56 duration-500 relative rounded-lg p-4 bg-purple-500 hover:-translate-y-2 hover:shadow-xl shadow-purple-400">
+            <div
+              class="absolute duration-700 shadow-md group-hover:-translate-y-4 group-hover:-translate-x-4 -bottom-10 -right-10 w-1/2 h-1/2 rounded-lg bg-purple-400"
+              alt="image here"
+            ></div>
 
+            <div class="">
+              <h2 class="text-2xl font-bold mb-2 text-white">Elegant Card</h2>
+              <p class="text-gray-200 line-clamp-3">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
+                convallis magna quis lectus fermentum, quis scelerisque orci
+                pellentesque. Duis id porta justo. Sed ac enim id justo
+                tincidunt hendrerit id ac lectus. Pellentesque maximus posuere
+                tortor vitae consequat.
+              </p>
+            </div>
+            <button class="hover:bg-purple-400 bg-purple-600 text-white mt-6 rounded p-2 px-6">
+              Explore
+            </button>
+          </div>
         </div>
-        
-        
-       
-        
       </div>
-      <div>
-        
-      </div>
+      <div></div>
 
       <footer className="bg-white py-16 mt-20">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
