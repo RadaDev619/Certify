@@ -25,7 +25,7 @@ import InsLogin from "./component/InsLogin";
 import CertificateOfCompletion from "./pages/CertificateOfCompletion";
 import Admindashboard from "./pages/Admin/Admindashboard";
 import Loading from "./component/LoadingAnimation";
-
+import AdminLogin from "./component/adminLogin"
 
 function App() {
   return (
@@ -63,6 +63,7 @@ function App() {
           element={<CertificateOfCompletion />}
         />
         <Route path="/admindashboard" element={<Admindashboard />} />
+        <Route path="/adminlogin" element = {< AdminLogin/>}/>
       </Routes>
     </>
   );
