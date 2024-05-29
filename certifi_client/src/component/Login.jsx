@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../../public/logo.png";
 import { useNavigate } from "react-router-dom";
+import logo from "../../public/logo.png";
 import "../css/index.css";
+import LoadingAnimation from "./LoadingAnimation"; // import loading 
 
 function Login() {
   // Define state variables for form inputs
@@ -12,16 +13,17 @@ function Login() {
 
   const navigate = useNavigate();
 
-  // Function to handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-
+   
     console.log("Email", email);
     console.log("Password", password);
 
     if (!password || !email) {
       alert("All fields are required");
     } else {
+      setIsLoading(true ) // is loading 
+
       fetch("https://prj-certifi-backend.onrender.com/api/auth/login", {
         method: "POST",
         headers: {
@@ -45,6 +47,7 @@ function Login() {
             }
             setEmail("");
             setPassword("");
+            setIsLoading(false) //loading 
             navigate("/dashboard");
           } else {
             alert("Login failed. Please try again.");
@@ -52,15 +55,16 @@ function Login() {
         });
     }
   };
-
   const handleRememberMeChange = (event) => {
     setRememberMe(event.target.checked);
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex justify-center items-center flex-col">
-      <nav className=" w-full pt-12 pb-20 flex justify-between px-52 items-center">
-        <img src={logo} alt="" />
+      <nav className="w-full pt-12 pb-20 flex justify-between px-52 items-center">
+        <img src={logo} alt="Logo" />
         <p>
           Don't have an account?
           <Link
@@ -117,6 +121,12 @@ function Login() {
                 </p>
               </Link>
             </div>
+
+            <Link to={"/Forgotpassword"}>
+              <p className="pl-4 text-sm hover:text-blue-500  hover:duration-300">
+                Forgot Password?
+              </p>
+            </Link>
           </div>
           <div className="w-full  flex justify-center ">
             <button type="submit" className="loginBut w-[400px] ">

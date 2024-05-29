@@ -1,10 +1,12 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../public/logo.png";
+import "../../css/index.css";
 
 const CertificatePart = () => {
   const navigate = useNavigate();
   const certId = window.localStorage.getItem("certId");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleButtonClick = () => {
     // console.log(signer.email)
@@ -13,6 +15,7 @@ const CertificatePart = () => {
     formData.append("image", image);
     formData.append("signer", signer.email);
     console.log("formaData", image);
+    setIsLoading(true);
 
     fetch(
       `https://prj-certifi-backend.onrender.com/api/certificate/addSigner/${certId}`,
@@ -25,9 +28,12 @@ const CertificatePart = () => {
       .then((data) => {
         if (data.status === "success") {
           localStorage.setItem("documentId", certId);
+          setIsLoading(false);
+
           navigate("/cvalid");
         } else {
           alert("Certificate creation failed. Please try again.");
+          setIsLoading(false);
         }
       });
   };
@@ -35,12 +41,37 @@ const CertificatePart = () => {
   const [image, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [signer, setSigner] = useState(null);
-  const [availableSigners, setAvailableSigners] = useState([
-    { email: "GCIT@rub.edu.bt", name: "GCIT" },
-    { email: "Genic@rub.edu.bt", name: "Genic" },
-    { email: "Sharubtse@rub.edu.bt", name: "Sharubtse" },
-  ]);
+  const [availableSigners, setAvailableSigners] = useState([]);
   const previewRef = useRef(null);
+
+  useEffect(() => {
+    if (localStorage.getItem("documentId")) {
+      localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
+    }
+
+    // Fetch certificates from backend API
+    fetch("https://prj-certifi-backend.onrender.com/api/institute/getAllins", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setAvailableSigners(data.data);
+        } else {
+          alert("Signer data fetch failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching certificates:", error);
+        alert(
+          "An error occurred while fetching certificates. Please try again."
+        );
+      });
+  }, []);
 
   const handleFileChange = (e) => {
     const image = e.target.files[0];
@@ -71,11 +102,15 @@ const CertificatePart = () => {
     }
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex justify-center items-center flex-col">
       {/* Navigation */}
       <nav className="w-full pt-12 pb-20 px-52">
-        <img src={logo} alt="" />
+        <Link to={"/cform"} className="">
+          <img src={logo} alt="" />
+        </Link>
       </nav>
 
       <div className="form-container w-[90vw] xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32 border-2 border-gray-400 rounded-lg">
@@ -183,13 +218,14 @@ const CertificatePart = () => {
       <div className="flex justify-between items-center flex-col gap-4 mt-12">
         {/* <Link to="/cvalid"> */}
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-96"
+          type="submit"
+          className="loginBut w-[400px] "
           onClick={handleButtonClick}
         >
-          Add document
+          <span>Add document</span>
         </button>
         {/* </Link> */}
-        <button className="text-gray-700 font-bold py-2 px-4 rounded w-96">
+        <button className="pl-4 text-blue-500 hover:underline hover:underline-blue-500 hover:underline-offset-[7px] hover:transition-all hover:duration-500">
           Cancel
         </button>
       </div>
