@@ -22,6 +22,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
+import LoadingAnimation from "../../component/LoadingAnimation";
 
 const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
 const contractABI = abi.abi;
@@ -32,6 +33,7 @@ const Dashboard = ({ state }) => {
   const [certificates, setCertificates] = useState([]); // State to store fetched certificates
   const [Hash, setHash] = useState("");
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem("documentId")) {
@@ -172,6 +174,8 @@ const Dashboard = ({ state }) => {
   const storeHash = (certificateId) => async (event) => {
     event.preventDefault();
     try {
+      setIsLoading(true);
+
       fetch(
         `https://prj-certifi-backend.onrender.com/api/certificate/get/${certificateId}`
       )
@@ -218,14 +222,17 @@ const Dashboard = ({ state }) => {
             console.log(data.data);
 
             alert("Document uploaded successfully.");
+            setIsLoading(false);
           } else {
             console.log(data);
             alert("Document uploading failed. Please try again.");
+            setIsLoading(false);
           }
         });
     } catch (error) {
       console.error("Error adding hash:", error.message);
       alert("Error adding hash. Please try again later.");
+      setIsLoading(false);
     }
   };
 
@@ -235,7 +242,9 @@ const Dashboard = ({ state }) => {
     navigate("/cvalid");
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="dashboard-wrapper">
       <Modal
         isOpen={metamaskPopupIsOpen}

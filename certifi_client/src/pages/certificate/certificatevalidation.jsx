@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../../public/background.jpeg";
 import Modal from "react-modal";
 import axios from "axios";
+import LoadingAnimation from "../../component/LoadingAnimation";
 
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");
@@ -15,6 +16,7 @@ function CertificateValidation() {
   const [recipients, setRecipients] = useState([]);
   // State for certificate information (replace with your actual data or fetching mechanism)
   const [certificateInfo, setCertificateInfo] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // document approval
   // const [certificates, setCertificates] = useState([]); // State to store fetched certificates
@@ -105,6 +107,8 @@ function CertificateValidation() {
     // alert("reached here4");
 
     // Make the API request to Pinata to upload the image
+    setIsLoading(true);
+
     const responseData = await axios({
       method: "post",
       url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
@@ -141,9 +145,11 @@ function CertificateValidation() {
           console.log(data.data);
 
           alert("Document verified successfully.");
+          setIsLoading(false);
         } else {
           console.log(data);
           alert("Document verification failed. Please try again.");
+          setIsLoading(false);
         }
       });
     // console.log("Validated");
@@ -151,6 +157,8 @@ function CertificateValidation() {
   };
 
   const handleNotValid = (certificateId) => {
+    setIsLoading(true);
+
     fetch(
       `https://prj-certifi-backend.onrender.com/api/certificate/notverify/${certificateId}`,
       {
@@ -162,6 +170,8 @@ function CertificateValidation() {
     )
       .then((response) => response.json())
       .then((data) => {});
+    setIsLoading(false);
+
     // console.log("Validated");
     closenotValidModal();
   };
@@ -280,7 +290,9 @@ function CertificateValidation() {
     console.log("Certificate rejected");
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex h-screen">
       <nav className="w-full flex justify-between pl-20 pb-5 fixed top-0 left-0">
         <p className="">
@@ -292,27 +304,6 @@ function CertificateValidation() {
           </Link>
         </p>
       </nav>
-      {/* <div className="w-[70%] bg-white p-8 pt-32 shadow-md rounded-lg">
-        <div>
-          <h1 className="text-4xl font-bold text-center font-serif">
-            CERTIFICATE OF COMPLETION
-          </h1>
-          <p className="text-lg text-center mt-4">Awarded to</p>
-          <h2 className="text-4xl text-center mt-2">{authorName}</h2>
-          <p className="text-lg text-center mt-4">For completing the course</p>
-          <h3 className="text-3xl font-bold text-center mt-2">{courseName}</h3>
-          <p className="text-left px-[400px] mt-60">
-            Course duration: {courseDuration}
-          </p>
-          <p className="text-left px-[400px]">Course detail: {courseDetails}</p>
-          <p className="text-left px-[400px]">DocumentId: {documentId}</p>
-          <p className="text-left px-[400px]">ID : {ID}</p>
-          <p className="text-left px-[400px]">
-            Issue date : {formatDate(issueDate)}
-          </p>
-        </div>
-      </div> */}
-
       {/* Certificate Content */}
       <div
         className="w-9/12 bg-gray-100 p-8 bg-center bg-no-repeat"

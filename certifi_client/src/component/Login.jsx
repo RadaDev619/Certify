@@ -46,6 +46,7 @@ function Login() {
             navigate("/dashboard");
           } else {
             alert("Login failed. Please try again.");
+            setIsLoading(false);
           }
         });
     }

@@ -9,6 +9,7 @@ function InsLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -22,6 +23,7 @@ function InsLogin() {
     if (!password || !email) {
       alert("All fields are required");
     } else {
+      setIsLoading(true);
       fetch("https://prj-certifi-backend.onrender.com/api/institute/login", {
         method: "POST",
         headers: {
@@ -40,9 +42,12 @@ function InsLogin() {
             alert("Login successful!");
             setEmail("");
             setPassword("");
+            setIsLoading(false);
+
             navigate("/Institutiondashboard");
           } else {
             alert("Login failed. Please try again.");
+            setIsLoading(false);
           }
         });
     }
@@ -51,7 +56,9 @@ function InsLogin() {
     setRememberMe(event.target.checked);
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex justify-center items-center flex-col">
       <nav className=" w-full pt-12 pb-20 flex justify-between px-52 items-center">
         <img src={logo} alt="" />

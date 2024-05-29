@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../public/logo.png";
+import LoadingAnimation from "../../component/LoadingAnimation";
 
 const CertificatePart = () => {
   const navigate = useNavigate();
   const certId = window.localStorage.getItem("certId");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleButtonClick = () => {
     // console.log(signer.email)
@@ -13,6 +15,7 @@ const CertificatePart = () => {
     formData.append("image", image);
     formData.append("signer", signer.email);
     console.log("formaData", image);
+    setIsLoading(true);
 
     fetch(
       `https://prj-certifi-backend.onrender.com/api/certificate/addSigner/${certId}`,
@@ -25,9 +28,12 @@ const CertificatePart = () => {
       .then((data) => {
         if (data.status === "success") {
           localStorage.setItem("documentId", certId);
+          setIsLoading(false);
+
           navigate("/cvalid");
         } else {
           alert("Certificate creation failed. Please try again.");
+          setIsLoading(false);
         }
       });
   };
@@ -96,7 +102,9 @@ const CertificatePart = () => {
     }
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex justify-center items-center flex-col">
       {/* Navigation */}
       <nav className="w-full pt-12 pb-20 px-52">

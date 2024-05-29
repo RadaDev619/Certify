@@ -7,12 +7,14 @@ import { ethers } from "ethers"; //import ethers library
 import abi from "../contractJson/Certify.json";
 import "../css/index.css";
 import backgroundImage from "../../public/background.jpeg";
+import LoadingAnimation from "./LoadingAnimation";
 
 const Public = () => {
   const [ID, setID] = useState("");
   const [searchResult, setSearchResult] = useState("");
   const inputRef = useRef(null);
   const [fetchedData, setFetchedData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const searchCertificate = async (event) => {
     event.preventDefault();
@@ -41,6 +43,7 @@ const Public = () => {
 
       // Extract hash (remaining characters)
       const hash = ID.substring(66);
+      setIsLoading(true);
       const transaction = await contract.getIPFSHash(address, identifier, hash);
 
       console.log("Waiting for transaction...");
@@ -68,11 +71,15 @@ const Public = () => {
       const data = await response.json();
       if (data.status === "success") {
         setFetchedData(data.data); // Set fetched data in state
+        setIsLoading(false);
       } else {
+        setIsLoading(false);
+
         throw new Error("Certificate data fetch failed. Please try again.");
       }
     } catch (error) {
       alert("Certificate invalid!");
+      setIsLoading(false);
     }
   };
 
@@ -92,7 +99,9 @@ const Public = () => {
     inputRef.current.focus();
     setSearchResult("");
   };
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="pt-40 px-16">
       <div className="relative validate pb-40">
         <h1 className="text-center font-bold py-10 ">Validate</h1>

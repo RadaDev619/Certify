@@ -1,28 +1,28 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../public/logo.png";
-
+import LoadingAnimation from "../component/LoadingAnimation";
 
 function getCookie(name) {
   const cookieString = document.cookie;
-  const cookies = cookieString.split('; ');
+  const cookies = cookieString.split("; ");
   for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i];
-      const [cookieName, cookieValue] = cookie.split('=');
-      if (cookieName === name) {
-          return decodeURIComponent(cookieValue);
-      }
+    const cookie = cookies[i];
+    const [cookieName, cookieValue] = cookie.split("=");
+    if (cookieName === name) {
+      return decodeURIComponent(cookieValue);
+    }
   }
   return null;
 }
 
-const userEmail = getCookie('email');
-
+const userEmail = getCookie("email");
 
 function OtpEntry() {
   const [otp, setOtp] = useState(new Array(6).fill(""));
 
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (element, index) => {
     if (isNaN(element.value)) return;
@@ -34,6 +34,7 @@ function OtpEntry() {
       element.nextSibling.focus();
     }
   };
+  setIsLoading(true);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -53,21 +54,22 @@ function OtpEntry() {
       .then((data) => {
         if (data.status === "Verified") {
           alert("OTP verification successful!");
+
+          setIsLoading(false);
           navigate("/Login");
         } else {
           alert("OTP verification failed. Please try again.");
+          setIsLoading(false);
         }
-      }
-      )
-
-      console.log("Entered OTP:", otpValue);
+      });
+    console.log("Entered OTP:", otpValue);
     // For demonstration, we'll navigate to the password change page
     // In a real application, you would verify the OTP first
-    
-
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex justify-center items-center flex-col">
       {/* Navigation (same as ForgotPassword) */}
       <nav className="w-full pt-12 pb-20 flex justify-between px-52 items-center">
@@ -85,8 +87,13 @@ function OtpEntry() {
       </nav>
       <div className="form-container  xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
         <p className="text-center text-4xl pb-5">Email Verification </p>
-        <p className="text-center text-lg pb-12">We have sent a 6-digit verification code to your email</p>
-        <form onSubmit={handleSubmit} className="flex justify-center items-center flex-col w-full gap-6">
+        <p className="text-center text-lg pb-12">
+          We have sent a 6-digit verification code to your email
+        </p>
+        <form
+          onSubmit={handleSubmit}
+          className="flex justify-center items-center flex-col w-full gap-6"
+        >
           <div className="flex w-full justify-between pb-10">
             {otp.map((data, index) => {
               return (
@@ -103,10 +110,10 @@ function OtpEntry() {
               );
             })}
           </div>
-       
+
           <button type="submit" className="loginBut w-[400px] ">
-              <span>Verify OTP</span>
-            </button>
+            <span>Verify OTP</span>
+          </button>
         </form>
       </div>
     </div>
