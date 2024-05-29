@@ -81,7 +81,7 @@ function AdminLogin() {
       </nav>
 
       <div className="form-container xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
-        <p className="text-center text-4xl pb-12">Log In</p>
+        <p className="text-center text-4xl pb-12">Admin</p>
         <form
           onSubmit={handleSubmit}
           className="flex justify-center items-center flex-col w-full gap-6"

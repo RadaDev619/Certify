@@ -20,11 +20,16 @@ const Account = () => {
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [showEmailPopup, setShowEmailPopup] = useState(false);
   const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
+  const [name, setName] = useState("")
+  const [password, setPassword] = useState("")
+  const [mail, setMail] = useState("")
+  const [profilepic, setProfilepic] = useState("")
 
   
   const handleEditAvatar = () => {
     setShowAvatarPopup(true);
-    fetch(`https://prj-certifi-backend.onrender.com/api/auth/photoUpload/`, {})
+    useEffect(() =>{
+    })
   };
 
   const handleCloseAvatarPopup = () => {
