@@ -127,7 +127,7 @@ function AdminLogin() {
           </div>
           <div className="w-full flex justify-center">
             <button type="submit" className="loginBut w-[400px]">
-              <span>Sign In</span>
+              <span>Log In</span>
             </button>
           </div>
         </form>
