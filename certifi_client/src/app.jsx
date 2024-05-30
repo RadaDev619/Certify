@@ -25,8 +25,8 @@ import InsLogin from "./component/InsLogin";
 import CertificateOfCompletion from "./pages/CertificateOfCompletion";
 import Admindashboard from "./pages/Admin/Admindashboard";
 import Loading from "./component/LoadingAnimation";
-import AdminLogin from "./component/adminLogin"
-
+import AdminLogin from "./component/adminLogin";
+import ForgotPasswordChange from "./pages/FPchangepassword";
 function App() {
   return (
     <>
@@ -38,6 +38,10 @@ function App() {
         <Route path="/uregister" element={<UserRegister />} />
         <Route path="/iregister" element={<InstitutionRegister />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route
+          path="/ForgotPasswordChange"
+          element={<ForgotPasswordChange />}
+        />
         <Route path="/userchoice" element={<UserChoice />} />
         <Route path="/changep" element={<ChangeP />} />
         <Route path="/otpenter" element={<OtpEnter />} />
@@ -49,7 +53,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard1" element={<Dashboard1 />} />
         <Route path="/accountsetting" element={<Accountsetting />} />
-        <Route path="/Loading" element={<Loading/>} />
+        <Route path="/Loading" element={<Loading />} />
         <Route
           path="/institutiondashboard"
           element={<Institutiondashboard />}
@@ -63,7 +67,7 @@ function App() {
           element={<CertificateOfCompletion />}
         />
         <Route path="/admindashboard" element={<Admindashboard />} />
-        <Route path="/adminlogin" element = {< AdminLogin/>}/>
+        <Route path="/adminlogin" element={<AdminLogin />} />
       </Routes>
     </>
   );

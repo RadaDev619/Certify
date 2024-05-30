@@ -4,15 +4,15 @@ import logo from "../../public/logo.png";
 import { useNavigate } from "react-router-dom";
 import "../css/index.css";
 import LoadingAnimation from "./LoadingAnimation";
-
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 function InsLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
-const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // Function to handle form submission
   const handleSubmit = (event) => {
@@ -43,13 +43,33 @@ const navigate = useNavigate()
             localStorage.setItem("userid", data.data._id);
             localStorage.setItem("insLoggedIn", "true");
             alert("Login successful!");
+
+            // alert("Login successful!");
+            Toastify({
+              text: "Login successful!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
             setEmail("");
             setPassword("");
             setIsLoading(false);
 
             navigate("/Institutiondashboard");
           } else {
-            alert("Login failed. Please try again.");
+            // alert("Login successful!");
+            Toastify({
+              text: "Login failed. Please try again!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
             setIsLoading(false);
           }
         });
@@ -65,7 +85,6 @@ const navigate = useNavigate()
     <div className="flex justify-center items-center flex-col">
       <nav className=" w-full pt-12 pb-20 flex justify-between px-52 items-center">
         <img src={logo} alt="" />
-     
       </nav>
 
       <div className="form-container xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">

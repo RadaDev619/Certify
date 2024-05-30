@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../../public/logo.png";
 import "../css/index.css";
 import LoadingAnimation from "./LoadingAnimation";
-
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,16 +25,19 @@ function AdminLogin() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("https://prj-certifi-backend.onrender.com/admin/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      const response = await fetch(
+        "https://prj-certifi-backend.onrender.com/admin/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -41,17 +45,50 @@ function AdminLogin() {
         window.localStorage.setItem("email", email);
         window.localStorage.setItem("adminLoggedIn", "true")
 
-        alert("Login successful!");
         setEmail("");
         setPassword("");
+        Toastify({
+          text: "Login successful!",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+          stopOnFocus: true,
+        }).showToast();
         navigate("/admindashboard");
       } else {
-        alert(data.message || "Login failed. Please try again.");
+        Toastify({
+          text: "Login failed. Please try again!",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+          stopOnFocus: true,
+        }).showToast();
       }
     } catch (error) {
       console.error("Error during fetch:", error);
-      alert("An error occurred. Please try again later.");
+      Toastify({
+        text: "Login failed. Please try again!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "green",
+        stopOnFocus: true,
+      }).showToast();
     } finally {
+      Toastify({
+        text: "Login failed. Please try again!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "green",
+        stopOnFocus: true,
+      }).showToast();
       setIsLoading(false);
     }
   };

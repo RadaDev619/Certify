@@ -14,6 +14,10 @@ import { Logo } from "../component/Svgs";
 import cube1 from "../../public/cube1.png";
 import cube2 from "../../public/cube2.png";
 import {useNavigate} from "react-router-dom";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
+import LoadingAnimation from "./LoadingAnimation"; // import loading
+import backgroundImage from "../../public/background.jpeg";
 
 const Public = () => {
   const navigate = useNavigate();
@@ -95,15 +99,47 @@ const Public = () => {
       const data = await response.json();
       if (data.status === "success") {
         setFetchedData(data.data); // Set fetched data in state
+        Toastify({
+          text: "Transaction Successful!",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+          stopOnFocus: true,
+        }).showToast();
         setIsLoading(false);
       } else {
+        Toastify({
+          text: "Transaction faied!",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+          stopOnFocus: true,
+        }).showToast();
         setIsLoading(false);
 
         throw new Error("Certificate data fetch failed. Please try again.");
       }
     } catch (error) {
-      alert("Certificate invalid!");
+      Toastify({
+        text: "Transaction faied!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "green",
+        stopOnFocus: true,
+      }).showToast();
       setIsLoading(false);
+    }
+  };
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" }); // Smooth scrolling
     }
   };
 
@@ -123,7 +159,9 @@ const Public = () => {
     inputRef.current.focus();
     setSearchResult("");
   };
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className=" ">
       {/* hero */}
       <div className=" bg-gradient-to-b from-[#ececec] to-[#dfdfdf] h-[800px] backdrop-blur-sm pt-10 overflow-x-hidden">
@@ -166,12 +204,10 @@ const Public = () => {
             className="h-[200px] w-[200px] -translate-y-[50px] translate-x-[250px]  "
           />
         </div>
-        
       </div>
 
       {/* hero end */}
-
-      <div className="relative validate pb-40 pt-12">
+      <div className="relative validate pb-40 pt-12" id="validate">
         <h1 className="text-center font-bold py-10 text-2xl">Validate</h1>
         <h3 className="text-center text-4xl pb-6">
           Protect your documents! Check their integrity and authenticity
@@ -282,7 +318,7 @@ const Public = () => {
 
       {/* search  end*/}
 
-      <div className="Aboutus ">
+      <div className="Aboutus " id="aboutus">
         <h1 className="text-center font-bold py-10 text-2xl">About Us </h1>
         <p className="text-center leading-relaxed tracking-wide text-5xl">
           {" "}
@@ -295,7 +331,8 @@ const Public = () => {
       <h1 className="pt-20 text-center text-2xl font-bold uppercase">
         why choose us{" "}
       </h1>
-      <div className="aim flex justify-between mt-20 space-x-8">
+      {/* aim  */}
+      <div className="aim flex justify-between mt-20 space-x-4 px-20" id="aim">
         <div className="flex flex-col items-center">
           <div className="w-96 h-128 flex items-center justify-center">
             <img src={cub} alt="Storage" className="w-[500px] h-[600px]" />
@@ -304,7 +341,8 @@ const Public = () => {
           <p className="text-center text-lg mt-2">
             Secure storage for certificates, diplomas, licenses,
             <br />
-            and more. Our advanced encryption safeguards <br />
+            and more. Our advanced encryption safeguards
+            <br />
             your sensitive data from unauthorized access.
           </p>
         </div>
@@ -318,7 +356,8 @@ const Public = () => {
             <br />
             with user-friendly interface lets you categorize,
             <br />
-            tag, and label files, ensuring quick access when <br />
+            tag, and label files, ensuring quick access when
+            <br />
             needed.
           </p>
         </div>
@@ -332,14 +371,17 @@ const Public = () => {
           </div>
           <h3 className="text-center font-bold text-xl mt-4">Verification</h3>
           <p className="text-center text-lg mt-2">
-            Provides document verification to authenticate <br />
-            & maintain the integrity of certificates <br />
+            Provides document verification to authenticate
+            <br />
+            & maintain the integrity of certificates
+            <br />
             and documents, ensuring legitimacy.
           </p>
         </div>
       </div>
 
-      <div className="members ">
+      {/* member  */}
+      <div className="members " id="members">
         <h1 className="text-5xl text-center p-10">Members </h1>
         <div className="MCards flex justify-center gap-10 ">
           {/* card 1 */}
@@ -368,13 +410,18 @@ const Public = () => {
 
           <div class="group  before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-[#E78452] via-[#E78452] to-[#E78452] before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
             <div class="w-28 h-28 bg-[white] mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500">
-              <img src={Bend} className="rounded-[100%] h-[110px] w-[110px]" />
+              <img
+                src={Bend}
+                className="rounded-[100%] h-[110px] w-[110px] bg-white"
+              />
             </div>
             <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
               <span class="text-2xl font-semibold group-hover:text-white">
-                Karma Wangchuk
+                Backend Developer
               </span>
-              <p className="group-hover:text-white">Backend Developer </p>
+              <p className="group-hover:text-white">
+                Manages server-side functionality for applications
+              </p>
             </div>
             <button className="loginBut w-[200px] px-4 py-1">
               <span>
@@ -390,13 +437,15 @@ const Public = () => {
             </div>
             <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
               <span class="text-2xl font-semibold group-hover:text-white">
-                Tandin Pema Gyelmo
+                Front End Developer
               </span>
-              <p className="group-hover:text-white">Front End Developer</p>
+              <p className="group-hover:text-white">
+                Builds and maintains website interfaces.
+              </p>
             </div>
             <button className="loginBut w-[200px] px-4 py-1">
               <span>
-                <a href="">Tandn p Gyelmo</a>
+                <a href="">Tandn p Gyalmo</a>
               </span>
             </button>
           </div>
@@ -408,9 +457,11 @@ const Public = () => {
             </div>
             <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
               <span class="text-2xl font-semibold group-hover:text-white">
-                Rada Dorji
+                Blockchain specilist
               </span>
-              <p className="group-hover:text-white">Blockchain specilist</p>
+              <p className="group-hover:text-white">
+                develops and manages blockchain systems.
+              </p>
             </div>
 
             <button className="loginBut w-[150px] px-4 py-1">
@@ -425,61 +476,62 @@ const Public = () => {
 
       <footer className="bg-white py-16 mt-20">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className=" ">
+          {/* Logo */}
+          <div className="flex">
             <div>
-            <Logo className={"w-300px] h-[300px] -translate-x-[160px] translate-y-[70px]"} />
-            <h1></h1>
-
+              <Logo className="w-300px h-[300px] -translate-x-[160px] translate-y-[10px]" />
+              <h1></h1>
             </div>
-            
-            <div className="-translate-y-[5px]"> 
-              {/* contact us  */}
-              <h1 className="text-2xl pb-6">Contact us </h1>
-              <div class="relative rounded-full overflow-hidden bg-[#eeeeee] shadow-xl w-[80%]">
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Hover on Submit"
-                  class="input bg-transparent outline-none border-none pl-6 pr-10 py-5 w-full font-sans text-lg font-semibold"
-                />
-                <div class="absolute right-2 top-[0.4em]">
-                  <button class="w-14 h-14 rounded-full bg-violet-500 group shadow-xl flex items-center justify-center relative overflow-hidden">
-                    <svg
-                      width="50"
-                      height="50"
-                      viewBox="0 0 64 64"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="relative z-10"
-                    >
-                      <path
-                        d="M63.6689 29.0491L34.6198 63.6685L0.00043872 34.6194L29.0496 1.67708e-05L63.6689 29.0491Z"
-                        fill="white"
-                        fill-opacity="0.01"
-                      ></path>
-                      <path
-                        d="M42.8496 18.7067L21.0628 44.6712"
-                        stroke="white"
-                        stroke-width="3.76603"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                      <path
-                        d="M26.9329 20.0992L42.85 18.7067L44.2426 34.6238"
-                        stroke="white"
-                        stroke-width="3.76603"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                    </svg>
-                    <div class="w-full h-full rotate-45 absolute left-[32%] top-[32%] bg-black group-hover:-left-[100%] group-hover:-top-[100%] duration-1000"></div>
-                    <div class="w-full h-full -rotate-45 absolute -left-[32%] -top-[32%] group-hover:left-[100%] group-hover:top-[100%] bg-black duration-1000"></div>
-                  </button>
+            <div className="-translate-y-[5px]">
+              {/* contact us */}
+              <div className="flex items-center  pt-[100px] ">
+                <div className="relative flex rounded-full overflow-hidden bg-[#eeeeee] shadow-xl w-[80%] -translate-x-[200px] translate-y-[20px]">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="contact us "
+                    className=" input bg-transparent outline-none border-none pl-6 pr-10 py-5 w-[500px] font-sans text-lg font-semibold"
+                  />
+                  <div className="absolute right-2 top-[0.4em]">
+                    <button className="w-14 h-14 rounded-full bg-violet-500 group shadow-xl flex items-center justify-center relative overflow-hidden">
+                      <svg
+                        width="50"
+                        height="50"
+                        viewBox="0 0 64 64"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="relative z-10"
+                      >
+                        <path
+                          d="M63.6689 29.0491L34.6198 63.6685L0.00043872 34.6194L29.0496 1.67708e-05L63.6689 29.0491Z"
+                          fill="white"
+                          fillOpacity="0.01"
+                        ></path>
+                        <path
+                          d="M42.8496 18.7067L21.0628 44.6712"
+                          stroke="white"
+                          strokeWidth="3.76603"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        ></path>
+                        <path
+                          d="M26.9329 20.0992L42.85 18.7067L44.2426 34.6238"
+                          stroke="white"
+                          strokeWidth="3.76603"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        ></path>
+                      </svg>
+                      <div className="w-full h-full rotate-45 absolute left-[32%] top-[32%] bg-black group-hover:-left-[100%] group-hover:-top-[100%] duration-1000"></div>
+                      <div className="w-full h-full -rotate-45 absolute -left-[32%] -top-[32%] group-hover:left-[100%] group-hover:top-[100%] bg-black duration-1000"></div>
+                    </button>
+                  </div>
                 </div>
               </div>
-              {/* contact us end  */}
+              {/* contact us end */}
             </div>
           </div>
+          {/* logo end  */}
 
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-20 ">
             <div>

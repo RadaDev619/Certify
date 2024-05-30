@@ -63,13 +63,13 @@ function OtpEntry() {
         }
       });
     console.log("Entered OTP:", otpValue);
-    // For demonstration, we'll navigate to the password change page
+    // For demonstration, we'll navigate to the password change page isLoading === true ? (
+    //   <LoadingAnimation />
+    // ) :
     // In a real application, you would verify the OTP first
   };
 
-  return isLoading === true ? (
-    <LoadingAnimation />
-  ) : (
+  return (
     <div className="flex justify-center items-center flex-col">
       {/* Navigation (same as ForgotPassword) */}
       <nav className="w-full pt-12 pb-20 flex justify-between px-52 items-center">

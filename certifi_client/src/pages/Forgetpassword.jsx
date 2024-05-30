@@ -56,7 +56,10 @@ function ForgotPassword() {
 
       <div className="form-container  xs:p-10 sm:p-20 xl:px-40 xl:pt-20 xl:pb-32">
         <p className="text-center text-4xl pb-12">Forgot Password</p>
-        <form onSubmit={handleSubmit} className="flex justify-center items-center flex-col w-full gap-6">
+        <form
+          onSubmit={handleSubmit}
+          className="flex justify-center items-center flex-col w-full gap-6"
+        >
           <div className="w-full">
             <input
               type="email"
@@ -70,23 +73,22 @@ function ForgotPassword() {
           {isOtpSent && (
             <p className="text-sm text-gray-600">
               Didn't get the OTP?{" "}
-              <button type="button" onClick={handleResendOtp} className="text-blue-500 underline">
+              <button
+                type="submit"
+                onClick={handleResendOtp}
+                className="text-blue-500 underline"
+              >
                 Resend
               </button>
             </p>
           )}
 
-          <div className="w-full flex gap-4">
-          <button type="submit" className="loginBut w-[400px] ">
-              <span> Send OTP</span>
-            </button>
-
+          <div className="w-full flex item-center justify-center">
             {isOtpSent && (
-              <Link to="/otpenter" className="w-full flex">
-                <button  className="loginBut w-[400px] ">
-              <span>Continue</span>
-            </button>
-                
+              <Link to="/otpenter" className="w-[400px flex">
+                <button className="loginBut w-[400px] ">
+                  <span>Continue</span>
+                </button>
               </Link>
             )}
           </div>

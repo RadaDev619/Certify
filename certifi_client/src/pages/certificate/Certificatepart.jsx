@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../public/logo.png";
 import "../../css/index.css";
-
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 const CertificatePart = () => {
   const navigate = useNavigate();
   const certId = window.localStorage.getItem("certId");
@@ -28,11 +29,28 @@ const CertificatePart = () => {
       .then((data) => {
         if (data.status === "success") {
           localStorage.setItem("documentId", certId);
+          Toastify({
+            text: "Certificate creation successful!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
           setIsLoading(false);
 
           navigate("/cvalid");
         } else {
-          alert("Certificate creation failed. Please try again.");
+          Toastify({
+            text: "Certificate creation failed.!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
           setIsLoading(false);
         }
       });
