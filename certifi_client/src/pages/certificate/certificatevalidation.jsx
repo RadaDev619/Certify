@@ -27,6 +27,7 @@ function CertificateValidation() {
     useState(null);
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchData = async () => {
       try {
         const documentId = localStorage.getItem("documentId");
@@ -43,24 +44,24 @@ function CertificateValidation() {
         const data = await response.json();
         if (data.status === "success") {
           setFetchedData(data.data); // Set fetched data in state
+          setIsLoading(false);
         } else {
           throw new Error("Certificate data fetch failed. Please try again.");
         }
       } catch (error) {
         console.error(error);
-        alert(error.message);
+        setIsLoading(false);
       }
     };
 
     fetchData();
   }, []);
-
   useEffect(() => {
     const email = localStorage.getItem("email");
-    // Fetch certificates from backend API
 
+    // Fetch certificates from backend API
     fetch(
-      `https://prj-certifi-backend.onrender.com/api/auth/getuser/${email}`,
+      `https://prj-certifi-backend.onrender.com/api/auth/getuserbyemail/${email}`,
       {
         method: "GET",
         headers: {
@@ -70,26 +71,41 @@ function CertificateValidation() {
     )
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         if (data.status === "success") {
           // Update certificates state with fetched data
           setuserType(false);
+          console.log("User type updated to false");
+        } else {
+          // Handle case where data.status is not success
+          setuserType(true);
+          console.log(
+            "User type set to true due to data.status not being success"
+          );
         }
       })
       .catch((error) => {
         setuserType(true);
+        console.error("Error fetching user data:", error);
       });
-  }, []);
+  }, []); // Corrected dependency array
+
+  useEffect(() => {
+    console.log("User type changed:", userType);
+  }, [userType]);
 
   // verify modal
   const [verifyModalIsOpen, setVerifyModalIsOpen] = useState(false);
 
-  const openVerifyModal = (certificateId) => {
-    setCurrentVerifyCertificateId(certificateId);
+  const openVerifyModal = () => {
+    setCurrentVerifyCertificateId();
+    // handleVerify();
     setVerifyModalIsOpen(true);
   };
 
   const closeVerifyModal = () => {
     setVerifyModalIsOpen(false);
+    // handleNotValid(certificateId);
   };
 
   const handleVerify = async (certificateId) => {
@@ -97,83 +113,98 @@ function CertificateValidation() {
     const imageUrl = certificateInfo.image;
     console.log(imageUrl);
 
-    // Fetch the image as a Blob
-    const response = await fetch(imageUrl);
-    const imageBlob = await response.blob();
-    // alert("reached here2");
-
-    // Create FormData object to send the image
-    const formDataForUpload = new FormData();
-    formDataForUpload.append("file", imageBlob, "image.png");
-    // alert("reached here4");
-
-    // Make the API request to Pinata to upload the image
-    setIsLoading(true);
-
-    const responseData = await axios({
-      method: "post",
-      url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
-      data: formDataForUpload,
-      headers: {
-        pinata_api_key: import.meta.env.VITE_PINATA_API_KEY,
-        pinata_secret_api_key: import.meta.env.VITE_PINATA_SECRET_KEY,
-        "Content-Type": `multipart/form-data`,
-      },
-    });
-
-    // // Set the file URL
-    // const fileUrl =
-    //   "https://gateway.pinata.cloud/ipfs/" + responseData.data.IpfsHash;
-
-    const ipfsHash = String(responseData.data.IpfsHash);
-    console.log(ipfsHash);
-    if (!ipfsHash) {
-      console.error("Uploading to IPFS failed!");
-    }
-
-    fetch(
-      `https://prj-certifi-backend.onrender.com/api/certificate/verify/${certificateId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ipfsHash,
-        }),
+    try {
+      // Fetch the image as a Blob
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error("Failed to fetch image");
       }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === "success") {
-          console.log(data.data);
+      const imageBlob = await response.blob();
 
-          Toastify({
-            text: "Certificate verified successful!",
-            duration: 3000,
-            close: true,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "green",
-            stopOnFocus: true,
-          }).showToast();
-          setIsLoading(false);
-        } else {
-          console.log(data);
-          Toastify({
-            text: "Certificate verification failed!",
-            duration: 3000,
-            close: true,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "green",
-            stopOnFocus: true,
-          }).showToast();
-          setIsLoading(false);
-        }
+      // Create FormData object to send the image
+      const formDataForUpload = new FormData();
+      formDataForUpload.append("file", imageBlob, "image.png");
+
+      // Make the API request to Pinata to upload the image
+      setIsLoading(true);
+
+      const responseData = await axios({
+        method: "post",
+        url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        data: formDataForUpload,
+        headers: {
+          pinata_api_key: import.meta.env.VITE_PINATA_API_KEY,
+          pinata_secret_api_key: import.meta.env.VITE_PINATA_SECRET_KEY,
+          "Content-Type": `multipart/form-data`,
+        },
       });
-    // console.log("Validated");
-    closeVerifyModal();
+
+      const ipfsHash = responseData.data.IpfsHash;
+      console.log(ipfsHash);
+      if (!ipfsHash) {
+        throw new Error("Uploading to IPFS failed!");
+      }
+
+      // Optional: Verify the uploaded content is accessible via IPFS gateway
+      const ipfsGatewayUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+      const ipfsResponse = await fetch(ipfsGatewayUrl);
+      if (!ipfsResponse.ok) {
+        throw new Error("Uploaded content is not accessible via IPFS gateway");
+      }
+      console.log(ipfsGatewayUrl);
+      setIsLoading(false);
+
+      // Make API request to your backend to verify the certificate
+      const verifyResponse = await fetch(
+        `https://prj-certifi-backend.onrender.com/api/certificate/verify/${certificateId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ipfsHash }),
+        }
+      );
+
+      const data = await verifyResponse.json();
+      if (data.status === "success") {
+        console.log(data.data);
+        Toastify({
+          text: "Certificate verified successfully!",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+          stopOnFocus: true,
+        }).showToast();
+      } else {
+        console.log(data);
+        Toastify({
+          text: "Certificate verification failed!",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+          stopOnFocus: true,
+        }).showToast();
+      }
+    } catch (error) {
+      console.error(error);
+      Toastify({
+        text: "An error occurred during verification!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "red",
+        stopOnFocus: true,
+      }).showToast();
+    } finally {
+      setIsLoading(false);
+      closeVerifyModal();
+    }
   };
 
   const handleNotValid = (certificateId) => {
@@ -189,20 +220,23 @@ function CertificateValidation() {
       }
     )
       .then((response) => response.json())
-      .then((data) => {});
-    Toastify({
-      text: "Certificate declined!",
-      duration: 3000,
-      close: true,
-      gravity: "top",
-      position: "right",
-      backgroundColor: "green",
-      stopOnFocus: true,
-    }).showToast();
-    setIsLoading(false);
-
-    // console.log("Validated");
-    closenotValidModal();
+      .then((data) => {
+        if (data.status === "success") {
+          console.log(data.data);
+          Toastify({
+            text: "Certificate declined!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
+          setIsLoading(false);
+          // console.log("Validated");
+          closenotValidModal();
+        }
+      });
   };
 
   // notvalid modal
@@ -285,7 +319,7 @@ function CertificateValidation() {
   // State for valid badge color and text
   const [validStatus, setValidStatus] = useState({
     text: "Document pending",
-    color: "#FFA500", // Initial color: orange for pending
+    color: "#eaad7b", // Initial color: orange for pending
   });
 
   // Function to update the badge color and text based on validation logic
@@ -320,7 +354,9 @@ function CertificateValidation() {
     console.log("Certificate rejected");
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex h-full bg-gray-100 ">
       <nav className="w-full flex justify-between pl-20 pb-5 fixed top-0 left-0">
         <p className="">
@@ -522,11 +558,11 @@ function CertificateValidation() {
         </Modal>
 
         {/* Conditionally render the actions section based on userType */}
-        {userType && (
-          <div className="mt-8">
-            <h2 className="text-lg font-bold mb-4">Document Approval</h2>
+        <div className="mt-8">
+          <h2 className="text-lg font-bold mb-4">Document Approval</h2>
+          {userType == true ? (
             <div className="flex justify-between">
-              {!documentVerified ? (
+              {documentVerified == "pending" ? (
                 <>
                   <button
                     className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-[45%]"
@@ -543,7 +579,7 @@ function CertificateValidation() {
                 </>
               ) : (
                 <>
-                  {documentVerified === true ? (
+                  {documentVerified == "true" ? (
                     <button
                       className="bg-green-500 text-white font-bold py-2 px-4 rounded w-[100%]"
                       disabled
@@ -561,8 +597,39 @@ function CertificateValidation() {
                 </>
               )}
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="flex justify-between">
+              {documentVerified == "pending" ? (
+                <>
+                  <button
+                    className="bg-[orange] text-white font-bold py-2 px-4 rounded w-[45%]"
+                    // onClick={handleAccept}
+                  >
+                    Pending
+                  </button>
+                </>
+              ) : (
+                <>
+                  {documentVerified == "true" ? (
+                    <button
+                      className="bg-green-500 text-white font-bold py-2 px-4 rounded w-[100%]"
+                      disabled
+                    >
+                      Approved
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-red-500 text-white font-bold py-2 px-4 rounded w-[100%]"
+                      disabled
+                    >
+                      Rejected
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

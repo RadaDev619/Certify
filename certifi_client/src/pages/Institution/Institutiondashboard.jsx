@@ -6,15 +6,7 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import {
-  FaSignOutAlt,
-  FaSearch,
-  FaCheck,
-  FaTimes,
-  FaHome,
-  FaFilter,
-  FaCog,
-} from "react-icons/fa";
+import { FaSearch, FaHome, FaCog } from "react-icons/fa";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -73,6 +65,29 @@ const Dashboard = () => {
   }, [])
   
   
+  const [results, setResults] = useState([]); // State to store search results
+  const [query, setQuery] = useState("");
+  useEffect(() => {
+    const searchCertificates = (query) => {
+      // Filter certificates array based on the query
+      const filteredCertificates = certificates.filter((certificate) =>
+        certificate.name.toLowerCase().includes(query.toLowerCase())
+      );
+      // Update results state with filtered certificates
+      setResults(filteredCertificates);
+    };
+
+    // Debounce to limit search calls
+    const debounceTimeout = setTimeout(() => {
+      if (query.trim() !== "") {
+        searchCertificates(query);
+      } else {
+        setResults([]); // If query is empty, reset results to show all certificates
+      }
+    }, 300); // Adjust delay as needed
+
+    return () => clearTimeout(debounceTimeout);
+  }, [query, certificates]); // Effect runs on every query or certificates change
   useEffect(() => {
     if (localStorage.getItem("documentId")) {
       localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
@@ -131,9 +146,6 @@ const Dashboard = () => {
   };
 
   // Filter modal handlers
-  const openFilterModal = () => {
-    setFilterModal(true);
-  };
 
   const closeFilterModal = () => {
     setFilterModal(false);
@@ -169,8 +181,8 @@ const Dashboard = () => {
             <input
               type="text"
               placeholder="Search Document or Folder"
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)} // Update query on every keystroke
             />
           </div>
           <div className="user-info">
@@ -219,30 +231,79 @@ const Dashboard = () => {
             </div>
             <div className="documents-table">
               <div className="table-header1">
-                <div>Name</div>
+                <div>CourseName</div>
                 <div>Author</div>
                 <div>Update date</div>
                 <div>View</div>
+                <div>Status</div>
               </div>
-              {certificates.map((certificate) => (
-                <div className="table-row1" key={certificate.id}>
-                  <div>{certificate.courseName}</div>
-                  <div>{certificate.name}</div>
-                  <div>
-                    {
-                      new Date(certificate.createdAt)
-                        .toISOString()
-                        .split("T")[0]
-                    }
-                  </div>
-                  <Link onClick={toCertificateForm(certificate._id)}>
-                    {" "}
-                    <div>
-                      <i className="fas fa-eye"></i>
+              {results.length === 0
+                ? certificates.map((certificate) => (
+                    <div className="table-row1" key={certificate._id}>
+                      <div>{certificate.courseName}</div>
+                      <div>{certificate.name}</div>
+                      <div>
+                        {
+                          new Date(certificate.createdAt)
+                            .toISOString()
+                            .split("T")[0]
+                        }
+                      </div>
+                      <Link onClick={toCertificateForm(certificate._id)}>
+                        <div>
+                          <i className="fas fa-eye"></i>
+                        </div>
+                      </Link>
+                      <div
+                        className={`status ${
+                          certificate.verified === "pending"
+                            ? "pending"
+                            : certificate.verified === "true"
+                            ? "approved"
+                            : "rejected"
+                        }`}
+                      >
+                        {certificate.verified === "pending"
+                          ? "Pending"
+                          : certificate.verified === "true"
+                          ? "Approved"
+                          : "Rejected"}
+                      </div>
                     </div>
-                  </Link>
-                </div>
-              ))}
+                  ))
+                : results.map((certificate) => (
+                    <div className="table-row1" key={certificate._id}>
+                      <div>{certificate.courseName}</div>
+                      <div>{certificate.name}</div>
+                      <div>
+                        {
+                          new Date(certificate.createdAt)
+                            .toISOString()
+                            .split("T")[0]
+                        }
+                      </div>
+                      <Link onClick={toCertificateForm(certificate._id)}>
+                        <div>
+                          <i className="fas fa-eye"></i>
+                        </div>
+                      </Link>
+                      <div
+                        className={`status ${
+                          certificate.verified === "pending"
+                            ? "pending"
+                            : certificate.verified === "true"
+                            ? "approved"
+                            : "rejected"
+                        }`}
+                      >
+                        {certificate.verified === "pending"
+                          ? "Pending"
+                          : certificate.verified === "true"
+                          ? "Approved"
+                          : "Rejected"}
+                      </div>
+                    </div>
+                  ))}
             </div>
           </CardContent>
         </Card>

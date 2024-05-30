@@ -43,6 +43,8 @@ const Public = () => {
   const inputRef = useRef(null);
   const [fetchedData, setFetchedData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [documentID1, setdocumentID1] = useState("");
+  const [documentID2, setdocumentID2] = useState("");
 
   const searchCertificate = async (event) => {
     event.preventDefault();
@@ -55,7 +57,7 @@ const Public = () => {
       return;
     }
 
-    const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
+    const contractAddress = "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
     const contractABI = abi.abi;
 
     const provider = new ethers.providers.Web3Provider(ethereum);
@@ -70,22 +72,44 @@ const Public = () => {
       const identifier = ID.substring(42, 66);
 
       // // Extract hash (remaining characters)
-      // const hash = ID.substring(66);
-      // setIsLoading(true);
+      const hash = ID.substring(66);
+      setIsLoading(true);
+      // console.log(identifier);
+      // console.log(address);
+
+      // console.log(hash);
+
       // const transaction = await contract.getIPFSHash(address, identifier, hash);
 
       // console.log("Waiting for transaction...");
-      // // alert("reach1");
+      // // // alert("reach1");
       // const receipt = await transaction.wait(); // Wait for the transaction to be mined
+      // console.log("Waiting for transaction...", receipt);
+
+      // if (receipt.status !== 1) {
+      //   Toastify({
+      //     text: "Transaction faied!",
+      //     duration: 3000,
+      //     close: true,
+      //     gravity: "top",
+      //     position: "right",
+      //     backgroundColor: "green",
+      //     stopOnFocus: true,
+      //   }).showToast();
+      //   setIsLoading(false);
+      //   // Check if the transaction was reverted
+      //   throw new Error("Transaction failed");
+      // }
       // alert("Transaction is Successful!");
       // const event = receipt.events;
       // console.log("Event object:", event);
-      // // Access the concatenatedString from the args array
+
+      // // // Access the concatenatedString from the args array
       // const concatenatedString = event[0].args[0];
       // console.log("Concatenated String:", concatenatedString);
-      // // alert("Concatenated String: " + concatenatedString);
+      // // // alert("Concatenated String: " + concatenatedString);
 
-      // // Set the URL state to the concatenated string
+      // // // Set the URL state to the concatenated string
       // setSearchResult(concatenatedString);
       const response = await fetch(
         `https://prj-certifi-backend.onrender.com/api/certificate/getCertificatebyId/${identifier}`,
@@ -99,6 +123,9 @@ const Public = () => {
       const data = await response.json();
       if (data.status === "success") {
         setFetchedData(data.data); // Set fetched data in state
+        setdocumentID1(ID.substring(0, 50));
+        setdocumentID2(ID.substring(50));
+
         Toastify({
           text: "Transaction Successful!",
           duration: 3000,
@@ -119,6 +146,7 @@ const Public = () => {
           backgroundColor: "green",
           stopOnFocus: true,
         }).showToast();
+        setFetchedData(null);
         setIsLoading(false);
 
         throw new Error("Certificate data fetch failed. Please try again.");
@@ -133,6 +161,7 @@ const Public = () => {
         backgroundColor: "green",
         stopOnFocus: true,
       }).showToast();
+      setFetchedData(null);
       setIsLoading(false);
     }
   };
@@ -159,6 +188,14 @@ const Public = () => {
     inputRef.current.focus();
     setSearchResult("");
   };
+  function insertWbr(text, interval) {
+    const parts = [];
+    for (let i = 0; i < text.length; i += interval) {
+      parts.push(text.slice(i, i + interval));
+    }
+    return parts.join("<wbr>");
+  }
+
   return isLoading === true ? (
     <LoadingAnimation />
   ) : (
@@ -273,51 +310,51 @@ const Public = () => {
 
         {/* Display search results */}
         {fetchedData && (
-        <div className="mt-5 mr-56 flex flex-col items-center">
-        <div className="text-center translate-x-[100px] font-bold text-2xl uppercase mb-10">
-          Certificate Valid
-        </div>
-        <div className="flex">
-          <div
-            className="w-8/12  p-8 bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${backgroundImage})` }}
-          >
-            <div className="p-10 text-center flex flex-col">
-              <h1 className="text-4xl text-center mt-16 uppercase"> 
-                Certificate of Completion
-              </h1>
-              <h2 className="text-center pt-2">Awarded to</h2>
-              <p className="text-4xl text-center py-4 uppercase">
-                {fetchedData.name}
-              </p>
-              <p className="text-center">For completing the course</p>
-              <p className="text-3xl text-center py-6">
-                {fetchedData.courseName}
-              </p>
-              <div className="flex justify-center pt-40 gap-2">
-                <p>Course duration:</p>
-                <p>{fetchedData.coursePeriod}</p>
+          <div className="mt-5 mr-56 flex flex-col items-center">
+            <div className="text-center translate-x-[100px] font-bold text-2xl uppercase mb-10">
+              Certificate Valid
+            </div>
+            <div className="flex">
+              <div
+                className="w-8/12  p-8 bg-center bg-no-repeat"
+                style={{ backgroundImage: `url(${backgroundImage})` }}
+              >
+                <div className="p-10 text-center flex flex-col">
+                  <h1 className="text-4xl text-center mt-16 uppercase">
+                    Certificate of Completion
+                  </h1>
+                  <h2 className="text-center pt-2">Awarded to</h2>
+                  <p className="text-4xl text-center py-4 uppercase">
+                    {fetchedData.name}
+                  </p>
+                  <p className="text-center">For completing the course</p>
+                  <p className="text-3xl text-center py-6">
+                    {fetchedData.courseName}
+                  </p>
+                  <div className="flex justify-center pt-40 gap-2">
+                    <p>Course duration:</p>
+                    <p>{fetchedData.coursePeriod}</p>
+                  </div>
+                  <div className="flex justify-center pt-2 gap-2">
+                    <p>Course detail:</p>
+                    <p>{fetchedData.courseDetails}</p>
+                  </div>
+                  <div className="flex justify-center pt-2 gap-2">
+                    <p>ID :</p>
+                    <p>{ID}</p>
+                  </div>
+                  <div className="flex justify-center pt-2 gap-2">
+                    <p>Issue date :</p>
+                    <p>{fetchedData.createdAt}</p>
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-center pt-2 gap-2">
-                <p>Course detail:</p>
-                <p>{fetchedData.courseDetails}</p>
-              </div>
-              <div className="flex justify-center pt-2 gap-2">
-                <p>ID :</p>
-                <p>{ID}</p>
-              </div>
-              <div className="flex justify-center pt-2 gap-2">
-                <p>Issue date :</p>
-                <p>{fetchedData.createdAt}</p>
-              </div>
+              <img
+                src={fetchedData.image}
+                className="w-4/12 h-auto object-contain ml-4"
+              />
             </div>
           </div>
-          <img
-            src={fetchedData.image}
-            className="w-4/12 h-auto object-contain ml-4"
-          />
-        </div>
-      </div>
         )}
       </div>
 

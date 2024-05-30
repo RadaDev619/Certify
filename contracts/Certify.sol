@@ -49,7 +49,7 @@ contract Certify {
     function getIPFSHash(address certiOwner, string memory _identifier, string memory _hash) public returns (string memory _certi) {
                 
         if ( keccak256(bytes(certificates[certiOwner][_identifier])) == keccak256(bytes(_hash))){
-            string memory url = "https://api.pinata.cloud/pinning/pinFileToIPFS/" ;
+            string memory url = "https://gateway.pinata.cloud/ipfs/" ;
             bytes memory bytesA = bytes(url);
             bytes memory bytesB = bytes(_hash);
             bytes memory concatenatedString = new bytes(bytesA.length + bytesB.length);
