@@ -277,6 +277,7 @@ const Public = () => {
         </div>
       </div>
 
+          <img src={cube1} alt="" className="h-[200px] translate-x-[1600px] translate-y-[100px] " />
       {/* hero end */}
       <div className="relative validate pb-40 pt-12" id="validate">
         <h1 className="text-center font-bold py-10 text-2xl">Validate</h1>
@@ -417,6 +418,8 @@ const Public = () => {
       {/* search  end*/}
            {/* Information Section */}
      <div className="container mx-auto py-20 px-4">
+     <img src={cube1} alt="" className="-translate-x-[300px]" />
+
         <div className="text-center mb-12">
           <h2 className="text-2xl font-bold uppercase    ">
             Blockchain Technology <br /> for Secure Certificate Storage
@@ -490,7 +493,7 @@ const Public = () => {
         </p>
         <div>
         <img src={cube1} alt=""  className="h-[300px]"/>
-        <img src={cube1} alt="" className=" translate-x-[1500px] -translate-y-[1000px] " />
+        <img src={cube1} alt="" className=" translate-x-[1700px] -translate-y-[1000px] " />
 
         </div>
       </div>
@@ -498,7 +501,8 @@ const Public = () => {
       <h1 className="pt-10 text-center text-2xl font-bold uppercase " id="why">
         why choose us{" "}
       </h1>
-      {/* aim  */}
+
+  {/* aim  */}
       <div className="aim flex justify-between mt-20 space-x-4 px-20" id="aim">
         <div className="flex flex-col items-center">
           <div className="w-96 h-128 flex items-center justify-center">
@@ -555,7 +559,9 @@ const Public = () => {
 
       {/* member  */}
       <div className="members " id="members">
-        <h1 className="text-2xl font-bold uppercase  text-center py-20">Members </h1>
+      <img src={cube1} alt="" className="h-[150px] translate-x-[1800px]" />
+        <h1 className="text-2xl font-bold uppercase  text-center pt-20 pb-10">Members </h1>
+        <p className="text-xl  pb-10  text-center">A member of a blockchain developer team plays a crucial role in <br />designing, implementing, and maintaining decentralized applications and <br /> smart contracts to advance the project's objectives.</p>
         <div className="MCards flex justify-center gap-10 ">
           {/* card 1 */}
           <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:hover:text-[white]  before:bg-gradient-to-bl from-[#1d1d1d] via-[#1d1d1d] to-[#1d1d1d] before:absolute before:top-0 w-80 h-72 relative bg-[#f7f7f7] flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
@@ -643,17 +649,23 @@ const Public = () => {
               </span>
             </button>
           </div>
+          
         </div>
+        <img src={cube1} alt="" className="h-[200px]" />
+     
+
       </div>
-      <div></div>
 
       <footer className="bg-white py-16 mt-20">
+      <img src={cube1} alt="" className="h-[200px] translate-x-[1800px] translate-y-[100px]" />
+
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           {/* Logo */}
           <div className="flex">
+
             <div>
               <Logo className="w-300px h-[300px] -translate-x-[160px] translate-y-[10px]" />
-              <h1></h1>
+              
             </div>
             <div className="-translate-y-[5px]">
               {/* contact us */}
