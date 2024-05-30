@@ -254,46 +254,51 @@ const Public = () => {
 
         {/* Display search results */}
         {fetchedData && (
-          <div className="mt-5 mr-56 flex">
-            <div
-              className="w-8/12  p-8 bg-center bg-no-repeat"
-              style={{ backgroundImage: `url(${backgroundImage})` }}
-            >
-              <div className="p-10 text-center flex flex-col">
-                <h1 className="text-4xl text-center pt-28 uppercase">
-                  Certificate of completion
-                </h1>
-                <h2 className="text-center pt-2">Awarded to</h2>
-                <p className="text-4xl text-center py-4 uppercase">
-                  {fetchedData.name}
-                </p>
-                <p className="text-center">For completing the course</p>
-                <p className="text-3xl text-center py-6">
-                  {fetchedData.courseName}
-                </p>
-                <div className="flex justify-center pt-40 gap-2">
-                  <p>Course duration:</p>
-                  <p>{fetchedData.coursePeriod}</p>
-                </div>
-                <div className="flex justify-center pt-2 gap-2">
-                  <p>Course detail:</p>
-                  <p>{fetchedData.courseDetails}</p>
-                </div>
-                <div className="flex justify-center pt-2 gap-2">
-                  <p>ID :</p>
-                  <p>{ID}</p>
-                </div>
-                <div className="flex justify-center pt-2 gap-2">
-                  <p>Issue date :</p>
-                  <p>{fetchedData.createdAt}</p>
-                </div>
+        <div className="mt-5 mr-56 flex flex-col items-center">
+        <div className="text-center translate-x-[100px] font-bold text-2xl uppercase mb-10">
+          Certificate Valid
+        </div>
+        <div className="flex">
+          <div
+            className="w-8/12  p-8 bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${backgroundImage})` }}
+          >
+            <div className="p-10 text-center flex flex-col">
+              <h1 className="text-4xl text-center mt-16 uppercase"> 
+                Certificate of Completion
+              </h1>
+              <h2 className="text-center pt-2">Awarded to</h2>
+              <p className="text-4xl text-center py-4 uppercase">
+                {fetchedData.name}
+              </p>
+              <p className="text-center">For completing the course</p>
+              <p className="text-3xl text-center py-6">
+                {fetchedData.courseName}
+              </p>
+              <div className="flex justify-center pt-40 gap-2">
+                <p>Course duration:</p>
+                <p>{fetchedData.coursePeriod}</p>
+              </div>
+              <div className="flex justify-center pt-2 gap-2">
+                <p>Course detail:</p>
+                <p>{fetchedData.courseDetails}</p>
+              </div>
+              <div className="flex justify-center pt-2 gap-2">
+                <p>ID :</p>
+                <p>{ID}</p>
+              </div>
+              <div className="flex justify-center pt-2 gap-2">
+                <p>Issue date :</p>
+                <p>{fetchedData.createdAt}</p>
               </div>
             </div>
-            <img
-              src={fetchedData.image}
-              className="w-4/12 h-auto object-contain"
-            />
           </div>
+          <img
+            src={fetchedData.image}
+            className="w-4/12 h-auto object-contain ml-4"
+          />
+        </div>
+      </div>
         )}
       </div>
 
