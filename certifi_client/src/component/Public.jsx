@@ -100,6 +100,7 @@ const Public = () => {
           backgroundColor: "green",
           stopOnFocus: true,
         }).showToast();
+        setFetchedData(null);
         setIsLoading(false);
 
         throw new Error("Certificate data fetch failed. Please try again.");
@@ -114,6 +115,7 @@ const Public = () => {
         backgroundColor: "green",
         stopOnFocus: true,
       }).showToast();
+      setFetchedData(null);
       setIsLoading(false);
     }
   };
