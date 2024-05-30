@@ -57,6 +57,8 @@ function InsLogin() {
             navigate("/Institutiondashboard");
           } else {
             // alert("Login successful!");
+            setIsLoading(false);
+
             Toastify({
               text: "Login failed. Please try again!",
               duration: 3000,
@@ -66,7 +68,6 @@ function InsLogin() {
               backgroundColor: "green",
               stopOnFocus: true,
             }).showToast();
-            setIsLoading(false);
           }
         });
     }

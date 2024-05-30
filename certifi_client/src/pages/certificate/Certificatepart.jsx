@@ -4,6 +4,8 @@ import logo from "../../../public/logo.png";
 import "../../css/index.css";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
+import LoadingAnimation from "../../component/LoadingAnimation"; // import loading
+
 const CertificatePart = () => {
   const navigate = useNavigate();
   const certId = window.localStorage.getItem("certId");
@@ -40,7 +42,7 @@ const CertificatePart = () => {
           }).showToast();
           setIsLoading(false);
 
-          navigate("/cvalid");
+          navigate("/dashboard");
         } else {
           Toastify({
             text: "Certificate creation failed.!",
