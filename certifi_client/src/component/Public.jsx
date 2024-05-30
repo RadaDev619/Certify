@@ -581,7 +581,7 @@ const Public = () => {
             </div>
             <button className="loginBut w-[250px] px-4 py-1">
               <span>
-                <a href="">Ngawang Gyeltshen </a>
+                <a href="https://www.linkedin.com/in/ngawang-gyeltshen-46452025b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"  >Ngawang Gyeltshen </a>
               </span>
             </button>
           </div>
