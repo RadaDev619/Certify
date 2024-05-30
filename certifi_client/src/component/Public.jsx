@@ -107,7 +107,7 @@ const Public = () => {
   return (
     <div className=" ">
       {/* hero */}
-      <div className=" bg-gradient-to-b from-[#ececec] to-[#dfdfdf] h-[800px] backdrop-blur-sm pt-10 ">
+      <div className=" bg-gradient-to-b from-[#ececec] to-[#dfdfdf] h-[800px] backdrop-blur-sm pt-10 overflow-x-hidden">
         <div className="tagline  ">
           <h1 className="text-3xl item-left  translate-y-[150px] translate-x-[300px]">
             Secure and transparent{" "}
