@@ -87,6 +87,12 @@ const Public = () => {
       setIsLoading(false);
     }
   };
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling
+    }
+  };
 
   const handleInputChange = (event) => {
     setID(event.target.value);
@@ -150,8 +156,7 @@ const Public = () => {
       </div>
 
       {/* hero end */}
-
-      <div className="relative validate pb-40 pt-12">
+      <div className="relative validate pb-40 pt-12" id="validate">
         <h1 className="text-center font-bold py-10 text-2xl">Validate</h1>
         <h3 className="text-center text-4xl pb-6">
           Protect your documents! Check their integrity and authenticity
@@ -262,7 +267,7 @@ const Public = () => {
 
       {/* search  end*/}
 
-      <div className="Aboutus ">
+      <div className="Aboutus " id="aboutus">
         <h1 className="text-center font-bold py-10 text-2xl">About Us </h1>
         <p className="text-center leading-relaxed tracking-wide text-5xl">
           {" "}
@@ -276,7 +281,7 @@ const Public = () => {
         why choose us{" "}
       </h1>
       {/* aim  */}
-      <div className="aim flex justify-between mt-20 space-x-4 px-20">
+      <div className="aim flex justify-between mt-20 space-x-4 px-20" id="aim">
         <div className="flex flex-col items-center">
           <div className="w-96 h-128 flex items-center justify-center">
             <img src={cub} alt="Storage" className="w-[500px] h-[600px]" />
@@ -325,7 +330,7 @@ const Public = () => {
       </div>
 
       {/* member  */}
-      <div className="members ">
+      <div className="members " id="members">
         <h1 className="text-5xl text-center p-10">Members </h1>
         <div className="MCards flex justify-center gap-10 ">
           {/* card 1 */}
