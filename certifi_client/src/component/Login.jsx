@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../public/logo.png";
 import "../css/index.css";
 import LoadingAnimation from "./LoadingAnimation"; // import loading
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 function Login() {
   // Define state variables for form inputs
@@ -50,9 +52,26 @@ function Login() {
             setPassword("");
             localStorage.setItem("email", email);
             setIsLoading(false); //loading
+            Toastify({
+              text: "Login successful!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
             navigate("/dashboard");
           } else {
-            alert("Login failed. Please try again.");
+            Toastify({
+              text: "Login failed. Please try again!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
           }
         });
     }

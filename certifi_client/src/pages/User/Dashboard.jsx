@@ -33,35 +33,37 @@ const Dashboard = ({ state }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [mail, setMail] = useState("");
-  const [name, setUserName] = useState("")
-  const [profilepic, setProfilePic] = useState("")
-  const [userid, setUserId] = useState("")
+  const [name, setUserName] = useState("");
+  const [profilepic, setProfilePic] = useState("");
+  const [userid, setUserId] = useState("");
 
-
-  useEffect(() =>{
+  useEffect(() => {
     const mail = localStorage.getItem("email");
     setMail(mail);
-    const fetchUser = async () =>{
-      try{
-      const response = await fetch(`https://prj-certifi-backend.onrender.com/api/auth/getuser/${mail}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    const responseData = await response.json()
-    setMail(responseData.email)
-    setProfilePic(responseData.photo)
-    setUserName(responseData.name)
-    setUserId(responseData._id)
-    localStorage.setItem("userid", responseData._id)
-  }catch(error){
-    console.error("Error fetching user:", error)
-  }}
-  fetchUser();
-  }, [])
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(
+          `https://prj-certifi-backend.onrender.com/api/auth/getuser/${mail}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const responseData = await response.json();
+        setMail(responseData.email);
+        setProfilePic(responseData.photo);
+        setUserName(responseData.name);
+        setUserId(responseData._id);
+        localStorage.setItem("userid", responseData._id);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+    fetchUser();
+  }, []);
 
-  
   useEffect(() => {
     if (localStorage.getItem("documentId")) {
       localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
@@ -416,43 +418,7 @@ const Dashboard = ({ state }) => {
                 Documents
               </Typography>
               {/* 
-              <Modal
-                isOpen={renameModalIsOpen}
-                onRequestClose={closeRenameModal}
-                contentLabel="Rename Modal"
-                className="modal-overlay"
-                overlayClassName="modal-overlay"
-              >
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h2 className="modal-title">Enter a new name</h2>
-                    <span className="modal-close" onClick={closeRenameModal}>
-                      &times;
-                    </span>
-                  </div>
-                  <input
-                    type="text"
-                    value={newName}
-                    onChange={handleNameChange}
-                    placeholder="Name"
-                    className="modal-input"
-                  />
-                  <div className="modal-buttons">
-                    <button
-                      className="modal-button cancel"
-                      onClick={closeRenameModal}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      className="modal-button confirm"
-                      onClick={handleSubmit}
-                    >
-                      Change name
-                    </button>
-                  </div>
-                </div>
-              </Modal> */}
+             
               {/* Delete Modal */}
               <Modal
                 isOpen={deleteModalIsOpen}

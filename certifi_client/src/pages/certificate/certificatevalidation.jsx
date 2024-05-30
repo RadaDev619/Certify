@@ -6,7 +6,8 @@ import backgroundImage from "../../../public/background.jpeg";
 import Modal from "react-modal";
 import axios from "axios";
 import LoadingAnimation from "../../component/LoadingAnimation";
-
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");
   const [userType, setuserType] = useState(true);
@@ -126,6 +127,9 @@ function CertificateValidation() {
 
     const ipfsHash = String(responseData.data.IpfsHash);
     console.log(ipfsHash);
+    if (!ipfsHash) {
+      console.error("Uploading to IPFS failed!");
+    }
 
     fetch(
       `https://prj-certifi-backend.onrender.com/api/certificate/verify/${certificateId}`,
@@ -144,11 +148,27 @@ function CertificateValidation() {
         if (data.status === "success") {
           console.log(data.data);
 
-          alert("Document verified successfully.");
+          Toastify({
+            text: "Certificate verified successful!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
           setIsLoading(false);
         } else {
           console.log(data);
-          alert("Document verification failed. Please try again.");
+          Toastify({
+            text: "Certificate verification failed!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
           setIsLoading(false);
         }
       });
@@ -170,6 +190,15 @@ function CertificateValidation() {
     )
       .then((response) => response.json())
       .then((data) => {});
+    Toastify({
+      text: "Certificate declined!",
+      duration: 3000,
+      close: true,
+      gravity: "top",
+      position: "right",
+      backgroundColor: "green",
+      stopOnFocus: true,
+    }).showToast();
     setIsLoading(false);
 
     // console.log("Validated");
