@@ -13,6 +13,10 @@ import "../css/index.css";
 import { Logo } from "../component/Svgs";
 import cube1 from "../../public/cube1.png";
 import cube2 from "../../public/cube2.png";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
+import LoadingAnimation from "./LoadingAnimation"; // import loading
+import backgroundImage from "../../public/background.jpeg";
 
 const Public = () => {
   const [ID, setID] = useState("");
@@ -41,29 +45,28 @@ const Public = () => {
 
     try {
       // // Extract address (42 characters)
-      // const address = ID.substring(0, 42);
+      const address = ID.substring(0, 42);
 
       // Extract identifier (24 characters)
       const identifier = ID.substring(42, 66);
 
       // // Extract hash (remaining characters)
-      // const hash = ID.substring(66);
-      // setIsLoading(true);
-      // const transaction = await contract.getIPFSHash(address, identifier, hash);
+      const hash = ID.substring(66);
+      setIsLoading(true);
+      const transaction = await contract.getIPFSHash(address, identifier, hash);
 
       // console.log("Waiting for transaction...");
       // // alert("reach1");
-      // const receipt = await transaction.wait(); // Wait for the transaction to be mined
-      // alert("Transaction is Successful!");
-      // const event = receipt.events;
-      // console.log("Event object:", event);
+      const receipt = await transaction.wait(); // Wait for the transaction to be mined
+      alert("Transaction is Successful!");
+      const event = receipt.events;
+      console.log("Event object:", event);
       // // Access the concatenatedString from the args array
-      // const concatenatedString = event[0].args[0];
-      // console.log("Concatenated String:", concatenatedString);
-      // // alert("Concatenated String: " + concatenatedString);
+      const concatenatedString = event[0].args[0];
+      console.log("Concatenated String:", concatenatedString);
 
       // // Set the URL state to the concatenated string
-      // setSearchResult(concatenatedString);
+      setSearchResult(concatenatedString);
       const response = await fetch(
         `https://prj-certifi-backend.onrender.com/api/certificate/getCertificatebyId/${identifier}`,
         {
@@ -76,14 +79,40 @@ const Public = () => {
       const data = await response.json();
       if (data.status === "success") {
         setFetchedData(data.data); // Set fetched data in state
+        Toastify({
+          text: "Transaction successful!",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+          stopOnFocus: true,
+        }).showToast();
         setIsLoading(false);
       } else {
+        Toastify({
+          text: "Transaction faied!",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+          stopOnFocus: true,
+        }).showToast();
         setIsLoading(false);
 
         throw new Error("Certificate data fetch failed. Please try again.");
       }
     } catch (error) {
-      alert("Certificate invalid!");
+      Toastify({
+        text: "Transaction faied!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "green",
+        stopOnFocus: true,
+      }).showToast();
       setIsLoading(false);
     }
   };
@@ -104,7 +133,9 @@ const Public = () => {
     inputRef.current.focus();
     setSearchResult("");
   };
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className=" ">
       {/* hero */}
       <div className=" bg-gradient-to-b from-[#ececec] to-[#dfdfdf] h-[800px] backdrop-blur-sm pt-10 overflow-x-hidden">
@@ -147,7 +178,6 @@ const Public = () => {
             className="h-[200px] w-[200px] -translate-y-[50px] translate-x-[250px]  "
           />
         </div>
-        
       </div>
 
       {/* hero end */}
@@ -408,12 +438,15 @@ const Public = () => {
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className=" ">
             <div>
-            <Logo className={"w-300px] h-[300px] -translate-x-[160px] translate-y-[70px]"} />
-            <h1></h1>
-
+              <Logo
+                className={
+                  "w-300px] h-[300px] -translate-x-[160px] translate-y-[70px]"
+                }
+              />
+              <h1></h1>
             </div>
-            
-            <div className="-translate-y-[5px]"> 
+
+            <div className="-translate-y-[5px]">
               {/* contact us  */}
               <h1 className="text-2xl pb-6">Contact us </h1>
               <div class="relative rounded-full overflow-hidden bg-[#eeeeee] shadow-xl w-[80%]">
