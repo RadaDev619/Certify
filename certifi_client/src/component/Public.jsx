@@ -63,7 +63,6 @@ const Public = () => {
       // const transaction = await contract.getIPFSHash(address, identifier, hash);
 
       // console.log("Waiting for transaction...");
-      // // // alert("reach1");
       // const receipt = await transaction.wait(); // Wait for the transaction to be mined
       // console.log("Waiting for transaction...", receipt);
 
@@ -81,14 +80,12 @@ const Public = () => {
       //   // Check if the transaction was reverted
       //   throw new Error("Transaction failed");
       // }
-      // alert("Transaction is Successful!");
       // const event = receipt.events;
       // console.log("Event object:", event);
 
       // // // Access the concatenatedString from the args array
       // const concatenatedString = event[0].args[0];
       // console.log("Concatenated String:", concatenatedString);
-      // // // alert("Concatenated String: " + concatenatedString);
 
       // // // Set the URL state to the concatenated string
       // setSearchResult(concatenatedString);
@@ -104,8 +101,8 @@ const Public = () => {
       const data = await response.json();
       if (data.status === "success") {
         setFetchedData(data.data); // Set fetched data in state
-        setdocumentID1(ID.substring(0, 50));
-        setdocumentID2(ID.substring(50));
+        setdocumentID1(ID.substring(0, 58));
+        setdocumentID2(ID.substring(58));
 
         Toastify({
           text: "Transaction Successful!",
@@ -129,8 +126,6 @@ const Public = () => {
         }).showToast();
         setFetchedData(null);
         setIsLoading(false);
-
-        throw new Error("Certificate data fetch failed. Please try again.");
       }
     } catch (error) {
       Toastify({
@@ -317,16 +312,30 @@ const Public = () => {
                     <p>{fetchedData.coursePeriod}</p>
                   </div>
                   <div className="flex justify-center pt-2 gap-2">
-                    <p>Course detail:</p>
+                    <p>
+                      {" "}
+                      <b>Course detail:</b>
+                    </p>
                     <p>{fetchedData.courseDetails}</p>
                   </div>
-                  <div className="flex justify-center pt-2 gap-2">
-                    <p>ID :</p>
-                    <p>{ID}</p>
+                  <div className="flex flex-col items-center pt-2 gap-2">
+                    <div className="flex gap-2">
+                      <p>
+                        <b>ID :</b>{" "}
+                      </p>
+                      <p>{documentID1}</p>
+                    </div>
+                    <p>{documentID2}</p>
                   </div>
                   <div className="flex justify-center pt-2 gap-2">
                     <p>Issue date :</p>
-                    <p>{fetchedData.createdAt}</p>
+                    <p>
+                      {
+                        new Date(fetchedData.createdAt)
+                          .toISOString()
+                          .split("T")[0]
+                      }
+                    </p>
                   </div>
                 </div>
               </div>
