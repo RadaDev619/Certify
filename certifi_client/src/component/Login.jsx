@@ -51,6 +51,8 @@ function Login() {
             setEmail("");
             setPassword("");
             localStorage.setItem("email", email);
+            localStorage.setItem("userLoggedIn", "true");
+
             setIsLoading(false); //loading
             Toastify({
               text: "Login successful!",

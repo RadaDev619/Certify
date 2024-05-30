@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import "../../css/institutionaccountsetting.css";
 import certifiLogo from "../../assets/certifi-logo.png";
@@ -20,6 +20,32 @@ const Account = () => {
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [showEmailPopup, setShowEmailPopup] = useState(false);
   const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
+  const [mail, setMail] = useState("");
+  const [profilepic, setProfilepic] = useState("");
+  const [name, setUserName] = useState("");
+  
+  const uid = localStorage.getItem("userid");
+
+  useEffect(()=>{
+    const fetchIns = async()=>{
+      try{
+        const response = await fetch(`https://prj-certifi-backend.onrender.com/api/institute/getinsbyid/${uid}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        const responseData = await response.json()
+        setUserName(responseData.companyName)
+        setMail(responseData.email)
+        setProfilepic(responseData.photo)
+  
+      }catch(error){
+        console.log(error)
+      }
+    }
+    fetchIns()
+  }, [])
 
   const handleEditAvatar = () => {
     setShowAvatarPopup(true);
@@ -94,11 +120,11 @@ const Account = () => {
               className="profile-image-container"
             >
               <img
-                src={userProfileImage}
+                src={profilepic}
                 alt="User Profile"
                 className="profile-image"
               />
-              <span className="username">Username</span>
+              <span className="username">{name}</span>
             </div>
             <Link to="/">
               <button class="group flex items-center justify-start w-10 h-10 bg-red-600 rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-32 hover:rounded-lg active:translate-x-1 active:translate-y-1">
@@ -130,25 +156,25 @@ const Account = () => {
                     <span className="label">Avatar</span>
                     <div className="avatar-container">
                       <img
-                        src={userProfileImage}
+                        src={profilepic}
                         alt="Avatar"
                         className="avatar-image"
                       />
                     </div>
                   </div>
                   <div className="edit-container" onClick={handleEditAvatar}>
-                    <span className="edit-text">Edit</span>
-                    <FaEdit className="edit-icon" />
+                    {/* <span className="edit-text">Edit</span>
+                    <FaEdit className="edit-icon" /> */}
                   </div>
                 </div>
                 <div className="account-detail">
                   <span className="label">Name</span>
                   <div className="input-container">
-                    <input type="text" value="Name" className="input-field" readOnly />
+                    <input type="text" value={name} className="input-field" readOnly />
                   </div>
                   <div className="edit-container" onClick={handleEditName}>
-                    <span className="edit-text" >Edit</span>
-                    <FaEdit className="edit-icon" />
+                    {/* <span className="edit-text" >Edit</span>
+                    <FaEdit className="edit-icon" /> */}
                   </div>
                 </div>
                 <div className="account-detail">
@@ -161,8 +187,8 @@ const Account = () => {
                       readOnly
                     />
                     <div className="edit-container" onClick={handleEditPassword}>
-                      <span className="edit-text">Edit</span>
-                      <FaEdit className="edit-icon" />
+                      {/* <span className="edit-text">Edit</span>
+                      <FaEdit className="edit-icon" /> */}
                     </div>{" "}
                   </div>
                 </div>
@@ -171,13 +197,13 @@ const Account = () => {
                   <div className="input-container">
                     <input
                       type="email"
-                      value="Test@gmail.com"
+                      value={mail}
                       className="input-field"
                       readOnly
                     />
                     <div className="edit-container" onClick={handleEditEmail}>
-                      <span className="edit-text">Edit</span>
-                      <FaEdit className="edit-icon" />
+                      {/* <span className="edit-text">Edit</span> */}
+                      {/* <FaEdit className="edit-icon" /> */}
                     </div>{" "}
                   </div>
                 </div>
