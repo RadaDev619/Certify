@@ -4,7 +4,7 @@ import cub from "../../public/cub.png";
 import comp from "../../public/comp.png";
 import logo from "../../public/logo.png";
 import Fend from "../../public/frontend.jpg";
-import Bend from "../../public/backend.jpg";
+import Bend from "../../public/backend.png";
 import Bc from "../../public/blockchain.png";
 import Manager from "../../public/manager.jpg";
 import { ethers } from "ethers"; //import ethers library
@@ -17,7 +17,7 @@ import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import LoadingAnimation from "./LoadingAnimation"; // import loading
 import backgroundImage from "../../public/background.jpeg";
-import CryptoJS from 'crypto-js';
+import CryptoJS from "crypto-js";
 
 const Public = () => {
   const [ID, setID] = useState("");
@@ -25,7 +25,7 @@ const Public = () => {
   const inputRef = useRef(null);
   const [fetchedData, setFetchedData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [hashedId, setHashedId] = useState(null); 
+  const [hashedId, setHashedId] = useState(null);
   const [isCopyPromptVisible, setIsCopyPromptVisible] = useState(false);
 
   const searchCertificate = async (event) => {
@@ -47,7 +47,6 @@ const Public = () => {
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
-      
       // // Extract address (42 characters)
       // const address = ID.substring(0, 42);
 
@@ -84,7 +83,7 @@ const Public = () => {
       const data = await response.json();
       if (data.status === "success") {
         setFetchedData(data.data); // Set fetched data in state
-        const newHashedId = CryptoJS.SHA256(ID).toString(); 
+        const newHashedId = CryptoJS.SHA256(ID).toString();
         setHashedId(newHashedId);
         Toastify({
           text: "Transaction Successful!",
@@ -127,16 +126,18 @@ const Public = () => {
       setIsLoading(false);
     }
   };
-  // copy 
+  // copy
   const handleCopy = () => {
-    navigator.clipboard.writeText(ID)
+    navigator.clipboard
+      .writeText(ID)
       .then(() => {
-        setIsCopyPromptVisible(true); // Show the prompt 
-        setTimeout(() => { // Hide the prompt after 1 second
+        setIsCopyPromptVisible(true); // Show the prompt
+        setTimeout(() => {
+          // Hide the prompt after 1 second
           setIsCopyPromptVisible(false);
         }, 1000);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Failed to copy: ", err);
         Toastify({
           text: "Failed to copy ID. Please try again.",
@@ -172,14 +173,69 @@ const Public = () => {
     setID("");
     inputRef.current.focus();
     setSearchResult("");
-    
+  };
+  // Back to Top Functionality
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Smooth scrolling
+    });
   };
   return isLoading === true ? (
     <LoadingAnimation />
   ) : (
     <div className=" ">
+     <button
+  className="fixed bottom-10 right-10 overflow-hidden w-16 h-16 rounded-full bg-[#000000] border-none cursor-pointer  z-10 group flex items-center justify-center" // Increased size to w-16 h-16
+  onClick={scrollToTop}
+>
+  <svg
+    className="w-6 h-6 text-[white] dark:text-[white]"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    fill="none"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="m5 15 7-7 7 7"
+    />
+  </svg>
+
+  <span 
+    className="absolute w-36 h-32 -top-8 -left-2  bg-[#e9e9e9] text-[black]  rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-300 origin-right"
+  />
+
+  <span 
+    className="group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" 
+  >
+    <svg
+      className="w-6 h-6 text-[black] dark:text-[black]"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="m5 15 7-7 7 7"
+      />
+    </svg>
+  </span> 
+</button>
+
       {/* hero */}
-      <div className=" bg-gradient-to-b from-[#ececec] to-[#dfdfdf] h-[800px] backdrop-blur-sm pt-10 overflow-x-hidden">
+      <div className=" bg-gradient-to-b from-[#ececec] to-[#dfdfdf] h-[900px] backdrop-blur-sm pt-10 overflow-x-hidden">
         <div className="tagline  ">
           <h1 className="text-3xl item-left  translate-y-[150px] translate-x-[300px]">
             Secure and transparent{" "}
@@ -232,6 +288,7 @@ const Public = () => {
           file
         </p>
         {/* search    */}
+        <div className="">
         <form
           class="form relative flex justify-center"
           onKeyDown={handleKeyDown}
@@ -285,80 +342,145 @@ const Public = () => {
             </svg>
           </button>
         </form>
+        </div>
+        
 
         {/* Display search results */}
         {fetchedData && (
-        <div className="mt-5 mr-56 flex flex-col items-center">
-        <div className="text-center translate-x-[100px] font-bold text-2xl uppercase mb-10">
-          Certificate Valid
-        </div>
-        <div className="flex">
-          <div
-            className="w-8/12  p-8 bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${backgroundImage})` }}
-          >
-            <div className="p-10 text-center flex flex-col">
-              <h1 className="text-4xl text-center mt-16 uppercase"> 
-                Certificate of Completion
-              </h1>
-              <h2 className="text-center pt-2">Awarded to</h2>
-              <p className="text-4xl text-center py-4 uppercase">
-                {fetchedData.name}
-              </p>
-              <p className="text-center">For completing the course</p>
-              <p className="text-3xl text-center py-6">
-                {fetchedData.courseName}
-              </p>
-              <div className="flex justify-center pt-40 gap-2">
-                <p>Course duration:</p>
-                <p>{fetchedData.coursePeriod}</p>
+          <div className="mt-5 mr-56 flex flex-col items-center">
+            <div className="text-center translate-x-[100px] font-bold text-2xl uppercase mb-10">
+              Certificate Valid
+            </div>
+            <div className="flex">
+              <div
+                className="w-8/12  p-8 bg-center bg-no-repeat"
+                style={{ backgroundImage: `url(${backgroundImage})` }}
+              >
+                <div className="p-10 text-center flex flex-col">
+                  <h1 className="text-4xl text-center mt-16 uppercase">
+                    Certificate of Completion
+                  </h1>
+                  <h2 className="text-center pt-2">Awarded to</h2>
+                  <p className="text-4xl text-center py-4 uppercase">
+                    {fetchedData.name}
+                  </p>
+                  <p className="text-center">For completing the course</p>
+                  <p className="text-3xl text-center py-6">
+                    {fetchedData.courseName}
+                  </p>
+                  <div className="flex justify-center pt-40 gap-2">
+                    <p>Course duration:</p>
+                    <p>{fetchedData.coursePeriod}</p>
+                  </div>
+                  <div className="flex justify-center pt-2 gap-2">
+                    <p>Course detail:</p>
+                    <p>{fetchedData.courseDetails}</p>
+                  </div>
+                  <div className="flex justify-center pt-2 gap-2">
+                    <p>ID :</p>
+                    <p
+                      className="break-all"
+                      data-testid="shortenedId"
+                      data-id={hashedId}
+                    >
+                      {hashedId && hashedId.substring(0, 10)}...
+                    </p>
+                    <button
+                      className="ml-2 px-2 py-1 rounded-md bg-[#e9e9e9] text-sm hover:bg-gray-300"
+                      onClick={handleCopy}
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  <div className="flex justify-center pt-2 gap-2">
+                    <p>Issue date :</p>
+                    <p>{fetchedData.createdAt}</p>
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-center pt-2 gap-2">
-                <p>Course detail:</p>
-                <p>{fetchedData.courseDetails}</p>
-              </div>
-              <div className="flex justify-center pt-2 gap-2">
-                <p>ID :</p>
-                <p 
-                  className="break-all" 
-                  data-testid="shortenedId" 
-                  data-id={hashedId} 
-                >
-                  {hashedId && hashedId.substring(0, 10)}... 
-                </p>
-                <button 
-                  className="ml-2 px-2 py-1 rounded-md bg-[#e9e9e9] text-sm hover:bg-gray-300"
-                  onClick={handleCopy}
-                >
-                  Copy
-                </button>
-              </div>
-              <div className="flex justify-center pt-2 gap-2">
-                <p>Issue date :</p>
-                <p>{fetchedData.createdAt}</p>
-              </div>
+              <img
+                src={fetchedData.image}
+                className="w-4/12 h-auto object-contain ml-4"
+              />
             </div>
           </div>
-          <img
-            src={fetchedData.image}
-            className="w-4/12 h-auto object-contain ml-4"
-          />
-        </div>
-      </div>
         )}
         <div>
-        {isCopyPromptVisible && (
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-[305px] text-xs translate-y-[195px]  p-4 ">
-          ID copied!
-        </div>
-      )}
+          {isCopyPromptVisible && (
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-[300px] text-xs translate-y-[195px]  p-4 ">
+              ID copied!
+            </div>
+          )}
         </div>
       </div>
 
       {/* search  end*/}
-
-      <div className="Aboutus " id="aboutus">
+           {/* Information Section */}
+     <div className="container mx-auto py-20 px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl font-bold uppercase    ">
+            Blockchain Technology <br /> for Secure Certificate Storage
+          </h2>
+          <p className="text-lg text-gray-600 mt-4">
+            Learn how blockchain technology revolutionizes certificate storage,
+            ensuring authenticity, security, and tamper-proof records.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Card 1 */}
+          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transform transition duration-500 hover:scale-105">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              Immutability and Transparency
+            </h3>
+            <p className="text-gray-500 text-base">
+              Blockchain's immutable ledger ensures that records cannot be altered
+              or deleted, providing complete transparency and trust in certificate
+              data.
+            </p>
+            <div className="mt-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-blue-100 text-blue-700">
+                Blockchain
+              </span>
+            </div>
+          </div>
+          {/* Card 2 */}
+          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transform transition duration-500 hover:scale-105">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              Enhanced Security
+            </h3>
+            <p className="text-gray-500 text-base">
+              Blockchain's decentralized nature and cryptographic security measures
+              protect certificates from unauthorized access and tampering.
+            </p>
+            <div className="mt-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-green-100 text-green-700">
+                Security
+              </span>
+            </div>
+          </div>
+          {/* Card 3 */}
+          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transform transition duration-500 hover:scale-105">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              Improved Verifiability
+            </h3>
+            <p className="text-gray-500 text-base">
+              Blockchain allows for easy and instant verification of certificates,
+              reducing the risk of forgery and ensuring the authenticity of
+              credentials.
+            </p>
+            <div className="mt-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-yellow-100 text-yellow-700">
+                Verification
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+{/* about us  */}
+      <div className="Aboutus h-[900px] pt-[200px]" id="aboutus">
         <h1 className="text-center font-bold py-10 text-2xl">About Us </h1>
+        
         <p className="text-center leading-relaxed tracking-wide text-5xl">
           {" "}
           A <strong>BLOCKCHAIN-BASED</strong> STORAGE SYSTEM WHICH <br />{" "}
@@ -366,8 +488,14 @@ const Public = () => {
           <br /> HELPING US TO <strong>ERADICATE</strong>-FORGED <br /> FAKE
           CERTIFICATE-&-DOCUMENTS{" "}
         </p>
+        <div>
+        <img src={cube1} alt=""  className="h-[300px]"/>
+        <img src={cube1} alt="" className=" translate-x-[1500px] -translate-y-[1000px] " />
+
+        </div>
       </div>
-      <h1 className="pt-20 text-center text-2xl font-bold uppercase">
+      <div className="h-[900px]">
+      <h1 className="pt-10 text-center text-2xl font-bold uppercase " id="why">
         why choose us{" "}
       </h1>
       {/* aim  */}
@@ -418,13 +546,19 @@ const Public = () => {
           </p>
         </div>
       </div>
+      </div>
+
+    
+
+     
+      
 
       {/* member  */}
       <div className="members " id="members">
-        <h1 className="text-5xl text-center p-10">Members </h1>
+        <h1 className="text-2xl font-bold uppercase  text-center py-20">Members </h1>
         <div className="MCards flex justify-center gap-10 ">
           {/* card 1 */}
-          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:hover:text-[white]  before:bg-gradient-to-bl from-[#FF3F3F] via-[#FF3F3F] to-[#FF3F3F] before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:hover:text-[white]  before:bg-gradient-to-bl from-[#1d1d1d] via-[#1d1d1d] to-[#1d1d1d] before:absolute before:top-0 w-80 h-72 relative bg-[#f7f7f7] flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
             <div class="w-28 h-28  bg-white mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500">
               <img
                 src={Manager}
@@ -447,7 +581,7 @@ const Public = () => {
           </div>
           {/* card 2 */}
 
-          <div class="group  before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-[#E78452] via-[#E78452] to-[#E78452] before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+          <div class="group  before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-[#1d1d1d] via-[#1d1d1d] to-[#1d1d1d] before:absolute before:top-0 w-80 h-72 relative bg-[#f7f7f7] flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
             <div class="w-28 h-28 bg-[white] mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500">
               <img
                 src={Bend}
@@ -459,7 +593,7 @@ const Public = () => {
                 Backend Developer
               </span>
               <p className="group-hover:text-white">
-                Manages server-side functionality for applications
+                Server-side functionality for applications
               </p>
             </div>
             <button className="loginBut w-[200px] px-4 py-1">
@@ -470,7 +604,7 @@ const Public = () => {
           </div>
           {/* card 3  */}
 
-          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-br from-[#B137B1] via-[#B137B1] to-[#B137B1] before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-br from-[#1d1d1d] via-[#1d1d1d] to-[#1d1d1d] before:absolute before:top-0 w-80 h-72 relative bg-[#f7f7f7] flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
             <div class="w-28 h-28 bg-white mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500">
               <img src={Fend} className="rounded-[100%] h-[110px] w-[110px]" />
             </div>
@@ -490,7 +624,7 @@ const Public = () => {
           </div>
           {/* card 4 */}
 
-          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-br from-[#5BFD5B] via-[#5BFD5B] to-[#5BFD5B] before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-br from-[#1d1d1d] via-[#1d1d1d] to-[#1d1d1d] before:absolute before:top-0 w-80 h-72 relative bg-[#f7f7f7] flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
             <div class="w-28 h-28 bg-white mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500">
               <img src={Bc} className="rounded-[100%] h-[110px] w-[110px]" />
             </div>
