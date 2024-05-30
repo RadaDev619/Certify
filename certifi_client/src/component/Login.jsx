@@ -3,26 +3,27 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import logo from "../../public/logo.png";
 import "../css/index.css";
-import LoadingAnimation from "./LoadingAnimation"; // import loading 
+import LoadingAnimation from "./LoadingAnimation"; // import loading
 
 function Login() {
+  // Define state variables for form inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false); 
-  const [isLoading, setIsLoading] = useState(false) // loading
+  const [rememberMe, setRememberMe] = useState(false); // Add rememberMe state
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-   
+
     console.log("Email", email);
     console.log("Password", password);
 
     if (!password || !email) {
       alert("All fields are required");
     } else {
-      setIsLoading(true ) // is loading 
+      setIsLoading(true); // is loading
 
       fetch("https://prj-certifi-backend.onrender.com/api/auth/login", {
         method: "POST",
@@ -47,7 +48,8 @@ function Login() {
             }
             setEmail("");
             setPassword("");
-            setIsLoading(false) //loading 
+            localStorage.setItem("email", email);
+            setIsLoading(false); //loading
             navigate("/dashboard");
           } else {
             alert("Login failed. Please try again.");
@@ -130,7 +132,7 @@ function Login() {
           </div>
           <div className="w-full  flex justify-center ">
             <button type="submit" className="loginBut w-[400px] ">
-              <span>Sign In</span>
+              <span>Log In</span>
             </button>
           </div>
         </form>

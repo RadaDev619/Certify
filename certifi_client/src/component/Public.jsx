@@ -40,30 +40,30 @@ const Public = () => {
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
-      // Extract address (42 characters)
-      const address = ID.substring(0, 42);
+      // // Extract address (42 characters)
+      // const address = ID.substring(0, 42);
 
       // Extract identifier (24 characters)
       const identifier = ID.substring(42, 66);
 
-      // Extract hash (remaining characters)
-      const hash = ID.substring(66);
-      setIsLoading(true);
-      const transaction = await contract.getIPFSHash(address, identifier, hash);
+      // // Extract hash (remaining characters)
+      // const hash = ID.substring(66);
+      // setIsLoading(true);
+      // const transaction = await contract.getIPFSHash(address, identifier, hash);
 
-      console.log("Waiting for transaction...");
-      // alert("reach1");
-      const receipt = await transaction.wait(); // Wait for the transaction to be mined
-      alert("Transaction is Successful!");
-      const event = receipt.events;
-      console.log("Event object:", event);
-      // Access the concatenatedString from the args array
-      const concatenatedString = event[0].args[0];
-      console.log("Concatenated String:", concatenatedString);
-      // alert("Concatenated String: " + concatenatedString);
+      // console.log("Waiting for transaction...");
+      // // alert("reach1");
+      // const receipt = await transaction.wait(); // Wait for the transaction to be mined
+      // alert("Transaction is Successful!");
+      // const event = receipt.events;
+      // console.log("Event object:", event);
+      // // Access the concatenatedString from the args array
+      // const concatenatedString = event[0].args[0];
+      // console.log("Concatenated String:", concatenatedString);
+      // // alert("Concatenated String: " + concatenatedString);
 
-      // Set the URL state to the concatenated string
-      setSearchResult(concatenatedString);
+      // // Set the URL state to the concatenated string
+      // setSearchResult(concatenatedString);
       const response = await fetch(
         `https://prj-certifi-backend.onrender.com/api/certificate/getCertificatebyId/${identifier}`,
         {
@@ -218,9 +218,9 @@ const Public = () => {
 
         {/* Display search results */}
         {fetchedData && (
-          <div className="mt-5">
+          <div className="mt-5 mr-56 flex">
             <div
-              className="w-9/12 bg-gray-100 p-8 bg-center bg-no-repeat"
+              className="w-8/12  p-8 bg-center bg-no-repeat"
               style={{ backgroundImage: `url(${backgroundImage})` }}
             >
               <div className="p-10 text-center flex flex-col">
@@ -235,25 +235,28 @@ const Public = () => {
                 <p className="text-3xl text-center py-6">
                   {fetchedData.courseName}
                 </p>
-                <div className="flex pt-40 px-[460px] gap-2">
+                <div className="flex justify-center pt-40 gap-2">
                   <p>Course duration:</p>
                   <p>{fetchedData.coursePeriod}</p>
                 </div>
-                <div className="flex pt-2 px-[460px]  gap-2">
+                <div className="flex justify-center pt-2 gap-2">
                   <p>Course detail:</p>
                   <p>{fetchedData.courseDetails}</p>
                 </div>
-                <div className="flex pt-2 px-[460px]  gap-2">
+                <div className="flex justify-center pt-2 gap-2">
                   <p>ID :</p>
                   <p>{ID}</p>
                 </div>
-                <div className="flex pt-2 px-[460px]  gap-2">
+                <div className="flex justify-center pt-2 gap-2">
                   <p>Issue date :</p>
-                  {fetchedData.createdAt}
+                  <p>{fetchedData.createdAt}</p>
                 </div>
               </div>
             </div>
-            <img src={fetchedData.image} />
+            <img
+              src={fetchedData.image}
+              className="w-4/12 h-auto object-contain"
+            />
           </div>
         )}
       </div>

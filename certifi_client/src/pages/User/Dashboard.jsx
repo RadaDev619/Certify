@@ -8,7 +8,7 @@ import certifiLogo from "../../assets/certifi-logo.png";
 import userProfileImage from "../../assets/user-profile.png";
 import "@fortawesome/fontawesome-free/css/all.css";
 import {
-  FaCodepen ,
+  FaCodepen,
   FaSearch,
   FaPlusCircle,
   FaHome,
@@ -32,7 +32,36 @@ const Dashboard = ({ state }) => {
   const [Hash, setHash] = useState("");
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [mail, setMail] = useState("");
+  const [name, setUserName] = useState("")
+  const [profilepic, setProfilePic] = useState("")
+  const [userid, setUserId] = useState("")
 
+
+  useEffect(() =>{
+    const mail = localStorage.getItem("email");
+    setMail(mail);
+    const fetchUser = async () =>{
+      try{
+      const response = await fetch(`https://prj-certifi-backend.onrender.com/api/auth/getuser/${mail}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    const responseData = await response.json()
+    setMail(responseData.email)
+    setProfilePic(responseData.photo)
+    setUserName(responseData.name)
+    setUserId(responseData._id)
+    localStorage.setItem("userid", responseData._id)
+  }catch(error){
+    console.error("Error fetching user:", error)
+  }}
+  fetchUser();
+  }, [])
+
+  
   useEffect(() => {
     if (localStorage.getItem("documentId")) {
       localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
@@ -351,11 +380,11 @@ const Dashboard = ({ state }) => {
               onClick={toggleUserDropdown}
             >
               <img
-                src={userProfileImage}
+                src={profilepic}
                 alt="User Profile"
                 className="profile-image"
               />
-              <span className="username">Username</span>
+              <span className="username">{name}</span>
               {showUserDropdown && (
                 <div className="user-dropdown">
                   <Link to="/accountsetting" className="user-dropdown-content">
@@ -478,7 +507,13 @@ const Dashboard = ({ state }) => {
                     {certificate.verified === true ? "Approved" : "Rejected"}
                   </div>
                   <div>{certificate.name}</div>
-                  <div>{certificate.createdAt}</div>
+                  <div>
+                    {
+                      new Date(certificate.createdAt)
+                        .toISOString()
+                        .split("T")[0]
+                    }
+                  </div>
 
                   <Link
                     onClick={toCertificateForm(certificate._id)}
@@ -487,9 +522,9 @@ const Dashboard = ({ state }) => {
                     <i className="fas fa-eye"></i>
                   </Link>
                   <div className="view-icon ">
-                    <i
-                      onClick={storeHash(certificate._id)}
-                    ><FaCodepen /></i>
+                    <i onClick={storeHash(certificate._id)}>
+                      <FaCodepen />
+                    </i>
                   </div>
                 </div>
               ))}

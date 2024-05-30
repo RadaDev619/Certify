@@ -189,7 +189,13 @@ const Dashboard = () => {
                 <div className="table-row1" key={certificate.id}>
                   <div>{certificate.courseName}</div>
                   <div>{certificate.name}</div>
-                  <div>{certificate.createdAt}</div>
+                  <div>
+                    {
+                      new Date(certificate.createdAt)
+                        .toISOString()
+                        .split("T")[0]
+                    }
+                  </div>
                   <Link onClick={toCertificateForm(certificate._id)}>
                     {" "}
                     <div>

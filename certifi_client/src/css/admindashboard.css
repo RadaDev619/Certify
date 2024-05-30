@@ -126,7 +126,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end; /* Changed from space-between */
-    column-gap: 10px; /* Added gap between elements */
+    column-gap: 40px; /* Added gap between elements */
   }
   
   .profile-image-container {
