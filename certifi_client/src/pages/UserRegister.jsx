@@ -54,7 +54,8 @@ function URegister() {
           setPassword("");
           setConfirmPassword("");
           setIsLoading(false);
-
+          localStorage.setItem("email", email);
+          
           navigate("/OtpEnter");
         } else {
           alert("Registration failed. Please try again.");

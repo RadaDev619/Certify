@@ -39,23 +39,11 @@ function AdminLogin() {
         }
       );
 
-      if (!response.ok) {
-        // If response is not OK, try to get the error message
-        const textResponse = await response.text();
-        try {
-          const errorData = JSON.parse(textResponse);
-          alert(errorData.message);
-        } catch {
-          alert("An unexpected error occurred. Please try again later.");
-        }
-        setIsLoading(false);
-        return;
-      }
-
       const data = await response.json();
 
       if (data.status === "Success") {
         window.localStorage.setItem("email", email);
+        window.localStorage.setItem("adminLoggedIn", "true")
 
         setEmail("");
         setPassword("");

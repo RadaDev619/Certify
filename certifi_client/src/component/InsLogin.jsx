@@ -38,7 +38,11 @@ function InsLogin() {
         .then((response) => response.json())
         .then((data) => {
           if (data.status === "Success") {
+            console.log(data.data)
             window.localStorage.setItem("email", email);
+            localStorage.setItem("userid", data.data._id);
+            localStorage.setItem("insLoggedIn", "true");
+            alert("Login successful!");
 
             // alert("Login successful!");
             Toastify({
@@ -57,6 +61,8 @@ function InsLogin() {
             navigate("/Institutiondashboard");
           } else {
             // alert("Login successful!");
+            setIsLoading(false);
+
             Toastify({
               text: "Login failed. Please try again!",
               duration: 3000,
@@ -66,7 +72,6 @@ function InsLogin() {
               backgroundColor: "green",
               stopOnFocus: true,
             }).showToast();
-            setIsLoading(false);
           }
         });
     }

@@ -21,15 +21,17 @@ import Typography from "@mui/material/Typography";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import LoadingAnimation from "../../component/LoadingAnimation";
-
-const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
+import axios from "axios";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
+const contractAddress = "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
 const contractABI = abi.abi;
 
 const Dashboard = ({ state }) => {
   const [showCreateDropdown, setShowCreateDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [certificates, setCertificates] = useState([]); // State to store fetched certificates
-  const [Hash, setHash] = useState("");
+  const [hash, setHash] = useState("");
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [mail, setMail] = useState("");
@@ -37,7 +39,42 @@ const Dashboard = ({ state }) => {
   const [profilepic, setProfilePic] = useState("");
   const [userid, setUserId] = useState("");
 
+  const Logout = () => {
+    window.localStorage.setItem("userLoggedIn", "false")
+    window.localStorage.removeItem("email")
+    window.localStorage.removeItem("userLoggedIn")
+    
+    navigate("/login")
+    window.location.reload()
+  }
+  const [results, setResults] = useState([]); // State to store search results
+  const [query, setQuery] = useState("");
   useEffect(() => {
+    const searchCertificates = (query) => {
+      // Filter certificates array based on the query
+      const filteredCertificates = certificates.filter((certificate) =>
+        certificate.courseName.toLowerCase().includes(query.toLowerCase())
+      );
+      // Update results state with filtered certificates
+      setResults(filteredCertificates);
+    };
+
+    // Debounce to limit search calls
+    const debounceTimeout = setTimeout(() => {
+      if (query.trim() !== "") {
+        searchCertificates(query);
+      } else {
+        setResults([]); // If query is empty, reset results to show all certificates
+      }
+    }, 300); // Adjust delay as needed
+
+    return () => clearTimeout(debounceTimeout);
+  }, [query, certificates]); // Effect runs on every query or certificates change
+
+  useEffect(() => {
+    if(localStorage.getItem("userLoggedIn") === "false"){
+      navigate("/login")
+    }
     const mail = localStorage.getItem("email");
     setMail(mail);
     const fetchUser = async () => {
@@ -70,7 +107,7 @@ const Dashboard = ({ state }) => {
     }
 
     // Fetch certificates from backend API
-    fetch("https://prj-certifi-backend.onrender.com/api/certificate/getall", {
+    fetch(`https://prj-certifi-backend.onrender.com/api/certificate/getallcertificates/${mail}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -80,6 +117,7 @@ const Dashboard = ({ state }) => {
       .then((data) => {
         if (data.status === "success") {
           // Update certificates state with fetched data
+          
           setCertificates(data.data);
         } else {
           alert("Certificate data fetch failed. Please try again.");
@@ -201,6 +239,7 @@ const Dashboard = ({ state }) => {
   }, []);
 
   const storeHash = (certificateId) => async (event) => {
+    console.log(certificateId);
     event.preventDefault();
     try {
       setIsLoading(true);
@@ -210,16 +249,19 @@ const Dashboard = ({ state }) => {
       )
         .then((response) => response.json())
         .then((data) => {
+          console.log("Response data:", data);
+
           console.log("Response data:", data.data.ipfsHash);
-          setHash(String(data.data.ipfsHash));
+          setHash(data.data.ipfsHash);
         })
         .catch((error) => {
           console.error("Error fetching community data:", error);
         });
       const identifier = String(certificateId);
       console.log("signer", signer);
-
-      const transaction = await contract.storeCertificate(identifier, Hash);
+      console.log("scasc", identifier, hash);
+      console.log("hash", hash);
+      const transaction = await contract.storeCertificate(identifier, hash);
       console.log("Waiting for transaction...");
       const receipt = await transaction.wait();
       console.log(" object:", receipt);
@@ -232,7 +274,7 @@ const Dashboard = ({ state }) => {
       // Access the concatenatedString from the args array
       const documentIdentification = event[0].args[2];
       console.log("Concatenated String:", documentIdentification);
-      alert("Transaction is Successful!");
+      // alert("Transaction is Successful!");
       fetch(
         `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${certificateId}`,
         {
@@ -249,18 +291,40 @@ const Dashboard = ({ state }) => {
         .then((data) => {
           if (data.status === "success") {
             console.log(data.data);
-
-            alert("Document uploaded successfully.");
+            Toastify({
+              text: "Document uploaded successfully!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
             setIsLoading(false);
           } else {
             console.log(data);
-            alert("Document uploading failed. Please try again.");
+            Toastify({
+              text: "Document uploading failed. Please try again!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
             setIsLoading(false);
           }
         });
     } catch (error) {
-      console.error("Error adding hash:", error.message);
-      alert("Error adding hash. Please try again later.");
+      Toastify({
+        text: "Error adding hash. Please try again later!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "green",
+        stopOnFocus: true,
+      }).showToast();
       setIsLoading(false);
     }
   };
@@ -374,7 +438,12 @@ const Dashboard = ({ state }) => {
         <div className="search-bar">
           <div className="search-container">
             <FaSearch className="search-icon" />
-            <input type="text" placeholder="Search Document or Folder" />
+            <input
+              type="text"
+              placeholder="Search Document or Folder"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)} // Update query on every keystroke
+            />
           </div>
           <div className="user-info">
             <div
@@ -397,7 +466,7 @@ const Dashboard = ({ state }) => {
               )}
             </div>
             <Link to="/">
-              <button class="group flex items-center justify-start w-10 h-10 bg-red-600 rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-32 hover:rounded-lg active:translate-x-1 active:translate-y-1">
+              <button class="group flex items-center justify-start w-10 h-10 bg-red-600 rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-32 hover:rounded-lg active:translate-x-1 active:translate-y-1" onClick={Logout}>
                 <div class="flex items-center justify-center w-full transition-all duration-300 group-hover:justify-start group-hover:px-3">
                   <svg class="w-4 h-4" viewBox="0 0 512 512" fill="white">
                     <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
@@ -412,7 +481,7 @@ const Dashboard = ({ state }) => {
         </div>
         {/* Rest of the code remains the same */}
         <Card>
-          <CardContent>
+        <CardContent>
             <div className="documents-header">
               <Typography variant="h5" component="div">
                 Documents
@@ -461,39 +530,93 @@ const Dashboard = ({ state }) => {
                 <div>View</div>
                 <div>Upload</div>
               </div>
+              {results.length === 0
+                ? certificates.map((certificate) => (
+                    <div
+                      className="table-rows table-rowss"
+                      key={certificate._id}
+                    >
+                      <div>{certificate.courseName}</div>
+                      <div
+                        className={`status ${
+                          certificate.verified === "pending"
+                            ? "pending"
+                            : certificate.verified === "true"
+                            ? "approved"
+                            : "rejected"
+                        }`}
+                      >
+                        {certificate.verified === "pending"
+                          ? "Pending"
+                          : certificate.verified === "true"
+                          ? "Approved"
+                          : "Rejected"}
+                      </div>
+                      <div>{certificate.name}</div>
+                      <div>
+                        {
+                          new Date(certificate.createdAt)
+                            .toISOString()
+                            .split("T")[0]
+                        }
+                      </div>
 
-              {certificates.map((certificate) => (
-                <div className="table-rows table-rowss" key={certificate._id}>
-                  <div>{certificate.courseName}</div>
-                  <div
-                    className={`status ${
-                      certificate.verified === true ? true : false
-                    }`}
-                  >
-                    {certificate.verified === true ? "Approved" : "Rejected"}
-                  </div>
-                  <div>{certificate.name}</div>
-                  <div>
-                    {
-                      new Date(certificate.createdAt)
-                        .toISOString()
-                        .split("T")[0]
-                    }
-                  </div>
+                      <Link
+                        onClick={toCertificateForm(certificate._id)}
+                        className="view-icon"
+                      >
+                        <i className="fas fa-eye"></i>
+                      </Link>
+                      <div className="view-icon ">
+                        <i onClick={storeHash(certificate._id)}>
+                          <FaCodepen />
+                        </i>
+                      </div>
+                    </div>
+                  ))
+                : results.map((certificate) => (
+                    <div
+                      className="table-rows table-rowss"
+                      key={certificate._id}
+                    >
+                      <div>{certificate.courseName}</div>
+                      <div
+                        className={`status ${
+                          certificate.verified === "pending"
+                            ? "pending"
+                            : certificate.verified === "true"
+                            ? "approved"
+                            : "rejected"
+                        }`}
+                      >
+                        {certificate.verified === "pending"
+                          ? "Pending"
+                          : certificate.verified === "true"
+                          ? "Approved"
+                          : "Rejected"}
+                      </div>
+                      <div>{certificate.name}</div>
+                      <div>
+                        {
+                          new Date(certificate.createdAt)
+                            .toISOString()
+                            .split("T")[0]
+                        }
+                      </div>
 
-                  <Link
-                    onClick={toCertificateForm(certificate._id)}
-                    className="view-icon"
-                  >
-                    <i className="fas fa-eye"></i>
-                  </Link>
-                  <div className="view-icon ">
-                    <i onClick={storeHash(certificate._id)}>
-                      <FaCodepen />
-                    </i>
-                  </div>
-                </div>
-              ))}
+                      <Link
+                        onClick={toCertificateForm(certificate._id)}
+                        className="view-icon"
+                      >
+                        <i className="fas fa-eye"></i>
+                      </Link>
+                      <div className="view-icon ">
+                        <i onClick={storeHash(certificate._id)}>
+                          <FaCodepen />
+                        </i>
+                      </div>
+                    </div>
+                  ))}
             </div>
           </CardContent>
         </Card>

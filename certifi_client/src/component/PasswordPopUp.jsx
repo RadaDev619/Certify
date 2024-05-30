@@ -5,13 +5,45 @@ const PasswordPopup = ({ onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleChangePassword = () => {
-    // Implement logic to change the password
-    console.log("Current Password:", currentPassword);
-    console.log("New Password:", newPassword);
-    console.log("Confirm Password:", confirmPassword);
-    onClose();
+  const uid = localStorage.getItem("userid")
+  
+  const handleChangePassword = async() => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setError("All fields are required");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("New passwords do not match");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://prj-certifi-backend.onrender.com/api/auth/updatepassword/${uid}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+        }),
+      });
+
+      const data = await response.json();
+      console.log(data)
+      if (data.status === "success") {
+        console.log("Password updated successfully:", data);
+        onClose();
+      } else {
+        setError(data.message || "An error occurred. Please try again.");
+      }
+    } catch (error) {
+      setError("An error occurred. Please try again.");
+      console.error("Error updating password:", error);
+    }
   };
 
   return (

@@ -40,7 +40,7 @@ function Login() {
         .then((response) => response.json())
         .then((data) => {
           if (data.status === "Success") {
-            alert("Login successful!");
+            // alert("Login successful!");
             if (rememberMe) {
               // Store email in local storage
               window.localStorage.setItem("email", email);
@@ -51,6 +51,8 @@ function Login() {
             setEmail("");
             setPassword("");
             localStorage.setItem("email", email);
+            localStorage.setItem("userLoggedIn", "true");
+
             setIsLoading(false); //loading
             Toastify({
               text: "Login successful!",
@@ -72,6 +74,7 @@ function Login() {
               backgroundColor: "green",
               stopOnFocus: true,
             }).showToast();
+            setIsLoading(false); //loading
           }
         });
     }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../public/logo.png";
+import LoadingAnimation from "../component/LoadingAnimation";
 
 function getCookie(name) {
   const cookieString = document.cookie;
@@ -15,7 +16,7 @@ function getCookie(name) {
   return null;
 }
 
-const userEmail = getCookie("email");
+const userEmail = localStorage.getItem("email");
 
 function OtpEntry() {
   const [otp, setOtp] = useState(new Array(6).fill(""));
@@ -33,7 +34,7 @@ function OtpEntry() {
       element.nextSibling.focus();
     }
   };
-  setIsLoading(true);
+  // setIsLoading(true);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -55,7 +56,7 @@ function OtpEntry() {
           alert("OTP verification successful!");
 
           setIsLoading(false);
-          navigate("/Login");
+          navigate("/login");
         } else {
           alert("OTP verification failed. Please try again.");
           setIsLoading(false);
