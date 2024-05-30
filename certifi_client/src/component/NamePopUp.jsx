@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../css/namepopup.css"
 
 const NamePopup = ({ onClose }) => {
@@ -8,11 +8,33 @@ const NamePopup = ({ onClose }) => {
     setNewName(e.target.value);
   };
 
-  const handleChangeName = () => {
-    // Implement logic to update the name
-    console.log("New name:", newName);
-    onClose();
-  };
+  const uid = localStorage.getItem("userid");
+    const handleChangeName = () => {
+      // Implement logic to update the name
+      
+        const updateName = async () =>{
+          try{
+            const response = await fetch(`https://prj-certifi-backend.onrender.com/api/auth/updateuser/${uid}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ name: newName }),
+            })
+            const responseData = await response.json()
+            setNewName(responseData.name)
+  
+          }catch(error){
+            console.error("Error updating name:", error)
+          }
+          
+     } 
+     updateName()
+      console.log("New name:", newName);
+      onClose();
+    };
+  
+  
 
   return (
     <div className="popup-overlay">

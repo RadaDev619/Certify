@@ -13,8 +13,27 @@ import "../css/index.css";
 import { Logo } from "../component/Svgs";
 import cube1 from "../../public/cube1.png";
 import cube2 from "../../public/cube2.png";
+import {useNavigate} from "react-router-dom";
 
 const Public = () => {
+  const navigate = useNavigate();
+  const userLoggedIn = localStorage.getItem("userLoggedIn")
+  const insLoggedIn = localStorage.getItem("insLoggedIn")
+  const adminLoggedIn = localStorage.getItem("adminLoggedIn")
+
+  useEffect(() => {
+    if (userLoggedIn === "true") {
+      navigate("/dashboard");
+    }
+    if(insLoggedIn === "true"){
+      navigate("/institutiondashboard")
+    }
+    if(adminLoggedIn === "true"){
+      navigate("/admindashboard")
+    }
+  }, [userLoggedIn, insLoggedIn, adminLoggedIn]);
+
+
   const [ID, setID] = useState("");
   const [searchResult, setSearchResult] = useState("");
   const inputRef = useRef(null);

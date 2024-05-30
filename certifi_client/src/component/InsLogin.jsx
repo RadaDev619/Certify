@@ -38,8 +38,10 @@ const navigate = useNavigate()
         .then((response) => response.json())
         .then((data) => {
           if (data.status === "Success") {
+            console.log(data.data)
             window.localStorage.setItem("email", email);
-
+            localStorage.setItem("userid", data.data._id);
+            localStorage.setItem("insLoggedIn", "true");
             alert("Login successful!");
             setEmail("");
             setPassword("");

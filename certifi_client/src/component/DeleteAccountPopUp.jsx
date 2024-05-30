@@ -1,11 +1,33 @@
 import React from "react";
 import "../css/deleteaccountpopup.css"
+import { useNavigate } from "react-router-dom";
 
 const DeleteAccountPopup = ({ onClose }) => {
+  const uid = localStorage.getItem("userid");
+  const navigate = useNavigate()
+
   const handleDeleteAccount = () => {
-    // Implement logic to delete the account
-    console.log("Account deleted");
+    const deleteAccount = async () => {
+      try{
+        // Implement logic to delete the account
+        const response = fetch(`https://prj-certifi-backend.onrender.com/api/auth/deleteuser/${uid}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        const responseData = await response.json()
+        console.log(responseData)
+        if(responseData.status === "success"){
+          navigate("/login")
+        }
+      }catch(error){
+        console.log(error)
+      }
+  }
+    deleteAccount()
     onClose();
+  
   };
 
   return (

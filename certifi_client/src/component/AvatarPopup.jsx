@@ -2,38 +2,38 @@ import React, { useState } from "react";
 import "../css/avatarpopup.css";
 
 const AvatarPopup = ({ onClose }) => {
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [file, setSelectedFile] = useState(null);
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
   };
+  const userid = localStorage.getItem("userid");
 
   const handleSave = () => {
-    if (selectedFile) {
+    if (file) {
       const formData = new FormData();
-      formData.append("avatar", selectedFile);
+      formData.append('photo', file); // Ensure the key matches the one expected in the backend
 
-      fetch("http://localhost:5173/upload-avatar", {
-        // Corrected URL
-        method: "POST",
+      fetch(`https://prj-certifi-backend.onrender.com/api/auth/photoUpload/${userid}`, {
+        method: 'PATCH',
         body: formData,
       })
-        .then((response) => {
-          console.log("Upload response:", response);
-          if (response.ok) {
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('Upload response:', data);
+          if (data.status === 'success') {
             onClose();
           } else {
-            console.error("Failed to upload avatar");
+            console.error('Failed to upload avatar');
           }
         })
         .catch((error) => {
-          console.error("Error uploading avatar:", error);
+          console.error('Error uploading avatar:', error);
         });
     } else {
-      console.error("No file selected");
+      console.error('No file selected');
     }
   };
-
   return (
     <div className="avatar-popup-overlay">
       <div className="avatar-popup">
