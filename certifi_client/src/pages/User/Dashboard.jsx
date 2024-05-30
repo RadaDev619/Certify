@@ -56,7 +56,7 @@ const Dashboard = ({ state }) => {
     const fetchUser = async () => {
       try {
         const response = await fetch(
-          `https://prj-certifi-backend.onrender.com/api/auth/getuser/${mail}`,
+          `https://prj-certifi-backend.onrender.com/api/auth/getuserbyemail/${mail}`,
           {
             method: "GET",
             headers: {
@@ -65,10 +65,10 @@ const Dashboard = ({ state }) => {
           }
         );
         const responseData = await response.json();
-        setMail(responseData.email);
-        setProfilePic(responseData.photo);
-        setUserName(responseData.name);
-        setUserId(responseData._id);
+        setMail(responseData.data.email);
+        setProfilePic(responseData.data.photo);
+        setUserName(responseData.data.name);
+        setUserId(responseData.data._id);
         localStorage.setItem("userid", responseData._id);
       } catch (error) {
         console.error("Error fetching user:", error);

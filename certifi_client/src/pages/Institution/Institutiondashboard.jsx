@@ -12,6 +12,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Modal from "react-modal";
 
+
 const Dashboard = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [certificates, setCertificates] = useState([]); // State to store fetched certificates
@@ -56,6 +57,7 @@ const Dashboard = () => {
         const responseData = await response.json()
         setUserName(responseData.companyName)
         setProfile(responseData.photo)
+        console.log(profile)
   
       }catch(error){
         console.log(error)
