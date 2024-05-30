@@ -11,7 +11,8 @@ import { ethers } from "ethers"; //import ethers library
 import abi from "../contractJson/Certify.json";
 import "../css/index.css";
 import { Logo } from "../component/Svgs";
-import backgroundImage from "../../public/background.jpeg";
+import cube1 from "../../public/cube1.png";
+import cube2 from "../../public/cube2.png";
 
 const Public = () => {
   const [ID, setID] = useState("");
@@ -104,13 +105,55 @@ const Public = () => {
     setSearchResult("");
   };
   return (
-    <div className="pt-20 px-16">
-      <div className="herobanner">
-        <h1>hay</h1>
+    <div className=" ">
+      {/* hero */}
+      <div className=" bg-gradient-to-b from-[#ececec] to-[#dfdfdf] h-[800px] backdrop-blur-sm pt-10 overflow-x-hidden">
+        <div className="tagline  ">
+          <h1 className="text-3xl item-left  translate-y-[150px] translate-x-[300px]">
+            Secure and transparent{" "}
+          </h1>
+        </div>
+        <div className="Herobanner flex items-center justify-center ">
+          <div class="hero-title flex items-center">
+            <img
+              src={cube1}
+              alt=""
+              class="w-[300px] h-[300px] -translate-x-[150px]  "
+            />
+            <h1 class="text-[11rem] font-bold text-black">CER</h1>
+            <img src={cube2} alt="" class="w-[550px] h-[500px] ml-4" />
+            <h1 class="text-[11rem] font-bold text-black">TIFI</h1>
+            <img
+              src={cube1}
+              alt=""
+              class="w-[350px] h-[350px] translate-x-[200px] -translate-y-[100px]"
+            />
+          </div>
+        </div>
+        <div className="flex items-center justify-center">
+          <img
+            src={cube1}
+            alt=""
+            className=" h-[200px] w-[200px] -translate-x-[650px]"
+          />
+          <h1 className="text-right translate-x-[470px] -translate-y-[200px] text-xl ">
+            We will be helping the people eradicate the <br />
+            fake forgery of document and certificate <br />
+            which we see every where{" "}
+          </h1>
+          <img
+            src={cube1}
+            alt=""
+            className="h-[200px] w-[200px] -translate-y-[50px] translate-x-[250px]  "
+          />
+        </div>
+        
       </div>
 
-      <div className="relative validate pb-40">
-        <h1 className="text-center font-bold py-10 text-3xl">Validate</h1>
+      {/* hero end */}
+
+      <div className="relative validate pb-40 pt-12">
+        <h1 className="text-center font-bold py-10 text-2xl">Validate</h1>
         <h3 className="text-center text-4xl pb-6">
           Protect your documents! Check their integrity and authenticity
         </h3>
@@ -125,10 +168,10 @@ const Public = () => {
         >
           {" "}
           {/* Add justify-center */}
-          <button class="absolute left-[455px] -translate-y-1/2 top-1/2 p-1">
+          <button class="absolute left-[488px] -translate-y-[45%] top-1/2 p-1">
             <svg
-              width="17"
-              height="16"
+              width="16"
+              height="15"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               role="img"
@@ -154,7 +197,7 @@ const Public = () => {
           />
           <button
             type="button"
-            class="absolute right-[460px] -translate-y-1/2 top-1/2 p-1"
+            class="absolute right-[490px] -translate-y-[45%] top-1/2 p-1"
             onClick={handleClearInput}
           >
             <svg
@@ -221,7 +264,7 @@ const Public = () => {
       {/* search  end*/}
 
       <div className="Aboutus ">
-        <h1 className="text-center font-bold py-10">About Us </h1>
+        <h1 className="text-center font-bold py-10 text-2xl">About Us </h1>
         <p className="text-center leading-relaxed tracking-wide text-5xl">
           {" "}
           A <strong>BLOCKCHAIN-BASED</strong> STORAGE SYSTEM WHICH <br />{" "}
@@ -230,7 +273,7 @@ const Public = () => {
           CERTIFICATE-&-DOCUMENTS{" "}
         </p>
       </div>
-      <h1 className="pt-20 text-center text-xl font-bold uppercase">
+      <h1 className="pt-20 text-center text-2xl font-bold uppercase">
         why choose us{" "}
       </h1>
       <div className="aim flex justify-between mt-20 space-x-8">
@@ -363,11 +406,63 @@ const Public = () => {
 
       <footer className="bg-white py-16 mt-20">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-3 md:mb-0">
-            <Logo className={"w-300px] h-[300px]"} />
+          <div className=" ">
+            <div>
+            <Logo className={"w-300px] h-[300px] -translate-x-[160px] translate-y-[70px]"} />
+            <h1></h1>
+
+            </div>
+            
+            <div className="-translate-y-[5px]"> 
+              {/* contact us  */}
+              <h1 className="text-2xl pb-6">Contact us </h1>
+              <div class="relative rounded-full overflow-hidden bg-[#eeeeee] shadow-xl w-[80%]">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Hover on Submit"
+                  class="input bg-transparent outline-none border-none pl-6 pr-10 py-5 w-full font-sans text-lg font-semibold"
+                />
+                <div class="absolute right-2 top-[0.4em]">
+                  <button class="w-14 h-14 rounded-full bg-violet-500 group shadow-xl flex items-center justify-center relative overflow-hidden">
+                    <svg
+                      width="50"
+                      height="50"
+                      viewBox="0 0 64 64"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="relative z-10"
+                    >
+                      <path
+                        d="M63.6689 29.0491L34.6198 63.6685L0.00043872 34.6194L29.0496 1.67708e-05L63.6689 29.0491Z"
+                        fill="white"
+                        fill-opacity="0.01"
+                      ></path>
+                      <path
+                        d="M42.8496 18.7067L21.0628 44.6712"
+                        stroke="white"
+                        stroke-width="3.76603"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                      <path
+                        d="M26.9329 20.0992L42.85 18.7067L44.2426 34.6238"
+                        stroke="white"
+                        stroke-width="3.76603"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                    </svg>
+                    <div class="w-full h-full rotate-45 absolute left-[32%] top-[32%] bg-black group-hover:-left-[100%] group-hover:-top-[100%] duration-1000"></div>
+                    <div class="w-full h-full -rotate-45 absolute -left-[32%] -top-[32%] group-hover:left-[100%] group-hover:top-[100%] bg-black duration-1000"></div>
+                  </button>
+                </div>
+              </div>
+              {/* contact us end  */}
+            </div>
           </div>
 
-          <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-16">
+          <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-20 ">
             <div>
               <h3 className="text-lg font-medium text-gray-800 mb-4">
                 Services
