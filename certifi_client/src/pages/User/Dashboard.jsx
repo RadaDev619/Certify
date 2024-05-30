@@ -46,30 +46,6 @@ const Dashboard = ({ state }) => {
     navigate("/login")
     window.location.reload()
   }
-  const [results, setResults] = useState([]); // State to store search results
-  const [query, setQuery] = useState("");
-  useEffect(() => {
-    const searchCertificates = (query) => {
-      // Filter certificates array based on the query
-      const filteredCertificates = certificates.filter((certificate) =>
-        certificate.courseName.toLowerCase().includes(query.toLowerCase())
-      );
-      // Update results state with filtered certificates
-      setResults(filteredCertificates);
-    };
-
-    // Debounce to limit search calls
-    const debounceTimeout = setTimeout(() => {
-      if (query.trim() !== "") {
-        searchCertificates(query);
-      } else {
-        setResults([]); // If query is empty, reset results to show all certificates
-      }
-    }, 300); // Adjust delay as needed
-
-    return () => clearTimeout(debounceTimeout);
-  }, [query, certificates]); // Effect runs on every query or certificates change
-
   useEffect(() => {
     if(localStorage.getItem("userLoggedIn") === "false"){
       navigate("/login")
@@ -97,38 +73,60 @@ const Dashboard = ({ state }) => {
         console.error("Error fetching user:", error);
       }
     };
+
+    const fetchData = async ()=>{
+      try{
+        const func = await fetch(`https://prj-certifi-backend.onrender.com/api/certificate/getallcertificates/${mail}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        const data = await func.json();
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setCertificates(data.data);
+          console.log(certificates)
+        }
+      }catch(error){
+        console.error("Error fetching user:", error);
+      }
+
+    }
     fetchUser();
+    fetchData();
   }, []);
 
   useEffect(() => {
     if (localStorage.getItem("documentId")) {
       localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
     }
-
-    // Fetch certificates from backend API
-    fetch(`https://prj-certifi-backend.onrender.com/api/certificate/getallcertificates/${mail}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === "success") {
-          // Update certificates state with fetched data
-          
-          setCertificates(data.data);
-        } else {
-          alert("Certificate data fetch failed. Please try again.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching certificates:", error);
-        alert(
-          "An error occurred while fetching certificates. Please try again."
-        );
-      });
   }, []);
+
+  const [results, setResults] = useState([]); // State to store search results
+  const [query, setQuery] = useState("");
+  useEffect(() => {
+    const searchCertificates = (query) => {
+      // Filter certificates array based on the query
+      const filteredCertificates = certificates.filter((certificate) =>
+        certificate.courseName.toLowerCase().includes(query.toLowerCase())
+      );
+      // Update results state with filtered certificates
+      setResults(filteredCertificates);
+    };
+
+    // Debounce to limit search calls
+    const debounceTimeout = setTimeout(() => {
+      if (query.trim() !== "") {
+        searchCertificates(query);
+      } else {
+        setResults([]); // If query is empty, reset results to show all certificates
+      }
+    }, 300); // Adjust delay as needed
+
+    return () => clearTimeout(debounceTimeout);
+  }, [query, certificates]); // Effect runs on every query or certificates change
+
 
   const toggleCreateDropdown = () => {
     setShowCreateDropdown(!showCreateDropdown);
