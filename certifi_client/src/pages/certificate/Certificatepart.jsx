@@ -54,6 +54,7 @@ const CertificatePart = () => {
             stopOnFocus: true,
           }).showToast();
           setIsLoading(false);
+          navigate("/dashboard");
         }
       });
   };

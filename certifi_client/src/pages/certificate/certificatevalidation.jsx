@@ -11,6 +11,7 @@ import "toastify-js/src/toastify.css";
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");
   const [userType, setuserType] = useState(true);
+  const navigate = useNavigate();
 
   // const crtId = window.localStorage.getItem("certId");
   const [fetchedData, setFetchedData] = useState(null); // State to store fetched data
@@ -178,6 +179,7 @@ function CertificateValidation() {
           backgroundColor: "green",
           stopOnFocus: true,
         }).showToast();
+        navigate("/institutiondashboard");
       } else {
         console.log(data);
         Toastify({
@@ -189,6 +191,7 @@ function CertificateValidation() {
           backgroundColor: "green",
           stopOnFocus: true,
         }).showToast();
+        navigate("/institutiondashboard");
       }
     } catch (error) {
       console.error(error);

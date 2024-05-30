@@ -22,7 +22,8 @@ import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import LoadingAnimation from "../../component/LoadingAnimation";
 import axios from "axios";
-
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 const contractAddress = "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
 const contractABI = abi.abi;
 
@@ -271,7 +272,7 @@ const Dashboard = ({ state }) => {
       // Access the concatenatedString from the args array
       const documentIdentification = event[0].args[2];
       console.log("Concatenated String:", documentIdentification);
-      alert("Transaction is Successful!");
+      // alert("Transaction is Successful!");
       fetch(
         `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${certificateId}`,
         {
@@ -288,18 +289,40 @@ const Dashboard = ({ state }) => {
         .then((data) => {
           if (data.status === "success") {
             console.log(data.data);
-
-            alert("Document uploaded successfully.");
+            Toastify({
+              text: "Document uploaded successfully!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
             setIsLoading(false);
           } else {
             console.log(data);
-            alert("Document uploading failed. Please try again.");
+            Toastify({
+              text: "Document uploading failed. Please try again!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
             setIsLoading(false);
           }
         });
     } catch (error) {
-      console.error("Error adding hash:", error.message);
-      alert("Error adding hash. Please try again later.");
+      Toastify({
+        text: "Error adding hash. Please try again later!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "green",
+        stopOnFocus: true,
+      }).showToast();
       setIsLoading(false);
     }
   };
