@@ -457,7 +457,7 @@ const Dashboard = ({ state }) => {
         </div>
         {/* Rest of the code remains the same */}
         <Card>
-          <CardContent>
+        <CardContent>
             <div className="documents-header">
               <Typography variant="h5" component="div">
                 Documents
@@ -499,9 +499,9 @@ const Dashboard = ({ state }) => {
             </div>
             <div className="documents-table">
               <div className="table-header table-headers">
-                <div>Course Name</div>
+                <div>Name</div>
                 <div>Status</div>
-                <div>Signer</div>
+                <div>Author</div>
                 <div>Update date</div>
                 <div>View</div>
                 <div>Upload</div>
@@ -537,24 +537,6 @@ const Dashboard = ({ state }) => {
                         }
                       </div>
 
-              {certificates.map((certificate) => (
-                <div className="table-rows table-rowss" key={certificate._id}>
-                  <div>{certificate.courseName}</div>
-                  <div
-                    className={`status ${
-                      certificate.verified === true ? true : false
-                    }`}
-                  >
-                    {certificate.verified === true ? "Approved" : "Rejected"}
-                  </div>
-                  <div>{certificate.signer}</div>
-                  <div>
-                    {
-                      new Date(certificate.createdAt)
-                        .toISOString()
-                        .split("T")[0]
-                    }
-                  </div>
                       <Link
                         onClick={toCertificateForm(certificate._id)}
                         className="view-icon"
