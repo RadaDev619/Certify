@@ -521,9 +521,9 @@ const Dashboard = ({ state }) => {
             </div>
             <div className="documents-table">
               <div className="table-header table-headers">
-                <div>Name</div>
+                <div>Course Name</div>
                 <div>Status</div>
-                <div>Author</div>
+                <div>Signer</div>
                 <div>Update date</div>
                 <div>View</div>
                 <div>Upload</div>
@@ -550,7 +550,7 @@ const Dashboard = ({ state }) => {
                           ? "Approved"
                           : "Rejected"}
                       </div>
-                      <div>{certificate.name}</div>
+                      <div>{certificate.signer}</div>
                       <div>
                         {
                           new Date(certificate.createdAt)
