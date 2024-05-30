@@ -116,6 +116,7 @@ const Dashboard = ({ state }) => {
       .then((data) => {
         if (data.status === "success") {
           // Update certificates state with fetched data
+          
           setCertificates(data.data);
         } else {
           alert("Certificate data fetch failed. Please try again.");
