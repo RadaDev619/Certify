@@ -33,24 +33,23 @@ const Dashboard = ({ state }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [mail, setMail] = useState("");
-  // const [profilepic, setProfilePic] = useState("");
-  // const [name, setUserName] = useState("");
-  // const [userId, setUserId] = useState("");
+  const [name, setUserName] = useState("");
+  const [profilepic, setProfilePic] = useState("");
+  const [userid, setUserId] = useState("");
 
   const Logout = () => {
     window.localStorage.setItem("userLoggedIn", "false")
     window.localStorage.removeItem("email")
     window.localStorage.removeItem("userLoggedIn")
-    window.localStorage.removeItem("userid")
-
+    
     navigate("/login")
     window.location.reload()
   }
-  const [name, setUserName] = useState("");
-  const [profilepic, setProfilePic] = useState("");
-  const [userid, setUserId] = useState("");
 
   useEffect(() => {
+    if(localStorage.getItem("userLoggedIn") === "false"){
+      navigate("/login")
+    }
     const mail = localStorage.getItem("email");
     setMail(mail);
     const fetchUser = async () => {
@@ -78,43 +77,32 @@ const Dashboard = ({ state }) => {
   }, []);
 
   useEffect(() => {
-    if(!localStorage.getItem("userLoggedIn")){
-      navigate("/login")
+    if (localStorage.getItem("documentId")) {
+      localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
     }
-    const mail = localStorage.getItem("email");
-    if (mail) {
-      setMail(mail);
 
-      const fetchUser = async () => {
-        try {
-          const response = await fetch(`https://prj-certifi-backend.onrender.com/api/auth/getuserbyemail/${mail}`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch user data");
-          }
-
-          const responseData = await response.json();
-          const user = responseData.data; // Adjust according to your API response structure
-
-          if (user) {
-            setMail(user.email);
-            setProfilePic(user.photo);
-            setUserName(user.name);
-            setUserId(user._id);
-            localStorage.setItem("userid", user._id);
-          }
-        } catch (error) {
-          console.error("Error fetching user:", error);
+    // Fetch certificates from backend API
+    fetch(`https://prj-certifi-backend.onrender.com/api/certificate/getallcertificates/${mail}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setCertificates(data.data);
+        } else {
+          alert("Certificate data fetch failed. Please try again.");
         }
-      };
-
-      fetchUser();
-    }
+      })
+      .catch((error) => {
+        console.error("Error fetching certificates:", error);
+        alert(
+          "An error occurred while fetching certificates. Please try again."
+        );
+      });
   }, []);
 
   const toggleCreateDropdown = () => {
@@ -406,7 +394,7 @@ const Dashboard = ({ state }) => {
               onClick={toggleUserDropdown}
             >
               <img
-                src={userProfileImage}
+                src={profilepic}
                 alt="User Profile"
                 className="profile-image"
               />
@@ -478,9 +466,9 @@ const Dashboard = ({ state }) => {
             </div>
             <div className="documents-table">
               <div className="table-header table-headers">
-                <div>Name</div>
+                <div>Course Name</div>
                 <div>Status</div>
-                <div>Author</div>
+                <div>Signer</div>
                 <div>Update date</div>
                 <div>View</div>
                 <div>Upload</div>
@@ -496,7 +484,7 @@ const Dashboard = ({ state }) => {
                   >
                     {certificate.verified === true ? "Approved" : "Rejected"}
                   </div>
-                  <div>{certificate.name}</div>
+                  <div>{certificate.signer}</div>
                   <div>
                     {
                       new Date(certificate.createdAt)
