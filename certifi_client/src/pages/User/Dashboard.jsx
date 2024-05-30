@@ -33,9 +33,9 @@ const Dashboard = ({ state }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [mail, setMail] = useState("");
-  const [profilepic, setProfilePic] = useState("");
-  const [name, setUserName] = useState("");
-  const [userId, setUserId] = useState("");
+  // const [profilepic, setProfilePic] = useState("");
+  // const [name, setUserName] = useState("");
+  // const [userId, setUserId] = useState("");
 
   const Logout = () => {
     window.localStorage.setItem("userLoggedIn", "false")
