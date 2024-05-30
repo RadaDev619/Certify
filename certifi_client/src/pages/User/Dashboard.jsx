@@ -453,7 +453,7 @@ const Dashboard = ({ state }) => {
                 alt="User Profile"
                 className="profile-image"
               />
-              <span className="username">{name}</span>
+              <span className="username cursor-pointer">{name}</span>
               {showUserDropdown && (
                 <div className="user-dropdown">
                   <Link to="/accountsetting" className="user-dropdown-content">
