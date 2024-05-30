@@ -17,6 +17,7 @@ import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import LoadingAnimation from "./LoadingAnimation"; // import loading
 import backgroundImage from "../../public/background.jpeg";
+import CryptoJS from 'crypto-js';
 
 const Public = () => {
   const [ID, setID] = useState("");
@@ -24,6 +25,8 @@ const Public = () => {
   const inputRef = useRef(null);
   const [fetchedData, setFetchedData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hashedId, setHashedId] = useState(null); 
+  const [isCopyPromptVisible, setIsCopyPromptVisible] = useState(false);
 
   const searchCertificate = async (event) => {
     event.preventDefault();
@@ -44,6 +47,7 @@ const Public = () => {
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
+      
       // // Extract address (42 characters)
       // const address = ID.substring(0, 42);
 
@@ -80,6 +84,8 @@ const Public = () => {
       const data = await response.json();
       if (data.status === "success") {
         setFetchedData(data.data); // Set fetched data in state
+        const newHashedId = CryptoJS.SHA256(ID).toString(); 
+        setHashedId(newHashedId);
         Toastify({
           text: "Transaction Successful!",
           duration: 3000,
@@ -101,6 +107,7 @@ const Public = () => {
           stopOnFocus: true,
         }).showToast();
         setFetchedData(null);
+        setHashedId(null);
         setIsLoading(false);
 
         throw new Error("Certificate data fetch failed. Please try again.");
@@ -116,9 +123,33 @@ const Public = () => {
         stopOnFocus: true,
       }).showToast();
       setFetchedData(null);
+      setHashedId(null);
       setIsLoading(false);
     }
   };
+  // copy 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(ID)
+      .then(() => {
+        setIsCopyPromptVisible(true); // Show the prompt 
+        setTimeout(() => { // Hide the prompt after 1 second
+          setIsCopyPromptVisible(false);
+        }, 1000);
+      })
+      .catch(err => {
+        console.error("Failed to copy: ", err);
+        Toastify({
+          text: "Failed to copy ID. Please try again.",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+          stopOnFocus: true,
+        }).showToast();
+      });
+  };
+  // scroll
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
@@ -141,6 +172,7 @@ const Public = () => {
     setID("");
     inputRef.current.focus();
     setSearchResult("");
+    
   };
   return isLoading === true ? (
     <LoadingAnimation />
@@ -287,7 +319,19 @@ const Public = () => {
               </div>
               <div className="flex justify-center pt-2 gap-2">
                 <p>ID :</p>
-                <p>{ID}</p>
+                <p 
+                  className="break-all" 
+                  data-testid="shortenedId" 
+                  data-id={hashedId} 
+                >
+                  {hashedId && hashedId.substring(0, 10)}... 
+                </p>
+                <button 
+                  className="ml-2 px-2 py-1 rounded-md bg-[#e9e9e9] text-sm hover:bg-gray-300 "
+                  onClick={handleCopy}
+                >
+                  Copy
+                </button>
               </div>
               <div className="flex justify-center pt-2 gap-2">
                 <p>Issue date :</p>
@@ -302,6 +346,13 @@ const Public = () => {
         </div>
       </div>
         )}
+        <div>
+        {isCopyPromptVisible && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-[300px] text-sm -translate-y-1/2 p-4 ">
+          ID copied!
+        </div>
+      )}
+        </div>
       </div>
 
       {/* search  end*/}
