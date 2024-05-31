@@ -33,9 +33,9 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          {/* <Route index element={<Public />} /> */}
-        </Route>
+        {/* <Route path="/" element={<Layout />}>
+          <Route index element={<Public />} />
+        </Route> */}
         <Route path="/" element={<Public />}>
           {/* <Route index element={<Public />} /> */}
         </Route>
