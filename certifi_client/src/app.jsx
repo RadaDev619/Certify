@@ -32,6 +32,7 @@ import ForgotInsPassword from "./pages/ForgetInstitute";
 function App() {
   return (
     <>
+      <Public />
       <Routes>
         {/* <Route path="/" element={<Layout />}>
           <Route index element={<Public />} />
