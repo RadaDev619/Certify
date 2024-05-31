@@ -8,18 +8,29 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
-      external: ['ethers'],
       plugins: [
         nodeResolve({
           browser: true,
-          preferBuiltins: true
+          preferBuiltins: true,
         }),
         commonjs(),
+        inject({
+          Buffer: ['buffer', 'Buffer'],
+          process: 'process',
+        }),
       ],
     },
   },
   optimizeDeps: {
     include: ['ethers'],
   },
+  resolve: {
+    alias: {
+      process: 'process/browser',
+      buffer: 'buffer',
+    },
+  },
+  define: {
+    'process.env': {},
+  },
 });
-
