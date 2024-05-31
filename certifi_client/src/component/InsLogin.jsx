@@ -38,7 +38,7 @@ function InsLogin() {
         .then((response) => response.json())
         .then((data) => {
           if (data.status === "Success") {
-            console.log(data.data)
+            console.log(data.data);
             window.localStorage.setItem("email", email);
             localStorage.setItem("userid", data.data._id);
             localStorage.setItem("insLoggedIn", "true");
@@ -126,7 +126,7 @@ function InsLogin() {
                 <p className="">Remember Me</p>
               </div>
 
-              <Link to={"/Forgotpassword"}>
+              <Link to={"/ForgotInsPassword"}>
                 <p className="pl-4 text-sm hover:text-blue-500  hover:duration-300">
                   Forgot Password?
                 </p>

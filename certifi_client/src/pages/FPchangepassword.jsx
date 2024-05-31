@@ -4,43 +4,74 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../public/logo.png";
 import "../css/index.css";
 import LoadingAnimation from "../component/LoadingAnimation"; // import loading
-
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 function ForgotPasswordchange() {
   // Define state variables for form inputs
-  const [password, setPassword] = useState("");
+  const [newPassword, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const changePassword = (event) => {
     event.preventDefault();
 
-    console.log("Password", password);
+    console.log("Password", newPassword);
+    const email = localStorage.getItem("email");
 
-    if (!password) {
+    if (!newPassword) {
       alert("All fields are required");
     } else {
       setIsLoading(true); // is loading
 
-      fetch("https://prj-certifi-backend.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          password,
-        }),
-      })
+      fetch(
+        "https://prj-certifi-backend.onrender.com/api/auth/ChangePassword",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            newPassword: newPassword,
+            confirmPassword: confirmPassword,
+          }),
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
-          if (data.status === "Success") {
-            alert("Login successful!");
+          if (data.status === "success") {
+            Toastify({
+              text: "Password change successful!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
 
+            localStorage.removeItem("email");
             setPassword("");
             setIsLoading(false); //loading
             navigate("/login");
           } else {
-            alert("Login failed. Please try again.");
+            Toastify({
+              text: "Password change failed. Please try again.",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
+            localStorage.removeItem("email");
+
+            setIsLoading(false); //loading
+
+            console.log(data);
           }
         });
     }
@@ -58,13 +89,13 @@ function ForgotPasswordchange() {
         <p className="text-center text-4xl pb-12"> Change Password</p>
 
         <form
-          onSubmit={handleSubmit}
+          // onSubmit={handleSubmit}
           className="flex justify-center items-center flex-col w-full gap-6"
         >
           <div className="w-full">
             <input
               type="password"
-              value={password}
+              value={newPassword}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Set Your New Password"
               className="h-12 border-2  w-full rounded-md px-2"
@@ -73,15 +104,19 @@ function ForgotPasswordchange() {
           <div className="w-full">
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="COnfirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm Password"
               className="h-12 border-2  w-full rounded-md px-2"
             />
           </div>
           <div className="w-full  flex justify-center ">
-            <button type="submit" className="loginBut w-[400px] ">
-              <span>Login</span>
+            <button
+              // type="submit"
+              className="loginBut w-[400px] "
+              onClick={changePassword}
+            >
+              <span>Change Password</span>
             </button>
           </div>
         </form>

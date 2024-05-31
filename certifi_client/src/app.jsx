@@ -27,6 +27,8 @@ import Admindashboard from "./pages/Admin/Admindashboard";
 import Loading from "./component/LoadingAnimation";
 import AdminLogin from "./component/adminLogin";
 import ForgotPasswordChange from "./pages/FPchangepassword";
+import ForgotInsPassword from "./pages/ForgetInstitute";
+
 function App() {
   return (
     <>
@@ -38,6 +40,8 @@ function App() {
         <Route path="/uregister" element={<UserRegister />} />
         <Route path="/iregister" element={<InstitutionRegister />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/ForgotInsPassword" element={<ForgotInsPassword />} />
+
         <Route
           path="/ForgotPasswordChange"
           element={<ForgotPasswordChange />}

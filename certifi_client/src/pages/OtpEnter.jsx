@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../public/logo.png";
 import LoadingAnimation from "../component/LoadingAnimation";
-
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 function getCookie(name) {
   const cookieString = document.cookie;
   const cookies = cookieString.split("; ");
@@ -53,12 +54,28 @@ function OtpEntry() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "Verified") {
-          alert("OTP verification successful!");
+          Toastify({
+            text: "OTP verification successful!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
 
           setIsLoading(false);
           navigate("/login");
         } else {
-          alert("OTP verification failed. Please try again.");
+          Toastify({
+            text: "OTP verification failed. Please try again.!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
           setIsLoading(false);
         }
       });

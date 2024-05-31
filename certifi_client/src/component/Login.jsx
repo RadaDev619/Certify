@@ -146,11 +146,11 @@ function Login() {
               </Link>
             </div>
 
-            <Link to={"/Forgotpassword"}>
+            {/* <Link to={"/Forgotpassword"}>
               <p className="pl-4 text-sm hover:text-blue-500  hover:duration-300">
                 Forgot Password?
               </p>
-            </Link>
+            </Link> */}
           </div>
           <div className="w-full  flex justify-center ">
             <button type="submit" className="loginBut w-[400px] ">
