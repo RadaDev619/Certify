@@ -20,7 +20,7 @@ function getCookie(name) {
 const userEmail = localStorage.getItem("email");
 
 function OtpEntry() {
-  const [otp, setOtp] = useState(new Array(6).fill(""));
+  const [otps, setOtp] = useState(new Array(6).fill(""));
 
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +28,7 @@ function OtpEntry() {
   const handleChange = (element, index) => {
     if (isNaN(element.value)) return;
 
-    setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
+    setOtp([...otps.map((d, idx) => (idx === index ? element.value : d))]);
 
     //Focus next input
     if (element.nextSibling) {
@@ -39,7 +39,7 @@ function OtpEntry() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const otpValue = otp.join("");
+    const otpValue = otps.join("");
     // Validate OTP (you would typically call your backend API here)
     fetch("https://prj-certifi-backend.onrender.com/api/auth/verify", {
       method: "POST",
@@ -112,7 +112,7 @@ function OtpEntry() {
           className="flex justify-center items-center flex-col w-full gap-6"
         >
           <div className="flex w-full justify-between pb-10">
-            {otp.map((data, index) => {
+            {otps.map((data, index) => {
               return (
                 <input
                   className="m-2 border  rounded  h-20 w-14 text-center text-xl "

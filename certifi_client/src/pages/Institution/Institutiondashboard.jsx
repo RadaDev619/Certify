@@ -60,6 +60,7 @@ const Dashboard = () => {
         const responseData = await response.json();
         setUserName(responseData.companyName);
         setProfile(responseData.photo);
+        console.log(profile);
       } catch (error) {
         console.log(error);
       }

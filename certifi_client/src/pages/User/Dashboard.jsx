@@ -47,6 +47,63 @@ const Dashboard = ({ state }) => {
     navigate("/login")
     window.location.reload()
   }
+  useEffect(() => {
+    if(localStorage.getItem("userLoggedIn") === "false"){
+      navigate("/login")
+    }
+    const mail = localStorage.getItem("email");
+    setMail(mail);
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(
+          `https://prj-certifi-backend.onrender.com/api/auth/getuserbyemail/${mail}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const responseData = await response.json();
+        setMail(responseData.data.email);
+        setProfilePic(responseData.data.photo);
+        setUserName(responseData.data.name);
+        setUserId(responseData.data._id);
+        localStorage.setItem("userid", responseData._id);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    const fetchData = async ()=>{
+      try{
+        const func = await fetch(`https://prj-certifi-backend.onrender.com/api/certificate/getallcertificates/${mail}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        const data = await func.json();
+        if (data.status === "success") {
+          // Update certificates state with fetched data
+          setCertificates(data.data);
+          console.log(certificates)
+        }
+      }catch(error){
+        console.error("Error fetching user:", error);
+      }
+
+    }
+    fetchUser();
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem("documentId")) {
+      localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
+    }
+  }, []);
+
   const [results, setResults] = useState([]); // State to store search results
   const [query, setQuery] = useState("");
   useEffect(() => {
@@ -71,65 +128,6 @@ const Dashboard = ({ state }) => {
     return () => clearTimeout(debounceTimeout);
   }, [query, certificates]); // Effect runs on every query or certificates change
 
-  useEffect(() => {
-    if(localStorage.getItem("userLoggedIn") === "false"){
-      navigate("/login")
-    }
-    const mail = localStorage.getItem("email");
-    setMail(mail);
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(
-          `https://prj-certifi-backend.onrender.com/api/auth/getuser/${mail}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const responseData = await response.json();
-        setMail(responseData.email);
-        setProfilePic(responseData.photo);
-        setUserName(responseData.name);
-        setUserId(responseData._id);
-        localStorage.setItem("userid", responseData._id);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-    fetchUser();
-  }, []);
-
-  useEffect(() => {
-    if (localStorage.getItem("documentId")) {
-      localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
-    }
-
-    // Fetch certificates from backend API
-    fetch(`https://prj-certifi-backend.onrender.com/api/certificate/getallcertificates/${mail}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === "success") {
-          // Update certificates state with fetched data
-          
-          setCertificates(data.data);
-        } else {
-          alert("Certificate data fetch failed. Please try again.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching certificates:", error);
-        alert(
-          "An error occurred while fetching certificates. Please try again."
-        );
-      });
-  }, []);
 
   const toggleCreateDropdown = () => {
     setShowCreateDropdown(!showCreateDropdown);
@@ -455,7 +453,7 @@ const Dashboard = ({ state }) => {
                 alt="User Profile"
                 className="profile-image"
               />
-              <span className="username">{name}</span>
+              <span className="username cursor-pointer">{name}</span>
               {showUserDropdown && (
                 <div className="user-dropdown">
                   <Link to="/accountsetting" className="user-dropdown-content">
@@ -523,9 +521,9 @@ const Dashboard = ({ state }) => {
             </div>
             <div className="documents-table">
               <div className="table-header table-headers">
-                <div>Name</div>
+                <div>Course Name</div>
                 <div>Status</div>
-                <div>Author</div>
+                <div>Signer</div>
                 <div>Update date</div>
                 <div>View</div>
                 <div>Upload</div>
@@ -552,7 +550,7 @@ const Dashboard = ({ state }) => {
                           ? "Approved"
                           : "Rejected"}
                       </div>
-                      <div>{certificate.name}</div>
+                      <div>{certificate.signer}</div>
                       <div>
                         {
                           new Date(certificate.createdAt)

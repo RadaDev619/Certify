@@ -202,7 +202,7 @@ function CertificateForm() {
               /> 
               {errors.ID && <p className="text-red-500 text-sm">{errors.ID}</p>}
             </div> 
-            <label htmlFor="">Issued Date</label> 
+            {/* <label htmlFor="">Issued Date</label> 
             <div className="pb-6"> 
               <input type="date" id="Issue " 
                 className={`w-full border rounded py-2 px-3 ${errors.certificationDate ? 'border-red-500' : ''}`}
@@ -212,11 +212,13 @@ function CertificateForm() {
               {errors.certificationDate && <p className="text-red-500 text-sm">{errors.certificationDate}</p>}
             </div> 
           </div> 
-          <div className="pt-2"> 
-           
-            <button type="submit" className="loginBut w-[400px] " onClick={handleButtonClick} >
+          <div className="pt-2">  */}
+           <div className="pt-5">
+           <button type="submit" className="loginBut w-[400px]  " onClick={handleButtonClick} >
             <span>Create a new certificate </span>
           </button>
+           </div>
+           
           </div> 
         </div> 
       </div> 

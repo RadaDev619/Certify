@@ -4,7 +4,7 @@ import cub from "../../public/cub.png";
 import comp from "../../public/comp.png";
 import logo from "../../public/logo.png";
 import Fend from "../../public/frontend.jpg";
-import Bend from "../../public/backend.jpg";
+import Bend from "../../public/backend.png";
 import Bc from "../../public/blockchain.png";
 import Manager from "../../public/manager.jpg";
 import { ethers } from "ethers"; //import ethers library
@@ -13,38 +13,20 @@ import "../css/index.css";
 import { Logo } from "../component/Svgs";
 import cube1 from "../../public/cube1.png";
 import cube2 from "../../public/cube2.png";
-import {useNavigate} from "react-router-dom";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import LoadingAnimation from "./LoadingAnimation"; // import loading
 import backgroundImage from "../../public/background.jpeg";
+import CryptoJS from "crypto-js";
 
 const Public = () => {
-  const navigate = useNavigate();
-  const userLoggedIn = localStorage.getItem("userLoggedIn")
-  const insLoggedIn = localStorage.getItem("insLoggedIn")
-  const adminLoggedIn = localStorage.getItem("adminLoggedIn")
-
-  useEffect(() => {
-    if (userLoggedIn === "true") {
-      navigate("/dashboard");
-    }
-    if(insLoggedIn === "true"){
-      navigate("/institutiondashboard")
-    }
-    if(adminLoggedIn === "true"){
-      navigate("/admindashboard")
-    }
-  }, [userLoggedIn, insLoggedIn, adminLoggedIn]);
-
-
   const [ID, setID] = useState("");
   const [searchResult, setSearchResult] = useState("");
   const inputRef = useRef(null);
   const [fetchedData, setFetchedData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [documentID1, setdocumentID1] = useState("");
-  const [documentID2, setdocumentID2] = useState("");
+  const [hashedId, setHashedId] = useState(null);
+  const [isCopyPromptVisible, setIsCopyPromptVisible] = useState(false);
 
   const searchCertificate = async (event) => {
     event.preventDefault();
@@ -57,7 +39,7 @@ const Public = () => {
       return;
     }
 
-    const contractAddress = "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
+    const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
     const contractABI = abi.abi;
 
     const provider = new ethers.providers.Web3Provider(ethereum);
@@ -72,41 +54,22 @@ const Public = () => {
       const identifier = ID.substring(42, 66);
 
       // // Extract hash (remaining characters)
-      const hash = ID.substring(66);
-      setIsLoading(true);
-      // console.log(identifier);
-      // console.log(address);
-
-      // console.log(hash);
-
+      // const hash = ID.substring(66);
+      // setIsLoading(true);
       // const transaction = await contract.getIPFSHash(address, identifier, hash);
 
       // console.log("Waiting for transaction...");
+      // // alert("reach1");
       // const receipt = await transaction.wait(); // Wait for the transaction to be mined
-      // console.log("Waiting for transaction...", receipt);
-
-      // if (receipt.status !== 1) {
-      //   Toastify({
-      //     text: "Transaction faied!",
-      //     duration: 3000,
-      //     close: true,
-      //     gravity: "top",
-      //     position: "right",
-      //     backgroundColor: "green",
-      //     stopOnFocus: true,
-      //   }).showToast();
-      //   setIsLoading(false);
-      //   // Check if the transaction was reverted
-      //   throw new Error("Transaction failed");
-      // }
+      // alert("Transaction is Successful!");
       // const event = receipt.events;
       // console.log("Event object:", event);
-
-      // // // Access the concatenatedString from the args array
+      // // Access the concatenatedString from the args array
       // const concatenatedString = event[0].args[0];
       // console.log("Concatenated String:", concatenatedString);
+      // // alert("Concatenated String: " + concatenatedString);
 
-      // // // Set the URL state to the concatenated string
+      // // Set the URL state to the concatenated string
       // setSearchResult(concatenatedString);
       const response = await fetch(
         `https://prj-certifi-backend.onrender.com/api/certificate/getCertificatebyId/${identifier}`,
@@ -120,9 +83,8 @@ const Public = () => {
       const data = await response.json();
       if (data.status === "success") {
         setFetchedData(data.data); // Set fetched data in state
-        setdocumentID1(ID.substring(0, 58));
-        setdocumentID2(ID.substring(58));
-
+        const newHashedId = CryptoJS.SHA256(ID).toString();
+        setHashedId(newHashedId);
         Toastify({
           text: "Transaction Successful!",
           duration: 3000,
@@ -144,7 +106,10 @@ const Public = () => {
           stopOnFocus: true,
         }).showToast();
         setFetchedData(null);
+        setHashedId(null);
         setIsLoading(false);
+
+        throw new Error("Certificate data fetch failed. Please try again.");
       }
     } catch (error) {
       Toastify({
@@ -157,9 +122,35 @@ const Public = () => {
         stopOnFocus: true,
       }).showToast();
       setFetchedData(null);
+      setHashedId(null);
       setIsLoading(false);
     }
   };
+  // copy
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(ID)
+      .then(() => {
+        setIsCopyPromptVisible(true); // Show the prompt
+        setTimeout(() => {
+          // Hide the prompt after 1 second
+          setIsCopyPromptVisible(false);
+        }, 1000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+        Toastify({
+          text: "Failed to copy ID. Please try again.",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+          stopOnFocus: true,
+        }).showToast();
+      });
+  };
+  // scroll
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
@@ -183,20 +174,68 @@ const Public = () => {
     inputRef.current.focus();
     setSearchResult("");
   };
-  function insertWbr(text, interval) {
-    const parts = [];
-    for (let i = 0; i < text.length; i += interval) {
-      parts.push(text.slice(i, i + interval));
-    }
-    return parts.join("<wbr>");
-  }
-
+  // Back to Top Functionality
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Smooth scrolling
+    });
+  };
   return isLoading === true ? (
     <LoadingAnimation />
   ) : (
     <div className=" ">
+     <button
+  className="fixed bottom-10 right-10 overflow-hidden w-16 h-16 rounded-full bg-[#000000] border-none cursor-pointer  z-10 group flex items-center justify-center" // Increased size to w-16 h-16
+  onClick={scrollToTop}
+>
+  <svg
+    className="w-6 h-6 text-[white] dark:text-[white]"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    fill="none"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="m5 15 7-7 7 7"
+    />
+  </svg>
+
+  <span 
+    className="absolute w-36 h-32 -top-8 -left-2  bg-[#e9e9e9] text-[black]  rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-300 origin-right"
+  />
+
+  <span 
+    className="group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" 
+  >
+    <svg
+      className="w-6 h-6 text-[black] dark:text-[black]"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="m5 15 7-7 7 7"
+      />
+    </svg>
+  </span> 
+</button>
+
       {/* hero */}
-      <div className=" bg-gradient-to-b from-[#ececec] to-[#dfdfdf] h-[800px] backdrop-blur-sm pt-10 overflow-x-hidden">
+      <div className=" bg-gradient-to-b from-[#ececec] to-[#dfdfdf] h-[900px] backdrop-blur-sm pt-10 overflow-x-hidden">
         <div className="tagline  ">
           <h1 className="text-3xl item-left  translate-y-[150px] translate-x-[300px]">
             Secure and transparent{" "}
@@ -238,6 +277,7 @@ const Public = () => {
         </div>
       </div>
 
+          <img src={cube1} alt="" className="h-[200px] translate-x-[1600px] translate-y-[100px] " />
       {/* hero end */}
       <div className="relative validate pb-40 pt-12" id="validate">
         <h1 className="text-center font-bold py-10 text-2xl">Validate</h1>
@@ -249,6 +289,7 @@ const Public = () => {
           file
         </p>
         {/* search    */}
+        <div className="">
         <form
           class="form relative flex justify-center"
           onKeyDown={handleKeyDown}
@@ -302,6 +343,8 @@ const Public = () => {
             </svg>
           </button>
         </form>
+        </div>
+        
 
         {/* Display search results */}
         {fetchedData && (
@@ -331,30 +374,28 @@ const Public = () => {
                     <p>{fetchedData.coursePeriod}</p>
                   </div>
                   <div className="flex justify-center pt-2 gap-2">
-                    <p>
-                      {" "}
-                      <b>Course detail:</b>
-                    </p>
+                    <p>Course detail:</p>
                     <p>{fetchedData.courseDetails}</p>
                   </div>
-                  <div className="flex flex-col items-center pt-2 gap-2">
-                    <div className="flex gap-2">
-                      <p>
-                        <b>ID :</b>{" "}
-                      </p>
-                      <p>{documentID1}</p>
-                    </div>
-                    <p>{documentID2}</p>
+                  <div className="flex justify-center pt-2 gap-2">
+                    <p>ID :</p>
+                    <p
+                      className="break-all"
+                      data-testid="shortenedId"
+                      data-id={hashedId}
+                    >
+                      {hashedId && hashedId.substring(0, 10)}...
+                    </p>
+                    <button
+                      className="ml-2 px-2 py-1 rounded-md bg-[#e9e9e9] text-sm hover:bg-gray-300"
+                      onClick={handleCopy}
+                    >
+                      Copy
+                    </button>
                   </div>
                   <div className="flex justify-center pt-2 gap-2">
                     <p>Issue date :</p>
-                    <p>
-                      {
-                        new Date(fetchedData.createdAt)
-                          .toISOString()
-                          .split("T")[0]
-                      }
-                    </p>
+                    <p>{fetchedData.createdAt}</p>
                   </div>
                 </div>
               </div>
@@ -365,12 +406,84 @@ const Public = () => {
             </div>
           </div>
         )}
+        <div>
+          {isCopyPromptVisible && (
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-[300px] text-xs translate-y-[195px]  p-4 ">
+              ID copied!
+            </div>
+          )}
+        </div>
       </div>
 
       {/* search  end*/}
+           {/* Information Section */}
+     <div className="container mx-auto py-20 px-4">
+     <img src={cube1} alt="" className="-translate-x-[300px]" />
 
-      <div className="Aboutus " id="aboutus">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl font-bold uppercase    ">
+            Blockchain Technology <br /> for Secure Certificate Storage
+          </h2>
+          <p className="text-lg text-gray-600 mt-4">
+            Learn how blockchain technology revolutionizes certificate storage,
+            ensuring authenticity, security, and tamper-proof records.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Card 1 */}
+          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transform transition duration-500 hover:scale-105">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              Immutability and Transparency
+            </h3>
+            <p className="text-gray-500 text-base">
+              Blockchain's immutable ledger ensures that records cannot be altered
+              or deleted, providing complete transparency and trust in certificate
+              data.
+            </p>
+            <div className="mt-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-blue-100 text-blue-700">
+                Blockchain
+              </span>
+            </div>
+          </div>
+          {/* Card 2 */}
+          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transform transition duration-500 hover:scale-105">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              Enhanced Security
+            </h3>
+            <p className="text-gray-500 text-base">
+              Blockchain's decentralized nature and cryptographic security measures
+              protect certificates from unauthorized access and tampering.
+            </p>
+            <div className="mt-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-green-100 text-green-700">
+                Security
+              </span>
+            </div>
+          </div>
+          {/* Card 3 */}
+          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transform transition duration-500 hover:scale-105">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              Improved Verifiability
+            </h3>
+            <p className="text-gray-500 text-base">
+              Blockchain allows for easy and instant verification of certificates,
+              reducing the risk of forgery and ensuring the authenticity of
+              credentials.
+            </p>
+            <div className="mt-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-yellow-100 text-yellow-700">
+                Verification
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+{/* about us  */}
+      <div className="Aboutus h-[900px] pt-[200px]" id="aboutus">
         <h1 className="text-center font-bold py-10 text-2xl">About Us </h1>
+        
         <p className="text-center leading-relaxed tracking-wide text-5xl">
           {" "}
           A <strong>BLOCKCHAIN-BASED</strong> STORAGE SYSTEM WHICH <br />{" "}
@@ -378,11 +491,18 @@ const Public = () => {
           <br /> HELPING US TO <strong>ERADICATE</strong>-FORGED <br /> FAKE
           CERTIFICATE-&-DOCUMENTS{" "}
         </p>
+        <div>
+        <img src={cube1} alt=""  className="h-[300px]"/>
+        <img src={cube1} alt="" className=" translate-x-[1700px] -translate-y-[1000px] " />
+
+        </div>
       </div>
-      <h1 className="pt-20 text-center text-2xl font-bold uppercase">
+      <div className="h-[900px]">
+      <h1 className="pt-10 text-center text-2xl font-bold uppercase " id="why">
         why choose us{" "}
       </h1>
-      {/* aim  */}
+
+  {/* aim  */}
       <div className="aim flex justify-between mt-20 space-x-4 px-20" id="aim">
         <div className="flex flex-col items-center">
           <div className="w-96 h-128 flex items-center justify-center">
@@ -430,13 +550,21 @@ const Public = () => {
           </p>
         </div>
       </div>
+      </div>
+
+    
+
+     
+      
 
       {/* member  */}
       <div className="members " id="members">
-        <h1 className="text-5xl text-center p-10">Members </h1>
+      <img src={cube1} alt="" className="h-[150px] translate-x-[1800px]" />
+        <h1 className="text-2xl font-bold uppercase  text-center pt-20 pb-10">Members </h1>
+        <p className="text-xl  pb-10  text-center">A member of a blockchain developer team plays a crucial role in <br />designing, implementing, and maintaining decentralized applications and <br /> smart contracts to advance the project's objectives.</p>
         <div className="MCards flex justify-center gap-10 ">
           {/* card 1 */}
-          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:hover:text-[white]  before:bg-gradient-to-bl from-[#FF3F3F] via-[#FF3F3F] to-[#FF3F3F] before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:hover:text-[white]  before:bg-gradient-to-bl from-[#1d1d1d] via-[#1d1d1d] to-[#1d1d1d] before:absolute before:top-0 w-80 h-72 relative bg-[#f7f7f7] flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
             <div class="w-28 h-28  bg-white mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500">
               <img
                 src={Manager}
@@ -453,13 +581,13 @@ const Public = () => {
             </div>
             <button className="loginBut w-[250px] px-4 py-1">
               <span>
-                <a href="">Ngawang Gyeltshen </a>
+                <a href="https://www.linkedin.com/in/ngawang-gyeltshen-46452025b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"  >Ngawang Gyeltshen </a>
               </span>
             </button>
           </div>
           {/* card 2 */}
 
-          <div class="group  before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-[#E78452] via-[#E78452] to-[#E78452] before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+          <div class="group  before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-bl from-[#1d1d1d] via-[#1d1d1d] to-[#1d1d1d] before:absolute before:top-0 w-80 h-72 relative bg-[#f7f7f7] flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
             <div class="w-28 h-28 bg-[white] mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500">
               <img
                 src={Bend}
@@ -471,7 +599,7 @@ const Public = () => {
                 Backend Developer
               </span>
               <p className="group-hover:text-white">
-                Manages server-side functionality for applications
+                Server-side functionality for applications
               </p>
             </div>
             <button className="loginBut w-[200px] px-4 py-1">
@@ -482,7 +610,7 @@ const Public = () => {
           </div>
           {/* card 3  */}
 
-          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-br from-[#B137B1] via-[#B137B1] to-[#B137B1] before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-br from-[#1d1d1d] via-[#1d1d1d] to-[#1d1d1d] before:absolute before:top-0 w-80 h-72 relative bg-[#f7f7f7] flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
             <div class="w-28 h-28 bg-white mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500">
               <img src={Fend} className="rounded-[100%] h-[110px] w-[110px]" />
             </div>
@@ -502,7 +630,7 @@ const Public = () => {
           </div>
           {/* card 4 */}
 
-          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-br from-[#5BFD5B] via-[#5BFD5B] to-[#5BFD5B] before:absolute before:top-0 w-80 h-72 relative bg-slate-50 flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
+          <div class="group before:hover:scale-95 before:hover:h-72 before:hover:w-80 before:hover:h-44 before:hover:rounded-b-2xl before:transition-all before:duration-500 before:content-[''] before:w-80 before:h-24 before:rounded-t-2xl before:bg-gradient-to-br from-[#1d1d1d] via-[#1d1d1d] to-[#1d1d1d] before:absolute before:top-0 w-80 h-72 relative bg-[#f7f7f7] flex flex-col items-center justify-center gap-2 text-center rounded-2xl overflow-hidden">
             <div class="w-28 h-28 bg-white mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500">
               <img src={Bc} className="rounded-[100%] h-[110px] w-[110px]" />
             </div>
@@ -521,17 +649,23 @@ const Public = () => {
               </span>
             </button>
           </div>
+          
         </div>
+        <img src={cube1} alt="" className="h-[200px]" />
+     
+
       </div>
-      <div></div>
 
       <footer className="bg-white py-16 mt-20">
+      <img src={cube1} alt="" className="h-[200px] translate-x-[1800px] translate-y-[100px]" />
+
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           {/* Logo */}
           <div className="flex">
+
             <div>
               <Logo className="w-300px h-[300px] -translate-x-[160px] translate-y-[10px]" />
-              <h1></h1>
+              
             </div>
             <div className="-translate-y-[5px]">
               {/* contact us */}
