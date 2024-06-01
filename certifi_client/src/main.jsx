@@ -7,7 +7,7 @@ import { Route, Routes, BrowserRouter } from "react-router-dom";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <Routes>
+      <Routes>s
         <Route path="/*" element={<App />} />
       </Routes>
     </BrowserRouter>

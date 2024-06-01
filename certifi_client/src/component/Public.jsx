@@ -49,29 +49,29 @@ const Public = () => {
 
     try {
       // // Extract address (42 characters)
-      // const address = ID.substring(0, 42);
+      const address = ID.substring(0, 42);
 
       // Extract identifier (24 characters)
       const identifier = ID.substring(42, 66);
 
       // // Extract hash (remaining characters)
-      // const hash = ID.substring(66);
-      // setIsLoading(true);
-      // const transaction = await contract.getIPFSHash(address, identifier, hash);
+      const hash = ID.substring(66);
+      setIsLoading(true);
+      const transaction = await contract.getIPFSHash(address, identifier, hash);
 
       // console.log("Waiting for transaction...");
       // // alert("reach1");
-      // const receipt = await transaction.wait(); // Wait for the transaction to be mined
+      const receipt = await transaction.wait(); // Wait for the transaction to be mined
       // alert("Transaction is Successful!");
-      // const event = receipt.events;
+      const event = receipt.events;
       // console.log("Event object:", event);
       // // Access the concatenatedString from the args array
-      // const concatenatedString = event[0].args[0];
-      // console.log("Concatenated String:", concatenatedString);
+      const concatenatedString = event[0].args[0];
+      console.log("Concatenated String:", concatenatedString);
       // // alert("Concatenated String: " + concatenatedString);
 
       // // Set the URL state to the concatenated string
-      // setSearchResult(concatenatedString);
+      setSearchResult(concatenatedString);
       const response = await fetch(
         `https://prj-certifi-backend.onrender.com/api/certificate/getCertificatebyId/${identifier}`,
         {
@@ -186,7 +186,7 @@ const Public = () => {
     <LoadingAnimation />
   ) : (
     <>
-      <Layout />
+      {/* <Layout /> */}
       <div className=" ">
         <button
           className="fixed bottom-10 right-10 overflow-hidden w-16 h-16 rounded-full bg-[#000000] border-none cursor-pointer  z-10 group flex items-center justify-center" // Increased size to w-16 h-16
