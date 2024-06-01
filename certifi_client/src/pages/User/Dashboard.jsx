@@ -40,16 +40,16 @@ const Dashboard = ({ state }) => {
   const [userid, setUserId] = useState("");
 
   const Logout = () => {
-    window.localStorage.setItem("userLoggedIn", "false")
-    window.localStorage.removeItem("email")
-    window.localStorage.removeItem("userLoggedIn")
-    
-    navigate("/login")
-    window.location.reload()
-  }
+    window.localStorage.setItem("userLoggedIn", "false");
+    window.localStorage.removeItem("email");
+    window.localStorage.removeItem("userLoggedIn");
+
+    navigate("/login");
+    window.location.reload();
+  };
   useEffect(() => {
-    if(localStorage.getItem("userLoggedIn") === "false"){
-      navigate("/login")
+    if (localStorage.getItem("userLoggedIn") === "false") {
+      navigate("/login");
     }
     const mail = localStorage.getItem("email");
     setMail(mail);
@@ -75,25 +75,27 @@ const Dashboard = ({ state }) => {
       }
     };
 
-    const fetchData = async ()=>{
-      try{
-        const func = await fetch(`https://prj-certifi-backend.onrender.com/api/certificate/getallcertificates/${mail}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+    const fetchData = async () => {
+      try {
+        const func = await fetch(
+          `https://prj-certifi-backend.onrender.com/api/certificate/getallcertificates/${mail}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const data = await func.json();
         if (data.status === "success") {
           // Update certificates state with fetched data
           setCertificates(data.data);
-          console.log(certificates)
+          console.log(certificates);
         }
-      }catch(error){
+      } catch (error) {
         console.error("Error fetching user:", error);
       }
-
-    }
+    };
     fetchUser();
     fetchData();
   }, []);
@@ -103,6 +105,13 @@ const Dashboard = ({ state }) => {
       localStorage.removeItem("documentId"); // Replace 'yourItemKey' with the actual key you want to remove
     }
   }, []);
+  // verify modal
+  const [verifyModalIsOpen, setVerifyModalIsOpen] = useState(false);
+
+  const closeVerifyModal = () => {
+    setVerifyModalIsOpen(false);
+    // handleNotValid(certificateId);
+  };
 
   const [results, setResults] = useState([]); // State to store search results
   const [query, setQuery] = useState("");
@@ -127,7 +136,6 @@ const Dashboard = ({ state }) => {
 
     return () => clearTimeout(debounceTimeout);
   }, [query, certificates]); // Effect runs on every query or certificates change
-
 
   const toggleCreateDropdown = () => {
     setShowCreateDropdown(!showCreateDropdown);
@@ -209,22 +217,49 @@ const Dashboard = ({ state }) => {
   useEffect(() => {
     const connectWallet = async () => {
       try {
+        // Check if MetaMask is installed
         if (window.ethereum) {
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          setProvider(provider);
+          // Create a promise to handle MetaMask's injection
+          const connectPromise = new Promise((resolve, reject) => {
+            // Resolve if MetaMask is injected
+            if (window.ethereum) {
+              resolve(window.ethereum);
+            } else {
+              // Reject if MetaMask is not injected
+              reject(new Error("MetaMask not found"));
+            }
+          });
 
-          const accounts = await provider.send("eth_requestAccounts", []);
-          setAccount(accounts[0]);
+          // Handle the result of the promise
+          connectPromise
+            .then((ethereum) => {
+              // Create a provider instance
+              const provider = new ethers.providers.Web3Provider(ethereum);
+              setProvider(provider);
 
-          const signer = provider.getSigner();
-          setSigner(signer);
+              // Request account access
+              provider.send("eth_requestAccounts", []).then((accounts) => {
+                setAccount(accounts[0]);
 
-          const contract = new ethers.Contract(
-            contractAddress,
-            contractABI,
-            signer
-          );
-          setContract(contract);
+                // Get the signer
+                const signer = provider.getSigner();
+                setSigner(signer);
+
+                // Create a contract instance
+                const contract = new ethers.Contract(
+                  contractAddress,
+                  contractABI,
+                  signer
+                );
+                setContract(contract);
+              });
+            })
+            .catch((error) => {
+              console.error("Error connecting wallet:", error);
+              // Handle the error appropriately, for example:
+              // - Show an error message to the user
+              // - Open a modal to guide them through connecting their wallet
+            });
         } else {
           console.error("Please install MetaMask!");
         }
@@ -233,99 +268,211 @@ const Dashboard = ({ state }) => {
       }
     };
 
+    // Call connectWallet to initialize
     connectWallet();
   }, []);
 
-  const storeHash = (certificateId) => async (event) => {
-    console.log(certificateId);
-    event.preventDefault();
-    try {
-      setIsLoading(true);
+  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] =
+    useState(null);
 
-      fetch(
-        `https://prj-certifi-backend.onrender.com/api/certificate/get/${certificateId}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Response data:", data);
+  // Add event handlers for Accept and Reject buttons
+  const handleAccept = (certificateID) => {
+    // for accepting the certificate here
+    openVerifyModal(certificateID);
+    console.log("Certificate accepted");
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/certificate/get/${certificateID}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Response data:", data);
 
-          console.log("Response data:", data.data.ipfsHash);
-          setHash(data.data.ipfsHash);
-        })
-        .catch((error) => {
-          console.error("Error fetching community data:", error);
-        });
-      const identifier = String(certificateId);
-      console.log("signer", signer);
-      console.log("scasc", identifier, hash);
-      console.log("hash", hash);
-      const transaction = await contract.storeCertificate(identifier, hash);
-      console.log("Waiting for transaction...");
-      const receipt = await transaction.wait();
-      console.log(" object:", receipt);
-
-      // Access the event object from the logs array
-      // 0xbe432921b52531829ffdad541feec82dd15af5e2623y4d6b5448bca5f8b7e230ddddsqqqqqqqqqqssssdfsdfsdfd
-      const event = receipt.events;
-      console.log("Event object:", event);
-
-      // Access the concatenatedString from the args array
-      const documentIdentification = event[0].args[2];
-      console.log("Concatenated String:", documentIdentification);
-      // alert("Transaction is Successful!");
-      fetch(
-        `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${certificateId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            documentIdentification,
-          }),
-        }
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.status === "success") {
-            console.log(data.data);
-            Toastify({
-              text: "Document uploaded successfully!",
-              duration: 3000,
-              close: true,
-              gravity: "top",
-              position: "right",
-              backgroundColor: "green",
-              stopOnFocus: true,
-            }).showToast();
-            setIsLoading(false);
-          } else {
-            console.log(data);
-            Toastify({
-              text: "Document uploading failed. Please try again!",
-              duration: 3000,
-              close: true,
-              gravity: "top",
-              position: "right",
-              backgroundColor: "green",
-              stopOnFocus: true,
-            }).showToast();
-            setIsLoading(false);
-          }
-        });
-    } catch (error) {
-      Toastify({
-        text: "Error adding hash. Please try again later!",
-        duration: 3000,
-        close: true,
-        gravity: "top",
-        position: "right",
-        backgroundColor: "green",
-        stopOnFocus: true,
-      }).showToast();
-      setIsLoading(false);
-    }
+        console.log("Response data:", data.data.ipfsHash);
+        setHash(data.data.ipfsHash);
+      })
+      .catch((error) => {
+        console.error("Error fetching community data:", error);
+      });
+    // Add your logic
   };
+
+  const openVerifyModal = (certificateID) => {
+    setCurrentVerifyCertificateId(certificateID);
+    // handleVerify();
+    setVerifyModalIsOpen(true);
+  };
+
+  const handleVerify = async () => {
+    // currentVerifyCertificateId;
+    const identifier = String(currentVerifyCertificateId);
+    console.log("signer", signer);
+    console.log("scasc", identifier, hash);
+    console.log("hash", hash);
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(provider);
+
+      const accounts = await provider.send("eth_requestAccounts", []);
+      setAccount(accounts[0]);
+
+      const signer = provider.getSigner();
+      setSigner(signer);
+
+      const contract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
+      console.log("contractBefore", contract);
+
+      setContract(contract);
+    } else {
+      console.error("Please install MetaMask!");
+    }
+    console.log("contractBefore", contract);
+
+    const transaction = await contract.storeCertificate(identifier, hash);
+    console.log("Waiting for transaction...");
+    const receipt = await transaction.wait();
+    console.log(" object:", receipt);
+
+    const event = receipt.events;
+    console.log("Event object:", event);
+
+    // Access the concatenatedString from the args array
+    const documentIdentification = event[0].args[2];
+    console.log("Concatenated String:", documentIdentification);
+    // alert("Transaction is Successful!");
+    fetch(
+      `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${identifier}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          documentIdentification,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          console.log(data.data);
+          Toastify({
+            text: "Document uploaded successfully!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
+          setIsLoading(false);
+        } else {
+          console.log(data);
+          Toastify({
+            text: "Document uploading failed. Please try again!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
+          setIsLoading(false);
+        }
+      });
+  };
+
+  // const storeHash = (certificateId) => async (event) => {
+  //   console.log(certificateId);
+  //   event.preventDefault();
+  //   try {
+  //     setIsLoading(true);
+
+  //     fetch(
+  //       `https://prj-certifi-backend.onrender.com/api/certificate/get/${certificateId}`
+  //     )
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         console.log("Response data:", data);
+
+  //         console.log("Response data:", data.data.ipfsHash);
+  //         setHash(data.data.ipfsHash);
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error fetching community data:", error);
+  //       });
+  //     const identifier = String(certificateId);
+  //     console.log("signer", signer);
+  //     console.log("scasc", identifier, hash);
+  //     console.log("hash", hash);
+  //     const transaction = await contract.storeCertificate(identifier, hash);
+  //     console.log("Waiting for transaction...");
+  //     const receipt = await transaction.wait();
+  //     console.log(" object:", receipt);
+
+  //     const event = receipt.events;
+  //     console.log("Event object:", event);
+
+  //     // Access the concatenatedString from the args array
+  //     const documentIdentification = event[0].args[2];
+  //     console.log("Concatenated String:", documentIdentification);
+  //     // alert("Transaction is Successful!");
+  //     fetch(
+  //       `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${certificateId}`,
+  //       {
+  //         method: "PATCH",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           documentIdentification,
+  //         }),
+  //       }
+  //     )
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         if (data.status === "success") {
+  //           console.log(data.data);
+  //           Toastify({
+  //             text: "Document uploaded successfully!",
+  //             duration: 3000,
+  //             close: true,
+  //             gravity: "top",
+  //             position: "right",
+  //             backgroundColor: "green",
+  //             stopOnFocus: true,
+  //           }).showToast();
+  //           setIsLoading(false);
+  //         } else {
+  //           console.log(data);
+  //           Toastify({
+  //             text: "Document uploading failed. Please try again!",
+  //             duration: 3000,
+  //             close: true,
+  //             gravity: "top",
+  //             position: "right",
+  //             backgroundColor: "green",
+  //             stopOnFocus: true,
+  //           }).showToast();
+  //           setIsLoading(false);
+  //         }
+  //       });
+  //   } catch (error) {
+  //     Toastify({
+  //       text: "Error adding hash. Please try again later!",
+  //       duration: 3000,
+  //       close: true,
+  //       gravity: "top",
+  //       position: "right",
+  //       backgroundColor: "green",
+  //       stopOnFocus: true,
+  //     }).showToast();
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const toCertificateForm = (Id) => (event) => {
     event.preventDefault();
@@ -464,7 +611,10 @@ const Dashboard = ({ state }) => {
               )}
             </div>
             <Link to="/">
-              <button class="group flex items-center justify-start w-10 h-10 bg-red-600 rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-32 hover:rounded-lg active:translate-x-1 active:translate-y-1" onClick={Logout}>
+              <button
+                class="group flex items-center justify-start w-10 h-10 bg-red-600 rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-32 hover:rounded-lg active:translate-x-1 active:translate-y-1"
+                onClick={Logout}
+              >
                 <div class="flex items-center justify-center w-full transition-all duration-300 group-hover:justify-start group-hover:px-3">
                   <svg class="w-4 h-4" viewBox="0 0 512 512" fill="white">
                     <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
@@ -477,9 +627,37 @@ const Dashboard = ({ state }) => {
             </Link>
           </div>
         </div>
+        {/* verify Modal */}
+        <Modal
+          isOpen={verifyModalIsOpen}
+          onRequestClose={closeVerifyModal}
+          contentLabel="Verify Account Modal"
+          className="modal-overlay"
+          overlayClassName="modal-overlay"
+        >
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">Status validation </h2>
+            </div>
+            <p className="modal-message">
+              Are you sure this document is valid?
+            </p>
+            <div className="modal-buttons">
+              <button className="modal-button verify" onClick={handleVerify}>
+                Approve
+              </button>
+              <button
+                className="modal-button cancel"
+                onClick={closeVerifyModal}
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        </Modal>
         {/* Rest of the code remains the same */}
         <Card>
-        <CardContent>
+          <CardContent>
             <div className="documents-header">
               <Typography variant="h5" component="div">
                 Documents
@@ -565,8 +743,9 @@ const Dashboard = ({ state }) => {
                       >
                         <i className="fas fa-eye"></i>
                       </Link>
+                      {/* onClick={storeHash(certificate._id)} */}
                       <div className="view-icon ">
-                        <i onClick={storeHash(certificate._id)}>
+                        <i onClick={() => handleAccept(certificate._id)}>
                           <FaCodepen />
                         </i>
                       </div>
@@ -608,8 +787,9 @@ const Dashboard = ({ state }) => {
                       >
                         <i className="fas fa-eye"></i>
                       </Link>
+                      {/* onClick={storeHash(certificate._id)}  */}
                       <div className="view-icon ">
-                        <i onClick={storeHash(certificate._id)}>
+                        <i onClick={() => handleAccept(certificate._id)}>
                           <FaCodepen />
                         </i>
                       </div>
