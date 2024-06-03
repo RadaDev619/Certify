@@ -88,7 +88,9 @@ function OtpEntry() {
     // In a real application, you would verify the OTP first
   };
 
-  return (
+  return isLoading === true ? (
+    <LoadingAnimation />
+  ) : (
     <div className="flex justify-center items-center flex-col">
       {/* Navigation (same as ForgotPassword) */}
       <nav className="w-full pt-12 pb-20 flex justify-between px-52 items-center">

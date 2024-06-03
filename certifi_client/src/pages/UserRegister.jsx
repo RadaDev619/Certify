@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import logo from "../../public/logo.png";
 import { useNavigate } from "react-router-dom";
 import LoadingAnimation from "../component/LoadingAnimation";
-
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 function URegister() {
   // Define state variables for registration inputs
   const [name, setName] = useState("");
@@ -48,17 +49,36 @@ function URegister() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
-          alert("Registration successful!");
+          Toastify({
+            text: "Registration successful!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
+
+          setIsLoading(false);
           setName("");
           setEmail("");
           setPassword("");
           setConfirmPassword("");
           setIsLoading(false);
           localStorage.setItem("email", email);
-          
+
           navigate("/OtpEnter");
         } else {
-          alert("Registration failed. Please try again.");
+          Toastify({
+            text: "Registration failed. Please try again.!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
+
           setIsLoading(false);
         }
       })
