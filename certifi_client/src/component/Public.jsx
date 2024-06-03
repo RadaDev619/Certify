@@ -351,8 +351,11 @@ const Public = () => {
           {/* Display search results */}
           {fetchedData && (
             <div className="mt-5 mr-56 flex flex-col items-center">
-              <div className="text-center translate-x-[100px] font-bold text-2xl uppercase mb-10">
+              <div className="text-center translate-x-[100px] font-bold text-2xl uppercase mb-7">
                 Certificate Valid
+              </div>
+              <div className="text-center translate-x-[100px] font-semibold text-xl uppercase mb-10">
+                <p>IPFS file link :  {concatenatedString}</p>
               </div>
               <div className="flex">
                 <div
