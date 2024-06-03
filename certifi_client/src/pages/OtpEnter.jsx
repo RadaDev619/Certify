@@ -4,22 +4,23 @@ import logo from "../../public/logo.png";
 import LoadingAnimation from "../component/LoadingAnimation";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-function getCookie(name) {
-  const cookieString = document.cookie;
-  const cookies = cookieString.split("; ");
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i];
-    const [cookieName, cookieValue] = cookie.split("=");
-    if (cookieName === name) {
-      return decodeURIComponent(cookieValue);
-    }
-  }
-  return null;
-}
-
-const userEmail = localStorage.getItem("email");
+// function getCookie(name) {
+//   window.reload
+//   const cookieString = document.cookie;
+//   const cookies = cookieString.split("; ");
+//   for (let i = 0; i < cookies.length; i++) {
+//     const cookie = cookies[i];
+//     const [cookieName, cookieValue] = cookie.split("=");
+//     if (cookieName === name) {
+//       return decodeURIComponent(cookieValue);
+//     }
+//   }
+//   return null;
+// }
 
 function OtpEntry() {
+  const userEmail = localStorage.getItem("email");
+
   const [otps, setOtp] = useState(new Array(6).fill(""));
 
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ function OtpEntry() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const otpValue = otps.join("");
+    console.log("otp", otpValue);
     // Validate OTP (you would typically call your backend API here)
     fetch("https://prj-certifi-backend.onrender.com/api/auth/verify", {
       method: "POST",
