@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { ethers } from "ethers"; //import ethers library
+// import { ethers } from "ethers";
+import { ethers } from "ethers";
 import abi from "../../contractJson/Certify.json";
 import "../../css/dashboard.css";
 import metamaskLogo from "../../assets/metamask-logo.png";
@@ -24,8 +25,7 @@ import LoadingAnimation from "../../component/LoadingAnimation";
 import axios from "axios";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-const contractAddress = "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
-const contractABI = abi.abi;
+
 
 const Dashboard = ({ state }) => {
   const [showCreateDropdown, setShowCreateDropdown] = useState(false);
@@ -38,13 +38,67 @@ const Dashboard = ({ state }) => {
   const [name, setUserName] = useState("");
   const [profilepic, setProfilePic] = useState("");
   const [userid, setUserId] = useState("");
+  
+  const contractAddress = "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
+  const contractABI = abi.abi;
+
+  const [results, setResults] = useState([]); // State to store search results
+  const [query, setQuery] = useState("");
+
+  const [renameModalIsOpen, setRenameModalIsOpen] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [metamaskPopupIsOpen, setMetamaskPopupIsOpen] = useState(false);
+  const [metamaskPopupPendingIsOpen, setMetamaskPopupPendingIsOpen] = useState(false);
+
+  const [provider, setProvider] = useState(null);
+  const [signer, setSigner] = useState(null);
+  const [contract, setContract] = useState(null);
+  const [account, setAccount] = useState(null);
+  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] =  useState(null);
+
+
+
+    useEffect(() => {
+      const connectWallet = async () => {
+        if (!window.ethereum) {
+          console.error("Please install MetaMask!");
+          return;
+        }
+    
+            // Create a provider instance
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+           
+            const signer = provider.getSigner();
+            const contract = new ethers.Contract(contractAddress, contractABI, signer);
+            
+            const accounts = await provider.send("eth_requestAccounts", []);
+            
+            setProvider(provider);
+            setSigner(signer);
+            setAccount(accounts[0]);
+            setContract(contract);
+            // Create a contract instance
+                // Request account access
+        if (accounts.length === 0) {
+          console.error("No accounts found!");
+          return;
+        }
+            
+          // Check if MetaMask is installed
+        
+      };
+      connectWallet();
+    }, []);
+
+
+
 
   const Logout = () => {
     window.localStorage.setItem("userLoggedIn", "false");
     window.localStorage.removeItem("email");
     window.localStorage.removeItem("userLoggedIn");
 
-    navigate("/login");
+    navigate("/");
     window.location.reload();
   };
   useEffect(() => {
@@ -113,8 +167,6 @@ const Dashboard = ({ state }) => {
     // handleNotValid(certificateId);
   };
 
-  const [results, setResults] = useState([]); // State to store search results
-  const [query, setQuery] = useState("");
   useEffect(() => {
     const searchCertificates = (query) => {
       // Filter certificates array based on the query
@@ -137,6 +189,8 @@ const Dashboard = ({ state }) => {
     return () => clearTimeout(debounceTimeout);
   }, [query, certificates]); // Effect runs on every query or certificates change
 
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
+
   const toggleCreateDropdown = () => {
     setShowCreateDropdown(!showCreateDropdown);
   };
@@ -145,11 +199,7 @@ const Dashboard = ({ state }) => {
     setShowUserDropdown(!showUserDropdown);
   };
 
-  const [renameModalIsOpen, setRenameModalIsOpen] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [metamaskPopupIsOpen, setMetamaskPopupIsOpen] = useState(false);
-  const [metamaskPopupPendingIsOpen, setMetamaskPopupPendingIsOpen] =
-    useState(false);
+
 
   const openMetamaskPopup = () => {
     setMetamaskPopupIsOpen(true);
@@ -188,8 +238,7 @@ const Dashboard = ({ state }) => {
   //   closeRenameModal();
   // };
 
-  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
-
+  
   const openDeleteModal = () => {
     setDeleteModalIsOpen(true);
   };
@@ -209,71 +258,6 @@ const Dashboard = ({ state }) => {
     return;
   };
 
-  const [provider, setProvider] = useState(null);
-  const [signer, setSigner] = useState(null);
-  const [contract, setContract] = useState(null);
-  const [account, setAccount] = useState(null);
-
-  useEffect(() => {
-    const connectWallet = async () => {
-      try {
-        // Check if MetaMask is installed
-        if (window.ethereum) {
-          // Create a promise to handle MetaMask's injection
-          const connectPromise = new Promise((resolve, reject) => {
-            // Resolve if MetaMask is injected
-            if (window.ethereum) {
-              resolve(window.ethereum);
-            } else {
-              // Reject if MetaMask is not injected
-              reject(new Error("MetaMask not found"));
-            }
-          });
-
-          // Handle the result of the promise
-          connectPromise
-            .then((ethereum) => {
-              // Create a provider instance
-              const provider = new ethers.providers.Web3Provider(ethereum);
-              setProvider(provider);
-
-              // Request account access
-              provider.send("eth_requestAccounts", []).then((accounts) => {
-                setAccount(accounts[0]);
-
-                // Get the signer
-                const signer = provider.getSigner();
-                setSigner(signer);
-
-                // Create a contract instance
-                const contract = new ethers.Contract(
-                  contractAddress,
-                  contractABI,
-                  signer
-                );
-                setContract(contract);
-              });
-            })
-            .catch((error) => {
-              console.error("Error connecting wallet:", error);
-              // Handle the error appropriately, for example:
-              // - Show an error message to the user
-              // - Open a modal to guide them through connecting their wallet
-            });
-        } else {
-          console.error("Please install MetaMask!");
-        }
-      } catch (error) {
-        console.error("Error connecting wallet:", error);
-      }
-    };
-
-    // Call connectWallet to initialize
-    connectWallet();
-  }, []);
-
-  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] =
-    useState(null);
 
   // Add event handlers for Accept and Reject buttons
   const handleAccept = (certificateID) => {
@@ -385,94 +369,94 @@ const Dashboard = ({ state }) => {
       });
   };
 
-  // const storeHash = (certificateId) => async (event) => {
-  //   console.log(certificateId);
-  //   event.preventDefault();
-  //   try {
-  //     setIsLoading(true);
+  const storeHash = (certificateId) => async (event) => {
+    console.log(certificateId);
+    event.preventDefault();
+    try {
+      setIsLoading(true);
 
-  //     fetch(
-  //       `https://prj-certifi-backend.onrender.com/api/certificate/get/${certificateId}`
-  //     )
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         console.log("Response data:", data);
+      fetch(
+        `https://prj-certifi-backend.onrender.com/api/certificate/get/${certificateId}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Response data:", data);
 
-  //         console.log("Response data:", data.data.ipfsHash);
-  //         setHash(data.data.ipfsHash);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error fetching community data:", error);
-  //       });
-  //     const identifier = String(certificateId);
-  //     console.log("signer", signer);
-  //     console.log("scasc", identifier, hash);
-  //     console.log("hash", hash);
-  //     const transaction = await contract.storeCertificate(identifier, hash);
-  //     console.log("Waiting for transaction...");
-  //     const receipt = await transaction.wait();
-  //     console.log(" object:", receipt);
+          console.log("Response data:", data.data.ipfsHash);
+          setHash(data.data.ipfsHash);
+        })
+        .catch((error) => {
+          console.error("Error fetching community data:", error);
+        });
+      const identifier = String(certificateId);
+      console.log("signer", signer);
+      console.log("scasc", identifier, hash);
+      console.log("hash", hash);
+      const transaction = await contract.storeCertificate(identifier, hash);
+      console.log("Waiting for transaction...");
+      const receipt = await transaction.wait();
+      console.log(" object:", receipt);
 
-  //     const event = receipt.events;
-  //     console.log("Event object:", event);
+      const event = receipt.events;
+      console.log("Event object:", event);
 
-  //     // Access the concatenatedString from the args array
-  //     const documentIdentification = event[0].args[2];
-  //     console.log("Concatenated String:", documentIdentification);
-  //     // alert("Transaction is Successful!");
-  //     fetch(
-  //       `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${certificateId}`,
-  //       {
-  //         method: "PATCH",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           documentIdentification,
-  //         }),
-  //       }
-  //     )
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         if (data.status === "success") {
-  //           console.log(data.data);
-  //           Toastify({
-  //             text: "Document uploaded successfully!",
-  //             duration: 3000,
-  //             close: true,
-  //             gravity: "top",
-  //             position: "right",
-  //             backgroundColor: "green",
-  //             stopOnFocus: true,
-  //           }).showToast();
-  //           setIsLoading(false);
-  //         } else {
-  //           console.log(data);
-  //           Toastify({
-  //             text: "Document uploading failed. Please try again!",
-  //             duration: 3000,
-  //             close: true,
-  //             gravity: "top",
-  //             position: "right",
-  //             backgroundColor: "green",
-  //             stopOnFocus: true,
-  //           }).showToast();
-  //           setIsLoading(false);
-  //         }
-  //       });
-  //   } catch (error) {
-  //     Toastify({
-  //       text: "Error adding hash. Please try again later!",
-  //       duration: 3000,
-  //       close: true,
-  //       gravity: "top",
-  //       position: "right",
-  //       backgroundColor: "green",
-  //       stopOnFocus: true,
-  //     }).showToast();
-  //     setIsLoading(false);
-  //   }
-  // };
+      // Access the concatenatedString from the args array
+      const documentIdentification = event[0].args[2];
+      console.log("Concatenated String:", documentIdentification);
+      // alert("Transaction is Successful!");
+      fetch(
+        `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${certificateId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            documentIdentification,
+          }),
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            console.log(data.data);
+            Toastify({
+              text: "Document uploaded successfully!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
+            setIsLoading(false);
+          } else {
+            console.log(data);
+            Toastify({
+              text: "Document uploading failed. Please try again!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "green",
+              stopOnFocus: true,
+            }).showToast();
+            setIsLoading(false);
+          }
+        });
+    } catch (error) {
+      Toastify({
+        text: "Error adding hash. Please try again later!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "green",
+        stopOnFocus: true,
+      }).showToast();
+      setIsLoading(false);
+    }
+  };
 
   const toCertificateForm = (Id) => (event) => {
     event.preventDefault();

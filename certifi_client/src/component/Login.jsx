@@ -27,58 +27,116 @@ function Login() {
     } else {
       setIsLoading(true); // is loading
 
-      fetch("https://prj-certifi-backend.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.status === "Success") {
-            // alert("Login successful!");
-            if (rememberMe) {
-              // Store email in local storage
-              window.localStorage.setItem("email", email);
-            } else {
-              // Clear email from local storage if rememberMe is unchecked
-              window.localStorage.removeItem("email");
-            }
-            setEmail("");
-            setPassword("");
-            localStorage.setItem("email", email);
-            localStorage.setItem("userLoggedIn", "true");
+  //     fetch("https://prj-certifi-backend.onrender.com/api/auth/login", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         email,
+  //         password,
+  //       }),
+  //     })
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         if (data.status === "Success") {
+  //           // alert("Login successful!");
+  //           if (rememberMe) {
+  //             // Store email in local storage
+  //             window.localStorage.setItem("email", email);
+  //           } else {
+  //             // Clear email from local storage if rememberMe is unchecked
+  //             window.localStorage.removeItem("email");
+  //           }
+  //           setEmail("");
+  //           setPassword("");
+  //           localStorage.setItem("email", email);
+  //           localStorage.setItem("userLoggedIn", "true");
 
-            setIsLoading(false); //loading
-            Toastify({
-              text: "Login successful!",
-              duration: 3000,
-              close: true,
-              gravity: "top",
-              position: "right",
-              backgroundColor: "green",
-              stopOnFocus: true,
-            }).showToast();
-            navigate("/dashboard");
-          } else {
-            Toastify({
-              text: "Login failed. Please try again!",
-              duration: 3000,
-              close: true,
-              gravity: "top",
-              position: "right",
-              backgroundColor: "green",
-              stopOnFocus: true,
-            }).showToast();
-            setIsLoading(false); //loading
-          }
-        });
+  //           setIsLoading(false); //loading
+  //           Toastify({
+  //             text: "Login successful!",
+  //             duration: 3000,
+  //             close: true,
+  //             gravity: "top",
+  //             position: "right",
+  //             backgroundColor: "green",
+  //             stopOnFocus: true,
+  //           }).showToast();
+  //           navigate("/dashboard");
+  //         } 
+  //         if() {
+  //           Toastify({
+  //             text: "Login failed. Please try again!",
+  //             duration: 3000,
+  //             close: true,
+  //             gravity: "top",
+  //             position: "right",
+  //             backgroundColor: "green",
+  //             stopOnFocus: true,
+  //           }).showToast();
+  //           setIsLoading(false); //loading
+  //         }
+  //       });
+  //   }
+  // };
+
+  fetch("https://prj-certifi-backend.onrender.com/api/auth/login", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    email,
+    password,
+  }),
+})
+  .then((response) => response.json())
+  .then((data) => {
+    if (data.status === "Success") {
+      // alert("Login successful!");
+      if (rememberMe) {
+        // Store email in local storage
+        window.localStorage.setItem("email", email);
+      } else {
+        // Clear email from local storage if rememberMe is unchecked
+        window.localStorage.removeItem("email");
+      }
+      setEmail("");
+      setPassword("");
+      localStorage.setItem("email", email);
+      localStorage.setItem("userLoggedIn", "true");
+
+      setIsLoading(false); //loading
+      Toastify({
+        text: "Login successful!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "green",
+        stopOnFocus: true,
+      }).showToast();
+      navigate("/dashboard");
+    } else {
+      // This block handles the case when login fails
+      throw new Error("Login failed");
     }
-  };
+  })
+  .catch((error) => {
+    // Handle errors, such as incorrect password or other failures
+    Toastify({
+      text: "Login failed. Please try again!",
+      duration: 3000,
+      close: true,
+      gravity: "top",
+      position: "right",
+      backgroundColor: "red",
+      stopOnFocus: true,
+    }).showToast();
+    setIsLoading(false); //loading
+  });
+  }}
   const handleRememberMeChange = (event) => {
     setRememberMe(event.target.checked);
   };

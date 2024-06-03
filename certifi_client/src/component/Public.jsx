@@ -40,7 +40,7 @@ const Public = () => {
       return;
     }
 
-    const contractAddress = "0x17d30d722bD5BB3F5d7362aFA4F648fa446e34A2";
+    const contractAddress = "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
     const contractABI = abi.abi;
 
     const provider = new ethers.providers.Web3Provider(ethereum);
@@ -59,7 +59,7 @@ const Public = () => {
       setIsLoading(true);
       const transaction = await contract.getIPFSHash(address, identifier, hash);
 
-      // console.log("Waiting for transaction...");
+      console.log("Waiting for transaction...");
       // // alert("reach1");
       const receipt = await transaction.wait(); // Wait for the transaction to be mined
       // alert("Transaction is Successful!");

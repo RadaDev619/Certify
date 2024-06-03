@@ -42,8 +42,7 @@ function InsLogin() {
             window.localStorage.setItem("email", email);
             localStorage.setItem("userid", data.data._id);
             localStorage.setItem("insLoggedIn", "true");
-            alert("Login successful!");
-
+      
             // alert("Login successful!");
             Toastify({
               text: "Login successful!",
@@ -57,25 +56,27 @@ function InsLogin() {
             setEmail("");
             setPassword("");
             setIsLoading(false);
-
+      
             navigate("/Institutiondashboard");
           } else {
-            // alert("Login successful!");
-            setIsLoading(false);
-
-            Toastify({
-              text: "Login failed. Please try again!",
-              duration: 3000,
-              close: true,
-              gravity: "top",
-              position: "right",
-              backgroundColor: "green",
-              stopOnFocus: true,
-            }).showToast();
+            // This block handles the case when login fails
+            throw new Error("Login failed");
           }
+        })
+        .catch((error) => {
+          // Handle errors, such as incorrect password or other failures
+          Toastify({
+            text: "Login failed. Please try again!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "red",  // Changed to red for failure
+            stopOnFocus: true,
+          }).showToast();
+          setIsLoading(false); //loading
         });
-    }
-  };
+      }}      
   const handleRememberMeChange = (event) => {
     setRememberMe(event.target.checked);
   };

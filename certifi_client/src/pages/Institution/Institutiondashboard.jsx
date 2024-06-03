@@ -38,7 +38,7 @@ const Dashboard = () => {
     window.localStorage.removeItem("insLoggedIn");
     window.localStorage.removeItem("userid");
 
-    navigate("/inslogin");
+    navigate("/");
     window.location.reload();
   };
 

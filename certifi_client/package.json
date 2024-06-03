@@ -24,7 +24,6 @@
     "bootstrap": "^5.3.3",
     "buffer": "^6.0.3",
     "crypto-js": "^4.2.0",
-    "ethers": "^6.12.1",
     "preact": "^10.20.1",
     "process": "^0.11.10",
     "react": "^18.2.0",
