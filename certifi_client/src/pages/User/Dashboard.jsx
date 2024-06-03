@@ -26,7 +26,6 @@ import axios from "axios";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 
-
 const Dashboard = ({ state }) => {
   const [showCreateDropdown, setShowCreateDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
@@ -38,7 +37,7 @@ const Dashboard = ({ state }) => {
   const [name, setUserName] = useState("");
   const [profilepic, setProfilePic] = useState("");
   const [userid, setUserId] = useState("");
-  
+
   const contractAddress = "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
   const contractABI = abi.abi;
 
@@ -48,50 +47,50 @@ const Dashboard = ({ state }) => {
   const [renameModalIsOpen, setRenameModalIsOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [metamaskPopupIsOpen, setMetamaskPopupIsOpen] = useState(false);
-  const [metamaskPopupPendingIsOpen, setMetamaskPopupPendingIsOpen] = useState(false);
+  const [metamaskPopupPendingIsOpen, setMetamaskPopupPendingIsOpen] =
+    useState(false);
 
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [contract, setContract] = useState(null);
   const [account, setAccount] = useState(null);
-  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] =  useState(null);
+  const [currentVerifyCertificateId, setCurrentVerifyCertificateId] =
+    useState(null);
 
+  useEffect(() => {
+    const connectWallet = async () => {
+      if (!window.ethereum) {
+        console.error("Please install MetaMask!");
+        return;
+      }
 
+      // Create a provider instance
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-    useEffect(() => {
-      const connectWallet = async () => {
-        if (!window.ethereum) {
-          console.error("Please install MetaMask!");
-          return;
-        }
-    
-            // Create a provider instance
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-           
-            const signer = provider.getSigner();
-            const contract = new ethers.Contract(contractAddress, contractABI, signer);
-            
-            const accounts = await provider.send("eth_requestAccounts", []);
-            
-            setProvider(provider);
-            setSigner(signer);
-            setAccount(accounts[0]);
-            setContract(contract);
-            // Create a contract instance
-                // Request account access
-        if (accounts.length === 0) {
-          console.error("No accounts found!");
-          return;
-        }
-            
-          // Check if MetaMask is installed
-        
-      };
-      connectWallet();
-    }, []);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
 
+      const accounts = await provider.send("eth_requestAccounts", []);
 
+      setProvider(provider);
+      setSigner(signer);
+      setAccount(accounts[0]);
+      setContract(contract);
+      // Create a contract instance
+      // Request account access
+      if (accounts.length === 0) {
+        console.error("No accounts found!");
+        return;
+      }
 
+      // Check if MetaMask is installed
+    };
+    connectWallet();
+  }, []);
 
   const Logout = () => {
     window.localStorage.setItem("userLoggedIn", "false");
@@ -199,8 +198,6 @@ const Dashboard = ({ state }) => {
     setShowUserDropdown(!showUserDropdown);
   };
 
-
-
   const openMetamaskPopup = () => {
     setMetamaskPopupIsOpen(true);
   };
@@ -238,7 +235,6 @@ const Dashboard = ({ state }) => {
   //   closeRenameModal();
   // };
 
-  
   const openDeleteModal = () => {
     setDeleteModalIsOpen(true);
   };
@@ -257,7 +253,6 @@ const Dashboard = ({ state }) => {
     event.preventDefault();
     return;
   };
-
 
   // Add event handlers for Accept and Reject buttons
   const handleAccept = (certificateID) => {
@@ -367,95 +362,6 @@ const Dashboard = ({ state }) => {
           setIsLoading(false);
         }
       });
-  };
-
-  const storeHash = (certificateId) => async (event) => {
-    console.log(certificateId);
-    event.preventDefault();
-    try {
-      setIsLoading(true);
-
-      fetch(
-        `https://prj-certifi-backend.onrender.com/api/certificate/get/${certificateId}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Response data:", data);
-
-          console.log("Response data:", data.data.ipfsHash);
-          setHash(data.data.ipfsHash);
-        })
-        .catch((error) => {
-          console.error("Error fetching community data:", error);
-        });
-      const identifier = String(certificateId);
-      console.log("signer", signer);
-      console.log("scasc", identifier, hash);
-      console.log("hash", hash);
-      const transaction = await contract.storeCertificate(identifier, hash);
-      console.log("Waiting for transaction...");
-      const receipt = await transaction.wait();
-      console.log(" object:", receipt);
-
-      const event = receipt.events;
-      console.log("Event object:", event);
-
-      // Access the concatenatedString from the args array
-      const documentIdentification = event[0].args[2];
-      console.log("Concatenated String:", documentIdentification);
-      // alert("Transaction is Successful!");
-      fetch(
-        `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${certificateId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            documentIdentification,
-          }),
-        }
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.status === "success") {
-            console.log(data.data);
-            Toastify({
-              text: "Document uploaded successfully!",
-              duration: 3000,
-              close: true,
-              gravity: "top",
-              position: "right",
-              backgroundColor: "green",
-              stopOnFocus: true,
-            }).showToast();
-            setIsLoading(false);
-          } else {
-            console.log(data);
-            Toastify({
-              text: "Document uploading failed. Please try again!",
-              duration: 3000,
-              close: true,
-              gravity: "top",
-              position: "right",
-              backgroundColor: "green",
-              stopOnFocus: true,
-            }).showToast();
-            setIsLoading(false);
-          }
-        });
-    } catch (error) {
-      Toastify({
-        text: "Error adding hash. Please try again later!",
-        duration: 3000,
-        close: true,
-        gravity: "top",
-        position: "right",
-        backgroundColor: "green",
-        stopOnFocus: true,
-      }).showToast();
-      setIsLoading(false);
-    }
   };
 
   const toCertificateForm = (Id) => (event) => {
@@ -621,20 +527,20 @@ const Dashboard = ({ state }) => {
         >
           <div className="modal-content">
             <div className="modal-header">
-              <h2 className="modal-title">Status validation </h2>
+              <h2 className="modal-title">Confirmation </h2>
             </div>
             <p className="modal-message">
-              Are you sure this document is valid?
+              Are you sure you want to upload the document to the Blockchain?
             </p>
             <div className="modal-buttons">
               <button className="modal-button verify" onClick={handleVerify}>
-                Approve
+                Yes
               </button>
               <button
                 className="modal-button cancel"
                 onClick={closeVerifyModal}
               >
-                Back
+                No
               </button>
             </div>
           </div>
@@ -729,9 +635,18 @@ const Dashboard = ({ state }) => {
                       </Link>
                       {/* onClick={storeHash(certificate._id)} */}
                       <div className="view-icon ">
-                        <i onClick={() => handleAccept(certificate._id)}>
+                        {certificate.verified === "pending" ? (
+                          <i onClick={() => handleAccept(certificate._id)}></i>
+                        ) : certificate.verified === "true" ? (
+                          <i onClick={() => handleAccept(certificate._id)}>
+                            <FaCodepen />
+                          </i>
+                        ) : (
+                          <i onClick={() => handleAccept(certificate._id)}></i>
+                        )}
+                        {/* <i onClick={() => handleAccept(certificate._id)}>
                           <FaCodepen />
-                        </i>
+                        </i> */}
                       </div>
                     </div>
                   ))
@@ -773,9 +688,15 @@ const Dashboard = ({ state }) => {
                       </Link>
                       {/* onClick={storeHash(certificate._id)}  */}
                       <div className="view-icon ">
-                        <i onClick={() => handleAccept(certificate._id)}>
-                          <FaCodepen />
-                        </i>
+                        {certificate.verified === "pending" ? (
+                          <i onClick={() => handleAccept(certificate._id)}></i>
+                        ) : certificate.verified === "true" ? (
+                          <i onClick={() => handleAccept(certificate._id)}>
+                            <FaCodepen />
+                          </i>
+                        ) : (
+                          <i onClick={() => handleAccept(certificate._id)}></i>
+                        )}
                       </div>
                     </div>
                   ))}
