@@ -750,15 +750,16 @@ const Dashboard = ({ state }) => {
                         {certificate.verified === "pending" ? (
                           <i onClick={() => handleAccept(certificate._id)}></i>
                         ) : certificate.verified === "true" ? (
-                          <i onClick={() => handleAccept(certificate._id)}>
-                            <FaCodepen />
-                          </i>
+                          certificate.documentIdentification === "" ? (
+                            <i onClick={() => handleAccept(certificate._id)}>
+                              <FaCodepen />
+                            </i>
+                          ) : (
+                            <p>Uploaded to BlockChain</p>
+                          )
                         ) : (
                           <i onClick={() => handleAccept(certificate._id)}></i>
                         )}
-                        {/* <i onClick={() => handleAccept(certificate._id)}>
-                          <FaCodepen />
-                        </i> */}
                       </div>
                     </div>
                   ))
@@ -803,9 +804,13 @@ const Dashboard = ({ state }) => {
                         {certificate.verified === "pending" ? (
                           <i onClick={() => handleAccept(certificate._id)}></i>
                         ) : certificate.verified === "true" ? (
-                          <i onClick={() => handleAccept(certificate._id)}>
-                            <FaCodepen />
-                          </i>
+                          certificate.documentIdentification === "" ? (
+                            <i onClick={() => handleAccept(certificate._id)}>
+                              <FaCodepen />
+                            </i>
+                          ) : (
+                            <p>Uploaded to BlockChain</p>
+                          )
                         ) : (
                           <i onClick={() => handleAccept(certificate._id)}></i>
                         )}
