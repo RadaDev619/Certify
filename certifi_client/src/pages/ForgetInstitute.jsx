@@ -5,7 +5,7 @@ import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import LoadingAnimation from "../component/LoadingAnimation"; // import loading
 
-function ForgotPassword() {
+function ForgotInsPassword() {
   const [input, setInput] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -14,6 +14,7 @@ function ForgotPassword() {
   const sendOTp = async (event) => {
     event.preventDefault();
     console.log("Email for OTP:", input);
+    const email = "kwangchuk508@gmail.com";
 
     setIsLoading(true);
     fetch(`https://prj-certifi-backend.onrender.com/api/auth/sendOtp`, {
@@ -21,7 +22,7 @@ function ForgotPassword() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: input }),
+      body: JSON.stringify({ email: email }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -69,7 +70,7 @@ function ForgotPassword() {
 
   const confirmOtp = (event) => {
     event.preventDefault();
-    const email = localStorage.getItem("email");
+    const email = "kwangchuk508@gmail.com";
 
     const otpValue = input;
     console.log("sdfds", email, otpValue);
@@ -192,4 +193,4 @@ function ForgotPassword() {
   );
 }
 
-export default ForgotPassword;
+export default ForgotInsPassword;

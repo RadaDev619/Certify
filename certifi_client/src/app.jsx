@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Login from "./component/Login"; // Corrected import statement
 
 import abi from "./contractJson/Certify.json";
-import { ethers } from "ethers"; //import ethers library
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./component/Layout";
 import Public from "./component/Public";
@@ -27,17 +26,25 @@ import Admindashboard from "./pages/Admin/Admindashboard";
 import Loading from "./component/LoadingAnimation";
 import AdminLogin from "./component/adminLogin";
 import ForgotPasswordChange from "./pages/FPchangepassword";
+import ForgotInsPassword from "./pages/ForgetInstitute";
+
 function App() {
   return (
     <>
+      {/* <Public /> */}
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Public />} />
+        </Route>
+        <Route path="/" element={<Public />}>
+          {/* <Route index element={<Public />} /> */}
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/uregister" element={<UserRegister />} />
         <Route path="/iregister" element={<InstitutionRegister />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/ForgotInsPassword" element={<ForgotInsPassword />} />
+
         <Route
           path="/ForgotPasswordChange"
           element={<ForgotPasswordChange />}
