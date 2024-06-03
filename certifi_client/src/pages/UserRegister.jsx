@@ -58,17 +58,19 @@ function URegister() {
             backgroundColor: "green",
             stopOnFocus: true,
           }).showToast();
+
+          setIsLoading(false);
           setName("");
           setEmail("");
           setPassword("");
           setConfirmPassword("");
           setIsLoading(false);
           localStorage.setItem("email", email);
-          
+
           navigate("/OtpEnter");
         } else {
           Toastify({
-            text: "Registration failed. Please try again!",
+            text: "Registration failed. Please try again.!",
             duration: 3000,
             close: true,
             gravity: "top",

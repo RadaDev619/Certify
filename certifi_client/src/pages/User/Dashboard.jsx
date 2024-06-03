@@ -282,91 +282,199 @@ const Dashboard = ({ state }) => {
   };
 
   const handleVerify = async () => {
-
     setVerifyModalIsOpen(false);
     setIsLoading(true);
 
-    // currentVerifyCertificateId;
-    const identifier = String(currentVerifyCertificateId);
-    console.log("signer", signer);
-    console.log("scasc", identifier, hash);
-    console.log("hash", hash);
-    if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      setProvider(provider);
+    try {
+      const identifier = String(currentVerifyCertificateId);
+      console.log("signer", signer);
+      console.log("scasc", identifier, hash);
+      console.log("hash", hash);
 
-      const accounts = await provider.send("eth_requestAccounts", []);
-      setAccount(accounts[0]);
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        setProvider(provider);
 
-      const signer = provider.getSigner();
-      setSigner(signer);
+        const accounts = await provider.send("eth_requestAccounts", []);
+        setAccount(accounts[0]);
 
-      const contract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
-      console.log("contractBefore", contract);
+        const signer = provider.getSigner();
+        setSigner(signer);
 
-      setContract(contract);
-    } else {
-      console.error("Please install MetaMask!");
-    }
-    console.log("contractBefore", contract);
+        const contract = new ethers.Contract(
+          contractAddress,
+          contractABI,
+          signer
+        );
+        console.log("contractBefore", contract);
 
-    const transaction = await contract.storeCertificate(identifier, hash);
-    console.log("Waiting for transaction...");
-    const receipt = await transaction.wait();
-    console.log(" object:", receipt);
+        setContract(contract);
 
-    const event = receipt.events;
-    console.log("Event object:", event);
+        const transaction = await contract.storeCertificate(identifier, hash);
+        console.log("Waiting for transaction...");
+        const receipt = await transaction.wait();
+        console.log("Transaction receipt:", receipt);
 
-    // Access the concatenatedString from the args array
-    const documentIdentification = event[0].args[2];
-    console.log("Concatenated String:", documentIdentification);
-    // alert("Transaction is Successful!");
-    fetch(
-      `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${identifier}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          documentIdentification,
-        }),
+        const event = receipt.events;
+        console.log("Event object:", event);
+
+        // Access the concatenatedString from the args array
+        const documentIdentification = event[0].args[2];
+        console.log("Concatenated String:", documentIdentification);
+
+        // Send the documentIdentification to the backend
+        fetch(
+          `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${identifier}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              documentIdentification,
+            }),
+          }
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === "success") {
+              console.log(data.data);
+              Toastify({
+                text: "Document uploaded successfully!",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "green",
+                stopOnFocus: true,
+              }).showToast();
+              setIsLoading(false);
+            } else {
+              console.log(data);
+              Toastify({
+                text: "Document uploading failed. Please try again!",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "green",
+                stopOnFocus: true,
+              }).showToast();
+              setIsLoading(false);
+            }
+          });
+      } else {
+        console.error("Please install MetaMask!");
+        Toastify({
+          text: "Please install MetaMask!",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+          stopOnFocus: true,
+        }).showToast();
+        setIsLoading(false);
       }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === "success") {
-          console.log(data.data);
-          Toastify({
-            text: "Document uploaded successfully!",
-            duration: 3000,
-            close: true,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "green",
-            stopOnFocus: true,
-          }).showToast();
-          setIsLoading(false);
-        } else {
-          console.log(data);
-          Toastify({
-            text: "Document uploading failed. Please try again!",
-            duration: 3000,
-            close: true,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "green",
-            stopOnFocus: true,
-          }).showToast();
-          setIsLoading(false);
-        }
-      });
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      Toastify({
+        text: `Transaction failed: ${error.message}`,
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "red",
+        stopOnFocus: true,
+      }).showToast();
+      setIsLoading(false);
+    }
   };
+  // const handleVerify = async () => {
+  //   setVerifyModalIsOpen(false);
+  //   setIsLoading(true);
+
+  //   // currentVerifyCertificateId;
+  //   const identifier = String(currentVerifyCertificateId);
+  //   console.log("signer", signer);
+  //   console.log("scasc", identifier, hash);
+  //   console.log("hash", hash);
+  //   if (window.ethereum) {
+  //     const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //     setProvider(provider);
+
+  //     const accounts = await provider.send("eth_requestAccounts", []);
+  //     setAccount(accounts[0]);
+
+  //     const signer = provider.getSigner();
+  //     setSigner(signer);
+
+  //     const contract = new ethers.Contract(
+  //       contractAddress,
+  //       contractABI,
+  //       signer
+  //     );
+  //     console.log("contractBefore", contract);
+
+  //     setContract(contract);
+  //   } else {
+  //     console.error("Please install MetaMask!");
+  //   }
+  //   console.log("contractBefore", contract);
+
+  //   const transaction = await contract.storeCertificate(identifier, hash);
+  //   console.log("Waiting for transaction...");
+  //   const receipt = await transaction.wait();
+  //   console.log(" object:", receipt);
+
+  //   const event = receipt.events;
+  //   console.log("Event object:", event);
+
+  //   // Access the concatenatedString from the args array
+  //   const documentIdentification = event[0].args[2];
+  //   console.log("Concatenated String:", documentIdentification);
+  //   // alert("Transaction is Successful!");
+  //   fetch(
+  //     `https://prj-certifi-backend.onrender.com/api/certificate/uploadCertificate/${identifier}`,
+  //     {
+  //       method: "PATCH",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         documentIdentification,
+  //       }),
+  //     }
+  //   )
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       if (data.status === "success") {
+  //         console.log(data.data);
+  //         Toastify({
+  //           text: "Document uploaded successfully!",
+  //           duration: 3000,
+  //           close: true,
+  //           gravity: "top",
+  //           position: "right",
+  //           backgroundColor: "green",
+  //           stopOnFocus: true,
+  //         }).showToast();
+  //         setIsLoading(false);
+  //       } else {
+  //         console.log(data);
+  //         Toastify({
+  //           text: "Document uploading failed. Please try again!",
+  //           duration: 3000,
+  //           close: true,
+  //           gravity: "top",
+  //           position: "right",
+  //           backgroundColor: "green",
+  //           stopOnFocus: true,
+  //         }).showToast();
+  //         setIsLoading(false);
+  //       }
+  //     });
+  // };
 
   const toCertificateForm = (Id) => (event) => {
     event.preventDefault();
