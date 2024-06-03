@@ -590,6 +590,7 @@ const Dashboard = ({ state }) => {
               placeholder="Search Document or Folder"
               value={query}
               onChange={(e) => setQuery(e.target.value)} // Update query on every keystroke
+              className="w-[100%]"
             />
           </div>
           <div className="user-info">

@@ -170,6 +170,8 @@ function CertificateValidation() {
       const data = await verifyResponse.json();
       if (data.status === "success") {
         console.log(data.data);
+        const newHashedId = CryptoJS.SHA256(ID).toString();
+        setHashedId(newHashedId);
         Toastify({
           text: "Certificate verified successfully!",
           duration: 3000,
@@ -481,8 +483,9 @@ function CertificateValidation() {
               {/* Add relative positioning */}
               {certificateInfo.documentVerified === "true" ? (
                 certificateInfo.documentIdentification != "" ? (
-                  <p ref={documentIdRef} className="font-bold pb-3 pr-6">
+                  <p ref={documentIdRef} className="font-bold pb-3 pr-6 break-all">
                     {certificateInfo.documentId}
+
                   </p>
                 ) : (
                   <p ref={documentIdRef} className="font-bold pb-3 pr-6">
