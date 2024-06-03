@@ -189,7 +189,7 @@ const Public = () => {
       {/* <Layout /> */}
       <div className=" ">
         <button
-          className="fixed bottom-10 right-10 overflow-hidden w-16 h-16 rounded-full bg-[#000000] border-none cursor-pointer  z-10 group flex items-center justify-center" // Increased size to w-16 h-16
+            className="fixed bottom-10 right-10 overflow-hidden w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-[#000000] border-none cursor-pointer z-10 group flex items-center justify-center"
           onClick={scrollToTop}
         >
           <svg
@@ -234,7 +234,7 @@ const Public = () => {
         </button>
 
         {/* hero */}
-        <div className=" bg-gradient-to-b from-[#ececec] to-[#dfdfdf] h-[900px] backdrop-blur-sm pt-10 overflow-x-hidden">
+        <div className=" bg-gradient-to-b from-[#ececec] to-[#dfdfdf] h-[1000px] backdrop-blur-sm pt-10 overflow-x-hidden">
           <div className="tagline  ">
             <h1 className="text-3xl item-left  translate-y-[150px] translate-x-[300px]">
               Secure and transparent{" "}
@@ -299,7 +299,7 @@ const Public = () => {
             >
               {" "}
               {/* Add justify-center */}
-              <button class="absolute left-[488px] -translate-y-[45%] top-1/2 p-1">
+              <button class="absolute left-[530px] -translate-y-[45%] top-1/2 p-1">
                 <svg
                   width="16"
                   height="15"
@@ -328,7 +328,7 @@ const Public = () => {
               />
               <button
                 type="button"
-                class="absolute right-[490px] -translate-y-[45%] top-1/2 p-1"
+                class="absolute right-[530px] -translate-y-[45%] top-1/2 p-1"
                 onClick={handleClearInput}
               >
                 <svg
@@ -662,7 +662,7 @@ const Public = () => {
               </div>
               <div class="z-10  group-hover:-translate-y-10 transition-all duration-500">
                 <span class="text-2xl font-semibold group-hover:text-white">
-                  Blockchain specilist
+                  Blockchain Lead
                 </span>
                 <p className="group-hover:text-white">
                   develops and manages blockchain systems.

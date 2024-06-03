@@ -282,6 +282,10 @@ const Dashboard = ({ state }) => {
   };
 
   const handleVerify = async () => {
+
+    setVerifyModalIsOpen(false);
+    setIsLoading(true);
+
     // currentVerifyCertificateId;
     const identifier = String(currentVerifyCertificateId);
     console.log("signer", signer);
