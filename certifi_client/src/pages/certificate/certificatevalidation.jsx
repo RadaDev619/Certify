@@ -359,6 +359,8 @@ function CertificateValidation() {
   };
 
   const handleReject = () => {
+    opennotValidModal();
+
     // Add your logic for rejecting the certificate here
     console.log("Certificate rejected");
   };
