@@ -12,7 +12,7 @@ contract Certify {
     }
     event CertificateStored(address indexed owner, string identifier, string concatenatedString);
 
-    event getCertificate(string concatenatedString);
+    // event getCertificate(string concatenatedString);
 
 
     // Function to store an IPFS hash
@@ -46,7 +46,7 @@ contract Certify {
     }
 
     // Function to retrieve an IPFS hash
-    function getIPFSHash(address certiOwner, string memory _identifier, string memory _hash) public returns (string memory _certi) {
+    function getIPFSHash(address certiOwner, string memory _identifier, string memory _hash) public view returns (string memory _certi) {
                 
         if ( keccak256(bytes(certificates[certiOwner][_identifier])) == keccak256(bytes(_hash))){
             string memory url = "https://gateway.pinata.cloud/ipfs/" ;
@@ -63,7 +63,7 @@ contract Certify {
             }
             string memory finalConcatenatedString = string(concatenatedString);
 
-            emit getCertificate(finalConcatenatedString);
+            // emit getCertificate(finalConcatenatedString);
 
             return finalConcatenatedString;
         }else{

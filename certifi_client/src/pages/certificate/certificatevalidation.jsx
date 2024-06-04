@@ -8,6 +8,8 @@ import axios from "axios";
 import LoadingAnimation from "../../component/LoadingAnimation";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
+import CryptoJS from "crypto-js";
+
 function CertificateValidation() {
   const [activeTab, setActiveTab] = useState("recipients");
   const [userType, setuserType] = useState(true);
@@ -170,8 +172,8 @@ function CertificateValidation() {
       const data = await verifyResponse.json();
       if (data.status === "success") {
         console.log(data.data);
-        const newHashedId = CryptoJS.SHA256(ID).toString();
-        setHashedId(newHashedId);
+        // const newHashedId = CryptoJS.SHA256(ID).toString();
+        // setHashedId(newHashedId);
         Toastify({
           text: "Certificate verified successfully!",
           duration: 3000,
@@ -483,9 +485,11 @@ function CertificateValidation() {
               {/* Add relative positioning */}
               {certificateInfo.documentVerified === "true" ? (
                 certificateInfo.documentIdentification != "" ? (
-                  <p ref={documentIdRef} className="font-bold pb-3 pr-6 break-all">
+                  <p
+                    ref={documentIdRef}
+                    className="font-bold pb-3 pr-6 break-all"
+                  >
                     {certificateInfo.documentId}
-
                   </p>
                 ) : (
                   <p ref={documentIdRef} className="font-bold pb-3 pr-6">
