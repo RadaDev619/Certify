@@ -38,7 +38,8 @@ const Dashboard = ({ state }) => {
   const [profilepic, setProfilePic] = useState("");
   const [userid, setUserId] = useState("");
 
-  const contractAddress = "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
+  const contractAddress = "0x63C39cF4D4bC1D5b4A4caC191Ff80a72Fa6dcb19";
+  // "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
   const contractABI = abi.abi;
 
   const [results, setResults] = useState([]); // State to store search results

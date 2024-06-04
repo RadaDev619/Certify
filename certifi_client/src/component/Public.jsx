@@ -28,6 +28,7 @@ const Public = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hashedId, setHashedId] = useState(null);
   const [isCopyPromptVisible, setIsCopyPromptVisible] = useState(false);
+  const [validStatus, setvalidStatus] = useState("");
 
   const searchCertificate = async (event) => {
     event.preventDefault();
@@ -40,7 +41,8 @@ const Public = () => {
       return;
     }
 
-    const contractAddress = "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
+    const contractAddress = "0x63C39cF4D4bC1D5b4A4caC191Ff80a72Fa6dcb19";
+    // "0xF2D99d629e640E9a936e90C9ce84aeC9800f6f78";
     const contractABI = abi.abi;
 
     const provider = new ethers.providers.Web3Provider(ethereum);
@@ -61,17 +63,16 @@ const Public = () => {
 
       console.log("Waiting for transaction...");
       // // alert("reach1");
-      const receipt = await transaction.wait(); // Wait for the transaction to be mined
       // alert("Transaction is Successful!");
-      const event = receipt.events;
+      // const event = receipt.events;
       // console.log("Event object:", event);
       // // Access the concatenatedString from the args array
-      const concatenatedString = event[0].args[0];
-      console.log("Concatenated String:", concatenatedString);
+      // const concatenatedString = event[0].args[0];
+      console.log("Concatenated String:", transaction);
       // // alert("Concatenated String: " + concatenatedString);
 
       // // Set the URL state to the concatenated string
-      setSearchResult(concatenatedString);
+      setSearchResult(transaction);
       const response = await fetch(
         `https://prj-certifi-backend.onrender.com/api/certificate/getCertificatebyId/${identifier}`,
         {
@@ -96,10 +97,11 @@ const Public = () => {
           stopOnFocus: true,
         }).showToast();
         setIsLoading(false);
+        setvalidStatus("Certificate Valid");
       } else {
         Toastify({
-          text: "Transaction faied!",
-          duration: 3000,
+          text: "Transaction faied, Certificate Invalid!",
+          duration: 1000,
           close: true,
           gravity: "top",
           position: "right",
@@ -109,12 +111,13 @@ const Public = () => {
         setFetchedData(null);
         setHashedId(null);
         setIsLoading(false);
+        setvalidStatus("Certificate Invalid!");
 
         throw new Error("Certificate data fetch failed. Please try again.");
       }
     } catch (error) {
       Toastify({
-        text: "Transaction faied!",
+        text: "Transaction faied, Certificate Invalid!",
         duration: 3000,
         close: true,
         gravity: "top",
@@ -189,7 +192,7 @@ const Public = () => {
       {/* <Layout /> */}
       <div className=" ">
         <button
-            className="fixed bottom-10 right-10 overflow-hidden w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-[#000000] border-none cursor-pointer z-10 group flex items-center justify-center"
+          className="fixed bottom-10 right-10 overflow-hidden w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-[#000000] border-none cursor-pointer z-10 group flex items-center justify-center"
           onClick={scrollToTop}
         >
           <svg
@@ -352,10 +355,11 @@ const Public = () => {
           {fetchedData && (
             <div className="mt-5 mr-56 flex flex-col items-center">
               <div className="text-center translate-x-[100px] font-bold text-2xl uppercase mb-7">
-                Certificate Valid
+                {validStatus}
+                {/* Certificate Valid */}
               </div>
-              <div className="text-center translate-x-[100px] font-semibold text-xl uppercase mb-10">
-                <p>IPFS file link :  {concatenatedString}</p>
+              <div className="text-center translate-x-[100px] font-semibold text-xl  mb-10">
+                <p>IPFS file link : {searchResult}</p>
               </div>
               <div className="flex">
                 <div
