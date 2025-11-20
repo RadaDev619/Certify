@@ -1,0 +1,23 @@
+const dotenv = require('dotenv');
+dotenv.config({ path: './.env' });
+
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+const instituteOtpVerificationEmail = (data) => {
+
+    console.log(data)
+
+    sgMail.send({
+        to: data.email,
+        from: "kuenzang24.dev@gmail.com",
+        subject: "Account Verification",
+        text: `Your OTP is ${data.otp}`,
+        html:`<p>Enter <b>${data.otp}</b> in the application to verify your email address and complete the signup process.<br> This code expires in <b>1 hour</b></p>`,
+        template_id:"d-123f37bf53a44c8bab131adb18c74bec",
+        dynamic_template_data:{
+            twilio_code:data.otp,
+        }
+})}
+
+module.exports = {instituteOtpVerificationEmail};
